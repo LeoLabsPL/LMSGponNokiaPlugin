@@ -1204,7 +1204,7 @@ class GPON_NOKIA_SNMP
                 if($snmp_result['Rx Power'] != '')
                 {
                     // do poprawy bo xgspon trzeba liczyć z sygnału innego ale to w następnej wersji
-                    $tlumienie=(float)str_replace(',', '.', $PON)-(float)str_replace(',', '.', str_replace('dBm', '', $snmp_result['Rx Power'])).' dBm';
+                    $tlumienie=(float)str_replace(',', '.', $PON)-(float)str_replace(',', '.', str_replace('dBm', '', $snmp_result['Rx Power'])).' dB';
                 }
                 else
                 {
@@ -1234,7 +1234,7 @@ class GPON_NOKIA_SNMP
                     <tr><td class="text-right bold">'.trans('TX ONU:').'</td><td'.$this->style_gpon_tx_power($snmp_result['Tx Power']).'>'.$snmp_result['Tx Power'].'</td></tr>
 					<tr><td class="text-right bold">'.trans('Signal Level 1490nm').'<br />'.trans('Received on ONU:').'</td><td'.$this->style_gpon_rx_power($snmp_result['Rx Power']).'>'.$snmp_result['Rx Power'].'</td></tr>
                     <tr><td class="text-right bold">'.trans('Attenuation of the route to the subscriber:').'</td><td>'.$tlumienie.'</td></tr>
-                    <tr><td class="text-right bold">'.trans('TX OLT:').'</td><td'.$this->style_gpon_tx_power($PON).'>'.$PON.'</td></tr>
+                    <tr><td class="text-right bold">'.trans('TX OLT:').'</td><td'.$this->style_gpon_tx_power($PON).'>'.$PON.' dBm</td></tr>
 					<tr><td class="text-right bold">'.trans('Signal Level 1310nm').'<br />'.trans('Received on OLT:').'</td><td'.$this->style_gpon_rx_power($snmp_result['Rx Power OLT']).'>'.$snmp_result['Rx Power OLT'].'</td></tr>    
 					<tr><td class="text-right bold">'.trans('Distance:').'</td><td>'.$snmp_result['Distance'].'</td></tr>';
 					//<tr><td class="text-right bold">'.trans('Link working time:').'</td><td>'.$snmp_result['Link Up Time'].'</td></tr>'
