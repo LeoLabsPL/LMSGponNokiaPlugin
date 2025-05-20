@@ -1,0 +1,86 @@
+{extends file="layout.html"}
+{block name=title}LMS :{$layout.pagetitle|striphtml}{/block}
+{block name=module_content}
+<!--// $Id$ //-->
+<H1>{$layout.pagetitle}</H1>
+<TABLE CELLPADDING="3" class="lmsbox">
+	<COLGROUP>
+		<COL style="width: 97%;">
+		<COL style="width: 1%;">
+		<COL style="width: 1%;">
+		<COL style="width: 1%;">
+		<COL style="width: 1%;">
+	</COLGROUP>
+	<THEAD>
+	<TR {tip text="Click on column name to change sorting order"}>
+		<TD>
+			<IMG src="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gpononumodels.gif" ALT="">&nbsp;<A href="?m=gponnokiaonumodelslist&o=name{if $listdata.direction eq "asc" && $listdata.order eq "name"},desc{/if}"><B>{trans("Name:")}</B></A> {if $listdata.order eq "name"}<IMG src="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}<BR>
+			<IMG src="img/producer.gif" ALT="">&nbsp;<A href="?m=gponnokiaonumodelslist&o=producer{if $listdata.direction eq "asc" && $listdata.order eq "producer"},desc{/if}">{trans("Manufacturer:")}</A> {if $listdata.order eq "producer"}<IMG src="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
+		</TD>
+		<TD class="nobr">
+		</TD>	
+		<TD class="text-right valign-top">
+			<A href="?m=gponnokiaonumodelslist&o=id{if $listdata.direction eq "asc" && $listdata.order eq "id"},desc{/if}">ID:</A> {if $listdata.order eq "id"}<IMG src="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
+		</TD>
+
+		<TD class="nobr">
+		</TD>
+		<TD class="text-right bold nobr">
+			{trans("Total:")} {$listdata.total|default:"0"}
+		</TD>
+	</TR>
+	</THEAD>
+	<TBODY>
+	{if $listdata.total != 0}
+	<TR class="dark">
+		<TD class="fall" colspan="5">
+			{include file="scroller.html" loop=$netdevlist}
+		</TD>
+	</TR>
+	{/if}
+	{cycle values="light,lucid" print=false}
+	{foreach $modellist as $model}
+	{if $model@iteration - 1 < $start}{continue}{/if}
+	{if $model@iteration > $pagelimit}{break}{/if}
+	<TR class="{cycle}" onmouseover="addClass(this, 'highlight')" onmouseout="removeClass(this, 'highlight')">
+		<TD class="valign-top" onClick="return self.location.href='?m=gponnokiaonumodelsinfo&id={$model.id}';">
+			<IMG src="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gpononumodels.gif" ALT=""> <a name="{$model.id}"><span class="bold">{$model.name}</span></A><BR>
+			<IMG src="img/producer.gif" ALT=""> {$model.producer} {if $model.model}/ {$model.model}{/if}{if $model.location} / {$model.location}{/if}
+		</TD>
+		<TD>{if $model.xgspon == 1}XGSPON{/if}</TD>
+		<TD class="text-right" onClick="return self.location.href='?m=gponnokiaonumodelsinfo&id={$model.id}';">
+			({$model.id|string_format:"%04d"})
+		</TD>
+		<TD class="nobr" onClick="return self.location.href='?m=gponnokiaonumodelsinfo&id={$model.id}';">
+		</TD>
+		<TD class="text-right nobr">
+			<a href="?m=gponnokiaonumodelsdel&id={$model.id}" onClick="return confirmLink(this, '{t a=$model.name}Are you sure, you want to remove device \'$a\' from database?{/t}')"><IMG src="img/delete.gif" alt="{trans("Delete")}" title="{trans("Delete")}"></A>
+			<a href="?m=gponnokiaonumodelsedit&id={$model.id}"><IMG src="img/edit.gif" alt="{trans("Edit")}" title="{trans("Edit")}"></A>
+			<a href="?m=gponnokiaonumodelsinfo&id={$model.id}"><IMG src="img/info.gif" alt="{trans("Info")}" title="{trans("Info")}"></A>
+		</TD>
+	</TR>
+	{foreachelse}
+	<TR>
+		<TD colspan="5" class="empty-table">
+			<p>&nbsp;</p>
+			<p>{trans("There are no ONU models in the database.")}</p>
+			<p>&nbsp;</p>
+		</TD>
+	</TR>
+	{/foreach}
+	{if $listdata.total != 0}
+	<TR class="dark">
+		<TD class="fall" colspan="5">
+			{include file="scroller.html" loop=$netdevlist}
+		</TD>
+	</TR>
+	{/if}
+	<TR >
+		<TD COLSPAN="4" class="text-right bold">
+				{trans("Total:")} {$listdata.total|default:"0"}
+		</TD>
+		<TD></TD>
+	</TR>
+	</TBODY>
+</TABLE>
+{/block}

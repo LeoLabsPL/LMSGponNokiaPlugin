@@ -1,0 +1,180 @@
+{extends file="layout.html"}
+{block name=module_content}
+<!--// $Id$ //-->
+<SCRIPT TYPE="text/javascript" SRC="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gpon.js""></SCRIPT>
+<H1>{$layout.pagetitle}</H1>
+<FORM NAME="netdevadd" METHOD="POST" ACTION="?m=gponnokiaoltadd">
+<INPUT type="submit" class="hiddenbtn">
+<TABLE WIDTH="100%" CELLPADDING="3" class="lmsbox">
+	<COLGROUP>
+		<COL style="width: 1%;">
+		<COL style="width: 1%;">
+		<COL style="width: 98%;">
+	</COLGROUP>
+	<THEAD>
+	<TR>
+		<TD>
+			<IMG SRC="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gponolt.gif" ALT="">
+		</TD>
+		<TD class="bold">
+			{trans("Name:")}
+		<TD>
+			<INPUT TYPE="TEXT" NAME="netdev[name]" VALUE="{$netdev.name}" MAXLENGTH="32" {tip trigger="name" text="Enter device name" bold=1}> 
+		</TD>
+	</TR>
+	</THEAD>
+	<TBODY>
+	<TR>
+		<TD>
+			<IMG SRC="img/netdev.gif" ALT="">
+		</TD>
+		<TD class="bold nobr">
+			{trans("Network device:")}
+		</TD>
+		<TD>
+			<SELECT name="netdev[netdevid]" {tip text="Select assigned network device"}>
+				{foreach $notgponoltdevices as $device}
+				<OPTION value="{$device.id}"{if $netdev.netdevid == $device.id} selected{/if}>{$device.name}</OPTION>
+				{/foreach}
+			</SELECT>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<IMG SRC="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gponolt_takenports.gif" ALT="">
+		</TD>
+		<TD class="bold nobr">
+			{trans("SNMP version:")}
+		</TD>
+		<TD>
+			<SELECT NAME="netdev[snmp_version]" {tip text="Select SNMP version" trigger="snmp_version"}>
+				<OPTION VALUE="0"></OPTION>
+				{section name=snmp_v start=2 loop=4}
+				<OPTION VALUE="{$smarty.section.snmp_v.index}" {if $netdev.snmp_version eq $smarty.section.snmp_v.index} SELECTED{/if}>Version {$smarty.section.snmp_v.index}</OPTION>
+				{/section}
+			</SELECT>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<IMG SRC="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gponolt_takenports.gif" ALT="">
+		</TD>
+		<TD class="bold nobr">
+			SNMP {trans("Description:")}
+		</TD>
+		<TD>
+			<TEXTAREA NAME="netdev[snmp_description]" COLS="40" ROWS="5" COLS="40" ROWS="3" {tip text="Enter additional information (optional)"}>{$netdev.snmp_description}</TEXTAREA>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<IMG SRC="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gponolt_takenports.gif" ALT="">
+		</TD>
+		<TD class="bold nobr">
+			SNMP IP host:
+		</TD>
+		<TD>
+			<INPUT TYPE="TEXT" NAME="netdev[snmp_host]" VALUE="{$netdev.snmp_host}" {tip trigger="snmp_host" text="Enter the IP address of the host"} maxlenght="100" />
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<IMG SRC="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gponolt_takenports.gif" ALT="">
+		</TD>
+		<TD class="bold nobr">
+			SNMP community (v.2):
+		</TD>
+		<TD>
+			<INPUT TYPE="TEXT" NAME="netdev[snmp_community]" VALUE="{$netdev.snmp_community}" {tip trigger="snmp_community" text="Enter Community - only for version 3 below"} maxlenght="100" />
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<IMG SRC="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gponolt_takenports.gif" ALT="">
+		</TD>
+		<TD class="bold nobr">
+			SNMP Auth protocol (v.3):
+		</TD>
+		<TD>
+			<SELECT NAME="netdev[snmp_auth_protocol]" {tip text="Choose Auth protocol (v.3)" trigger="snmp_auth_protocol"}>
+				<OPTION VALUE="MD5" {if $netdev.snmp_auth_protocol eq 'MD5'} SELECTED{/if}>MD5</OPTION>
+				<OPTION VALUE="SHA" {if $netdev.snmp_auth_protocol eq 'SHA'} SELECTED{/if}>SHA</OPTION>
+			</SELECT>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<IMG SRC="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gponolt_takenports.gif" ALT="">
+		</TD>
+		<TD class="bold nobr">
+			SNMP Username (v.3):
+		</TD>
+		<TD>
+			<INPUT TYPE="TEXT" NAME="netdev[snmp_username]" VALUE="{$netdev.snmp_username}" {tip trigger="snmp_username" text="Enter SNMP user login (v.3)"} maxlenght="255" />
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<IMG SRC="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gponolt_takenports.gif" ALT="">
+		</TD>
+		<TD class="bold nobr">
+			SNMP Password (v.3):
+		</TD>
+		<TD>
+			<INPUT TYPE="TEXT" NAME="netdev[snmp_password]" VALUE="{$netdev.snmp_password}" {tip trigger="snmp_password" text="Enter SNMP user password (v.3)"} maxlenght="255" />
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<IMG SRC="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gponolt_takenports.gif" ALT="">
+		</TD>
+		<TD class="bold nobr">
+			SNMP Security level (v.3):
+		</TD>
+		<TD>
+			<SELECT NAME="netdev[snmp_sec_level]" {tip text="Select Security level (v.3)" trigger="snmp_sec_level"}>
+				<OPTION VALUE="authNoPriv" {if $netdev.snmp_sec_level eq 'authNoPriv'} SELECTED{/if}>authNoPriv</OPTION>
+				<OPTION VALUE="noAuthNoPriv" {if $netdev.snmp_sec_level eq 'noAuthNoPriv'} SELECTED{/if}>noAuthNoPriv</OPTION>
+				<OPTION VALUE="authPriv" {if $netdev.snmp_sec_level eq 'authPriv'} SELECTED{/if}>authPriv</OPTION>
+			</SELECT>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<IMG SRC="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gponolt_takenports.gif" ALT="">
+		</TD>
+		<TD class="bold nobr">
+			SNMP Privacy passphrase (v.3):
+		</TD>
+		<TD>
+			<INPUT TYPE="TEXT" NAME="netdev[snmp_privacy_passphrase]" VALUE="{$netdev.snmp_privacy_passphrase}" {tip trigger="snmp_privacy_passphrase" text="Enter Privacy passphrase (v.3)"} maxlenght="255" />
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<IMG SRC="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gponolt_takenports.gif" ALT="">
+		</TD>
+		<TD class="bold nobr">
+			SNMP Privacy protocol (v.3):
+		</TD>
+		<TD>
+			<SELECT NAME="netdev[snmp_privacy_protocol]" {tip text="Select Privacy protocol (v.3)" trigger="snmp_privacy_protocol"}>
+				<OPTION VALUE="DES" {if $netdev.snmp_privacy_protocol eq 'DES'} SELECTED{/if}>DES</OPTION>
+				<OPTION VALUE="AES" {if $netdev.snmp_privacy_protocol eq 'AES'} SELECTED{/if}>AES</OPTION>
+			</SELECT>
+		</TD>
+	</TR>
+	<TR>
+		<TD COLSPAN="3" class="text-right">
+			<A HREF="javascript:document.netdevadd.submit();" ACCESSKEY="s">{trans("Submit")} <IMG SRC="img/save.gif" alt=""></A>
+			<A HREF="?m=gponnokiaoltlist">{trans("Cancel")} <IMG SRC="img/cancel.gif" alt=""></A>
+		</TD>
+	</TR>	
+</TABLE>
+</FORM>
+<SCRIPT type="text/javascript">
+<!--
+	document.forms['netdevadd'].elements['netdev[name]'].focus();
+//-->
+</SCRIPT>
+{/block}

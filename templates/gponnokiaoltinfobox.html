@@ -1,0 +1,347 @@
+<!--// $Id$ //-->
+{$xajax}
+
+<style>
+
+	.dot {
+		padding: 0.4em;
+		border-radius: 0.3em;
+		display: inline-block;
+		box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	}
+
+	.dot:not(:first-child) {
+		margin-left: 0.5em;
+	}
+
+	.fail-dot {
+		color: black;
+		background-color: red;
+	}
+
+	.ok-dot {
+		color: white;
+		background-color: green;
+	}
+
+	.alert-dot {
+		color: black;
+		background-color: orange;
+	}
+
+</style>
+
+<TABLE WIDTH="100%" CELLPADDING="3" class="lmsbox">
+	<colgroup>
+		<col style="width: 1%;">
+		<col style="width: 99%;">
+	</colgroup>
+	<thead>
+	<TR{if $devicepanel} class="hand" onClick="showOrHide('devicepanel');"{/if}>
+		<TD>
+			<IMG SRC="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gponolt.gif" ALT="">
+		</TD>
+		<TD>
+			<B>{$netdevinfo.name} ({$netdevinfo.id|string_format:"%04d"})</B>
+		</TD>
+	</TR>
+	</thead>
+	<tbody>
+	<TR{if $devicepanel} id="devicepanel" style="display:none;"{/if}>
+	        <TD WIDTH="100%" COLSPAN="2"{if $devicepanel} class="fall" ALIGN="RIGHT"{else}class="flr"{/if}>
+			<TABLE WIDTH="100%" CELLPADDING="0">
+				<TR>
+					<TD WIDTH="50%" style="vertical-align:top;">
+						<TABLE WIDTH="100%" CELLPADDING="3">
+							<colgroup>
+								<col style="width: 1%;">
+								<col style="width: 1%;">
+								<col style="width: 98%;">
+							</colgroup>
+	<TR>
+		<TD>
+			<IMG SRC="img/netdev.gif" ALT="">
+		</TD>
+		<TD class="bold">
+			{trans("Network device:")}
+		</TD>
+		<TD>
+			<A href="?m=netdevinfo&id={$netdevinfo.id}">{$netdevinfo.name}</A>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<IMG SRC="img/port.gif" ALT="">
+		</TD>
+		<TD class="bold nobr">
+			{trans("Number of ports:")}
+		</TD>
+		<TD>
+			{$gponoltportsinfo|size:"-"}
+			&nbsp;&nbsp;&nbsp;<A href="?m=gponnokiaoltedit&id={$netdevinfo.id}&action=updateportlist" onclick="return confirmLink(this,'{trans("Are you sure you want to update?")}');">{trans("Update port list (via snmp)")}</A>
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<IMG SRC="img/port.gif" ALT="">
+		</TD>
+		<TD class="bold nobr">
+			{trans("Ports:")}
+		</TD>
+		<TD>
+		<table class="lmsbox lms-ui-background-cycle" cellpadding="2">
+			<thead>
+			<tr  class="text-center bold">
+				<td>
+					<strong>{trans("Port")}</strong>
+				</td>
+				<td>
+					<strong>{trans("Occupied by the ONU")}</strong>
+				</td>
+				<td>
+					<strong>{trans("Max. ONU per port")}</strong>
+				</td>
+				<td>
+					<strong>{trans("Description")}</strong>
+				</td>
+			</tr>
+		</thead><tbody>
+			{foreach $gponoltportsinfo as $gponoltports}
+				<tr class="text-center">
+					<td>
+						{if $gponoltports.numportf}{$gponoltports.numportf}{else}{$gponoltports.numport}{/if}
+					</td>
+					<td>
+						{$gponoltports.countlinkport}
+					</td>
+					<td>
+						{$gponoltports.maxonu}
+					</td>
+					<td>
+						{if strlen($gponoltports.description)}
+							{$gponoltports.description|escape}
+						{else}
+							-
+						{/if}
+					</td>
+				</tr>
+			{/foreach}
+		</tbody>
+			</table>
+		</TD>
+	</TR>
+	<TR>
+		<TD COLSPAN="3">
+			<HR SIZE="1">
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<IMG SRC="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gponolt_takenports.gif" ALT="">
+		</TD>
+		<TD class="bold nobr">
+		        {trans("SNMP version:")}
+		</TD>
+		<TD>
+			{$netdevinfo.snmp_version}
+		</TD>
+	</TR>
+	<TR class="{if $netdevinfo.snmp_version eq 0}blend{/if}">
+		<TD>
+			<IMG SRC="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gponolt_takenports.gif" ALT="">
+		</TD>
+		<TD class="bold nobr">
+			SNMP {trans("Description:")}
+		</TD>
+		<TD>
+			{$netdevinfo.snmp_description}
+		</TD>
+	</TR>
+	<TR class="{if $netdevinfo.snmp_version eq 0}blend{/if}">
+		<TD>
+			<IMG SRC="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gponolt_takenports.gif" ALT="">
+		</TD>
+		<TD class="bold nobr">
+			SNMP IP host:
+		</TD>
+		<TD>
+			{$netdevinfo.snmp_host}
+		</TD>
+	</TR>
+	<TR class="{if $netdevinfo.snmp_version eq 3 or $netdevinfo.snmp_version eq 0}blend{/if}">
+		<TD>
+			<IMG SRC="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gponolt_takenports.gif" ALT="">
+		</TD>
+		<TD class="bold nobr">
+			SNMP Community (v.2):
+		</TD>
+		<TD>
+			{$netdevinfo.snmp_community}
+		</TD>
+	</TR>
+	<TR class="{if $netdevinfo.snmp_version lt 3}blend{/if}">
+		<TD>
+			<IMG SRC="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gponolt_takenports.gif" ALT="">
+		</TD>
+		<TD class="bold nobr">
+			SNMP Auth protocol (v.3):
+		</TD>
+		<TD>
+			{$netdevinfo.snmp_auth_protocol}
+		</TD>
+	</TR>
+	<TR class="{if $netdevinfo.snmp_version lt 3}blend{/if}">
+		<TD>
+			<IMG SRC="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gponolt_takenports.gif" ALT="">
+		</TD>
+		<TD class="bold nobr">
+			SNMP Username (v.3):
+		</TD>
+		<TD>
+			{$netdevinfo.snmp_username}
+		</TD>
+	</TR>
+	<TR class="{if $netdevinfo.snmp_version lt 3}blend{/if}">
+		<TD>
+			<IMG SRC="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gponolt_takenports.gif" ALT="">
+		</TD>
+		<TD class="bold nobr">
+			SNMP Password (v.3):
+		</TD>
+		<TD>
+			{$netdevinfo.snmp_password}
+		</TD>
+	</TR>
+	<TR class="{if $netdevinfo.snmp_version lt 3}blend{/if}">
+		<TD>
+			<IMG SRC="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gponolt_takenports.gif" ALT="">
+		</TD>
+		<TD class="bold nobr">
+			SNMP Security level (v.3):
+		</TD>
+		<TD>
+			{$netdevinfo.snmp_sec_level}
+		</TD>
+	</TR>
+	<TR class="{if $netdevinfo.snmp_version lt 3}blend{/if}">
+		<TD>
+			<IMG SRC="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gponolt_takenports.gif" ALT="">
+		</TD>
+		<TD class="bold nobr">
+			SNMP Privacy passphrase (v.3):
+		</TD>
+		<TD>
+			{$netdevinfo.snmp_privacy_passphrase}
+		</TD>
+	</TR>
+	<TR class="{if $netdevinfo.snmp_version lt 3}blend{/if}">
+		<TD>
+			<IMG SRC="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gponolt_takenports.gif" ALT="">
+		</TD>
+		<TD class="bold nobr">
+			SNMP Privacy protocol (v.3):
+		</TD>
+		<TD>
+			{$netdevinfo.snmp_privacy_protocol}
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<IMG SRC="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gponolt_takenports.gif" ALT="">
+		</TD>
+		<TD class="bold nobr">
+			SNMP Bussy State:
+		</TD>
+		<TD>
+			{if $netdevinfo.snmp_is_bussy == 0}
+				<span class="ok-dot dot"></span>
+			{else}
+				<span class="fail-dot dot"></span>
+				{/if}
+		</TD>
+	</TR>
+	<TR>
+		<TD colspan="3">
+			<HR size="1">
+		</TD>
+	</TR>
+	<TR>
+		<TD>
+			<IMG SRC="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gpononu.gif" ALT="">
+		</TD>
+		<TD colspan="2">
+			<a href="?m=gponnokiaonucheck&id={$netdevinfo.id}">{trans("Detect ONU")}</a>
+		</TD>
+	</TR>
+				    </TABLE>
+				</TD>
+				<TD WIDTH="50%" style="vertical-align:top;">
+					<TABLE WIDTH="100%" CELLPADDING="3">
+						<colgroup>
+							<col style="width: 1%;">
+							<col style="width: 98%;">
+						</colgroup>
+	<!--<TR>
+		<TD class="valign-top">
+			<IMG SRC="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/configuration-icon.png" ALT="">
+		</TD>
+		<TD>
+		    <A href="?m=gponnokiaoltedit&id={$netdevinfo.id}&action=writememory" onclick="return confirmLink(this,'{trans("Are you sure you want to save the configuration?")}');"> <B>{trans("Save configuration")} </B></A>(write memory)
+		</TD>
+	</TR>-->
+	<TR>
+		<TD class="valign-top">
+			<IMG SRC="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gponolt.gif" ALT="">
+		</TD>
+		<TD class="bold">
+			{trans("SNMP data:")}<br><br>
+		</TD>
+		
+	</TR>
+	<tr>
+		<td></td>
+		<TD >
+			{$table_OLT_param}
+		</TD>
+	</tr>
+
+					</TABLE>
+					</TD>
+				</TR>
+			</TABLE>
+{if !$devicepanel}
+    		</TD>
+	</TR>
+	<TR>
+		<TD class="lms-ui-box-buttons" colspan="2">
+{/if}
+			{button icon="edit" label="Edit" tip="Edit" onclick="location.href = '?m=gponnokiaoltedit&id={$netdevinfo.id}';"}
+			{button icon="delete" label="Delete" tip="Delete" id="delete-button"}
+			{button icon="delete" label="Delete with network device" tip="Delete with network device" id="delete-button-with-netdev"}
+		</TD>
+	</TR>
+	</tbody>
+</TABLE>
+<script>
+
+{if $devicepanel}
+	if (getCookie('devicepanel')=='1') {
+		document.getElementById('devicepanel').style.display = '';
+	}
+{/if}
+
+	$(function() {
+		$('#delete-button').click(function() {
+			confirmDialog($t("Are you sure, you want to remove device '$a' from database?", '{$netdevinfo.name}'), this).done(function() {
+				location.href = '?m=gponnokiaoltdel&id={$netdevinfo.id}';
+			});
+		});
+
+		$('#delete-button-with-netdev').click(function() {
+			confirmDialog($t("Are you sure, you want to remove device '$a' from database?", '{$netdevinfo.name}'), this).done(function() {
+				location.href = '?m=gponnokiaoltdel&id={$netdevinfo.id}&netdev=1';
+			});
+		});
+	});
+
+</script>

@@ -1,0 +1,28 @@
+{extends file="layout.html"}
+{block name=module_content}
+<!--// $Id$ //-->
+{$xajax}
+<h1>{$layout.pagetitle}</h1>
+<div id="gpon-nokia-onu-info-sortable" class="lms-ui-sortable-persistent">
+	{include file="gponnokiaonu/gponnokiaonuinfobox.html"}
+	{if !empty($netdevinfo.rrd)}
+		{include file="gponnokiaonu/gponnokiaonustats.html"}
+	{/if}
+	{if !empty($onulastauth)}
+		{include file="gponnokiaonu/gponnokiaonulastauth.html"}
+	{/if}
+	{if !empty($onusyslog)}
+		{include file="gponnokiaonu/gponnokiaonusyslog.html"}
+	{/if}
+	{include file="gponnokiaonu/gponnokiaonuconnbox.html"}
+	{if !empty($gpononu2customerscount)}
+		{include file="customer/customerinfobox.html" customerpanel=1}
+	{/if}
+</div>
+
+<script>
+
+	restoreSortable('gpon-nokia-onu-info-sortable', '{$gponnokiaonuinfo_sortable_order}');
+
+</script>
+{/block}

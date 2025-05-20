@@ -1,0 +1,8 @@
+[internet]
+type=bridge
+vlanid=100
+tagged=
+untagged=1
+multicast=no
+priority=0
+

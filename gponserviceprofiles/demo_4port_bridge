@@ -1,0 +1,15 @@
+[internet]
+type=bridge
+vlanid=100
+tagged=4
+untagged=1,2
+multicast=no
+priority=0
+
+[tv]
+type=bridge
+vlanid=101
+tagged=4
+untagged=3
+multicast=yes
+priority=0

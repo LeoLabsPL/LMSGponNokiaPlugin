@@ -1,0 +1,344 @@
+<!--// $Id$ //-->
+
+{$xajax}
+
+<style>
+
+	.snmp-properties td {
+		vertical-align: middle;
+	}
+
+	.snmp-properties td {
+		border-left: 1px dotted black;
+	}
+
+	.snmp-properties td:last-child {
+		border-right: 1px dotted black;
+	}
+
+</style>
+
+<script>
+
+	var current_port;
+	var gpon_ports;
+
+	function OLT_ONU_walk_callback() {
+		$.ajax({
+			url: location.href + '&api=1&ajax=1&port=' + gpon_ports[current_port++],
+			method: "GET",
+			dataType: 'json',
+			success: function(data) {
+				var onus = $('#onus');
+				$.each(data.gpon, function(id, record) {
+					var onu = $('#' + id , onus);
+					$.each(record, function(property, value) {
+						if (property.match('^data-')) {
+							onu.attr(property, value);
+						} else {
+							onu.find('.' + property).html(value);
+							//console.log(property + ': ' + value);
+						}
+					});
+				});
+
+				if (data.error.length) {
+					$("#OLT_ONU_date").append(data.error);
+				}
+
+				if (current_port >= gpon_ports.length) {
+					$('.onu-header .sort-order-toggle').removeClass('disabled');
+
+					$("#OLT_ONU_date").append('Data of: <strong>' + (new Date()).toLocaleString() + '</strong>');
+					$("#onu-snmp-button").prop('disabled', false);
+
+					return;
+				}
+
+				//OLT_ONU_walk_callback();
+			}
+		});
+	}
+
+	function OLT_ONU_walk() {
+		gpon_ports = [];
+
+		$('.onu-header .sort-order-toggle').addClass('disabled');
+		$('.onu-row').removeAttr('data-rx-power');
+
+		var selection = $('[name="choosefilter"] [name="f"]');
+		var selected = selection.val();
+		if (selected != 0) {
+			gpon_ports.push(selected);
+		} else {
+			alert('Please select port');
+			return;
+			/*
+			selection.find('option').each(function() {
+				//if (parseInt($(this).val())) {
+					gpon_ports.push($(this).val());
+				//}
+			});*/
+		}
+
+		current_port = 0;
+		$("#OLT_ONU_date").empty();
+		$("#onu-snmp-button").prop('disabled', true);
+
+		OLT_ONU_walk_callback();
+	}
+
+</script>
+
+<TABLE WIDTH="100%" CELLPADDING="3" class="lmsbox">
+	<COLGROUP>
+		<COL style="width: 50%;">
+		<COL style="width: 50%;">
+	</COLGROUP>
+	<THEAD>
+		<TR>
+			<TD class="bold hand" colspan="2" class="nobr" onClick="showOrHide('devicedevices');">
+				<IMG SRC="img/mac.gif" alt="">
+				{if empty($netdevlist)}
+					{$count = 0}
+				{else}
+					{$count = count($netdevlist)}
+				{/if}
+				{t a=$count}Podłączone ONU ($a){/t}
+			</TD>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR id="devicedevices" style="display:none;">
+			<TD WIDTH="100%" colspan="2">
+
+				<TABLE cellpadding="5" cellspacing="0" WIDTH="100%" class="lmsbox-inner lms-ui-background-cycle">
+					<COLGROUP>
+						<COL style="width: 1%;">
+						<COL style="width: 94%;">
+						<COL style="width: 1%;">
+						<COL style="width: 1%;">
+						<COL style="width: 1%;">
+						<COL style="width: 1%;">
+						<COL style="width: 1%;">
+						<COL style="width: 1%;">
+					</COLGROUP>
+					<THEAD>
+						<TR class="lms-ui-header-panel">
+							<TD rowspan="2">
+								<IMG src="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gpononu.gif" ALT=""><br>
+								<IMG src="img/customer.gif" ALT="">
+							</TD>
+							<TD rowspan="2">
+								<B>{trans("Name")} / {trans("Producer")} / {trans("Model")} /</B> {trans("ONU description:")} <BR>
+								 {trans("Customer:")}
+							</TD>
+							<TD align="center" colspan="5" style="border-bottom: 0;">
+								{button label="{trans('Show SNMP data')}" id="onu-snmp-button" onclick="OLT_ONU_walk();"}
+								<div id="OLT_ONU_date"></div>
+							</TD>
+							<TD class="text-right nobr" rowspan="2">
+								<A href="?m=gponnokiaoltinfo&id={$netdevinfo.id}&o=id{if $listdata.direction eq "asc" && $listdata.order eq "id"},desc{/if}">ID:</A> {if $listdata.order eq "id"}<IMG src="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">{/if} <br>
+								<IMG src="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gpononu_takenports.gif" ALT="">
+								<A href="?m=gponnokiaoltinfo&id={$netdevinfo.id}&o=onuid{if $listdata.direction eq "asc" && $listdata.order eq "onuid"},desc{/if}">ONU ID:</A> {if $listdata.order eq "onuid"}<IMG src="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
+							</TD>
+							<TD rowspan="2" NOWRAP>
+								<IMG src="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gpononu_takenports.gif" ALT=""><A href="?m=gponnokiaoltinfo&id={$netdevinfo.id}&o=numport{if $listdata.direction eq "asc" && $listdata.order eq "numport"},desc{/if}">{trans("Port OLT:")}</A> {if $listdata.order eq "numport"}<IMG src="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">{/if} <BR>Filtr:
+								<FORM METHOD="GET" ACTION="?m={$layout.module}" NAME="choosefilter">
+									<INPUT type="submit" class="hiddenbtn">
+									<INPUT TYPE="HIDDEN" NAME="m" VALUE="gponnokiaoltinfo">
+									<INPUT TYPE="HIDDEN" NAME="id" VALUE="{$netdevinfo.id}">
+									<SELECT SIZE="1" NAME="f" ONCHANGE="document.choosefilter.submit();">
+										<option value="0">— {t}all{/t} —</option>
+										{foreach from=$gponoltportsinfo item=gponoltports}
+										<option value="{$gponoltports.numport}" {if $listdata.filtr eq $gponoltports.numport} SELECTED{/if}> {if $gponoltports.numportf}{$gponoltports.numportf}{else}{$gponoltports.numport}{/if} </option>
+										{/foreach}
+									</select>
+								</form>
+							</TD>
+							<TD rowspan="2">
+							</TD>
+						</TR>
+						<TR class="lms-ui-header-panel snmp-properties">
+							<td class="bold nobr onu-header" data-target="distance">
+								<input type="hidden" class="sort-order" value="-1">
+								<a href="#" class="sort-order-toggle disabled">
+									{trans("Distance:")}
+									<img class="sort-order-icon">
+								</a>
+							</td>
+							<td class="bold nobr onu-header" data-target="rx-power">
+								<input type="hidden" class="sort-order" value="-1">
+								<a href="#" class="sort-order-toggle disabled">
+									{trans("ONT RX Power:")}
+									<img class="sort-order-icon">
+								</a>
+							</td>
+							<td class="bold nobr onu-header" data-target="olt-rx-power">
+								<input type="hidden" class="sort-order" value="-1">
+								<a href="#" class="sort-order-toggle disabled">
+									{trans("OLT RX Power:")}
+									<img class="sort-order-icon">
+								</a>
+							</td>
+							<td class="bold nobr onu-header" data-target="status">
+								<input type="hidden" class="sort-order" value="-1">
+								<a href="#" class="sort-order-toggle disabled">
+									{trans("Status:")}
+									<img class="sort-order-icon">
+								</a>
+							</td>
+							<td class="bold nobr onu-header" data-target="active-os">
+								<input type="hidden" class="sort-order" value="-1">
+								<a href="#" class="sort-order-toggle disabled">
+									{trans("Active OS:")}
+									<img class="sort-order-icon">
+								</a>
+							</td>
+						</TR>
+					</THEAD>
+
+					<TBODY id="onus">
+						{foreach $netdevlist as $onu}
+						<TR class="highlight onu-row" id="onu-{$onu.numport_js}-{$onu.onuid}">
+							<TD>
+								<IMG src="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gpononu.gif" ALT=""><br>
+								<IMG src="img/customer.gif" ALT="">
+							</TD>
+							<TD class="valign-top nobr" onClick="return self.location.href='?m=gponnokiaonuinfo&id={$onu.id}';">
+								<a name="{$onu.id}"><B>{$onu.name} {if $onu.producer}/ {$onu.producer}{/if} {if $onu.model}/ {$onu.model}{/if} </B> {if $onu.onudescription}/ {$onu.onudescription}{/if}</A><BR>
+								<ol style="margin: 0;">
+								{foreach from=$onu.gpononu2customers item=c}
+									<li><a href="?m=customerinfo&id={$c.customersid}">{$c.customersname}</a></li>
+									{/foreach}
+									</ol>
+							</TD>
+							<td class="nobr Distance"></td>
+							<td class="nobr RxPower"></td>
+							<td class="nobr OLTrxPower"></td>
+							<td class="nobr Status"></td>
+							<td class="nobr ActiveOS"></td>
+							<TD class="text-right nobr" onClick="return self.location.href='?m=gponnokiaonuinfo&id={$onu.id}';">
+								({$onu.id|string_format:"%04d"})<br>
+								<b>{if $onu.onuid}{$onu.onuid}{else}-{/if}</b>
+							</TD>
+							<TD class="nobr" onClick="return self.location.href='?m=gponnokiaonuinfo&id={$onu.id}';">
+								{if $onu.linktype}
+									<A href="?m=gponnokiaonuedit&action=switchlinktype&linktype=0&id={$netdevinfo.id}&devid={$onu.id}"><IMG SRC="img/wireless.gif" alt="{trans("Change connection type")}" title="{trans("Change connection type")}"></A>
+								{else}
+									<A href="?m=gponnokiaonuedit&action=switchlinktype&linktype=1&id={$netdevinfo.id}&devid={$onu.id}"><IMG SRC="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gpononu_takenports.gif" alt="{trans("Change connection type")}" title="{trans("Change connection type")}"></A>
+								{/if}
+								[<b>{if $onu.numport}
+									{if $onu.numportf}{$onu.numportf}
+									{else}{$onu.numport}{/if}
+									{/if}</b>]
+							</TD>
+							<TD class="text-right">
+								<a href="#" class="onu-reset-button" data-onu-id="{$onu.id}">
+									<IMG SRC="img/reload.gif" title="{trans("<!gpon-nokia>Reset")}">
+								</a>
+								<A HREF="?m=gponnokiaoltedit&action=disconnect&id={$netdevinfo.id}&devid={$onu.id}&numport={$onu.numport}" OnClick="return confirmLink(this, '{trans("Are you sure, you want to delete that connection?")}');"><IMG SRC="img/delete.gif" {tip text="Delete connection"}></A>
+							</TD>
+						</TR>
+						{foreachelse}
+						<TR>
+							<TD colspan="11" class="empty-table">
+								{trans("No ONU to connect.")}
+							</TD>
+						</TR>
+						{/foreach}
+					</TBODY>
+
+					
+				</TABLE>
+
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+
+{if $connect.linkolt}
+<div style="background-color:white;border:1px solid black;margin:3px;padding:3px;"><b><font color="red">{$connect.linkolt}</font></b><br><br></div>
+{/if}
+
+<SCRIPT>
+
+	if (getCookie('devicedevices')=='1') {
+		$('#devicedevices').show();
+	}
+
+	$(function() {
+		$('.sort-order-toggle').click(function(e) {
+			e.preventDefault();
+			if ($(this).is('.disabled')) {
+				return;
+			}
+
+			var sortOrder = $(this).prev().val() * -1;
+			var sortKey = $(this).closest('.onu-header').attr('data-target');
+
+			$(".onu-row[data-" + sortKey + "]").sort(function(a, b) {
+				var aAttr = $(a).attr('data-' + sortKey);
+				var bAttr = $(b).attr('data-' + sortKey);
+
+				var aValue = aAttr;
+				var bValue = bAttr;
+				switch (sortKey) {
+					case 'distance':
+					case 'status':
+					case 'deactive-reason':
+						aValue = parseInt(aAttr);
+						bValue = parseInt(bAttr);
+						break;
+					case 'rx-power':
+						aValue = parseFloat(aAttr);
+						bValue = parseFloat(bAttr);
+						break;
+					case 'olt-rx-power':
+						aValue = parseFloat(aAttr);
+						bValue = parseFloat(bAttr);
+						break;
+				}
+
+				if (typeof(aValue) == 'string') {
+					if (sortOrder == -1) {
+						return aValue > bValue ? -1 : 1;
+					} else {
+						return aValue > bValue ? 1 : -1;
+					}
+				}
+				if (isNaN(aValue)) {
+					if (sortOrder == -1) {
+						return -1;
+					} else {
+						return 1;
+					}
+				} else if (isNaN(bValue)) {
+					if (sortOrder == -1) {
+						return -1;
+					} else {
+						return 1;
+					}
+				} else {
+					if (sortOrder == -1) {
+						return aValue - bValue;
+					} else {
+						return bValue - aValue;
+					}
+				}
+			}).appendTo('tbody#onus');
+			if (sortOrder == 1) {
+				$(".onu-row:not([data-" + sortKey + "])").appendTo('tbody#onus');
+			} else {
+				$(".onu-row:not([data-" + sortKey + "])").prependTo('tbody#onus');
+			}
+
+			$(this).closest('.snmp-properties').find('.sort-order-icon').removeAttr('src');
+			$(this).find('.sort-order-icon').attr('src', 'img/' + (sortOrder == -1 ? 'asc' : 'desc') + '_order.gif');
+			$(this).prev().val(sortOrder);
+		});
+	});
+
+</SCRIPT>
+
+{include file="gponnokiaonu/gponnokiaonuoperations.html"}

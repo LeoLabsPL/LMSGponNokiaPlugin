@@ -1,0 +1,19 @@
+{extends file="layout.html"}
+{block name=module_content}
+<!--// $Id$ //-->
+{$xajax}
+<h1>{$layout.pagetitle}</h1>
+<div id="gpon-nokia-onu-edit-sortable" class="lms-ui-sortable-persistent">
+	{include file="gponnokiaonu/gponnokiaonueditbox.html"}
+	{if !empty($onulastauth)}
+		{include file="gponnokiaonu/gponnokiaonulastauth.html"}
+	{/if}
+	{if !empty($onusyslog)}
+		{include file="gponnokiaonu/gponnokiaonusyslog.html"}
+	{/if}
+	{include file="gponnokiaonu/gponnokiaonuconnbox.html"}
+	{if !empty($netdevinfo.ownerid)}
+		{include file="customer/customerinfobox.html" customerpanel=1}
+	{/if}
+</div>
+{/block}

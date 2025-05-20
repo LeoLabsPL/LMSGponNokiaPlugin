@@ -1,0 +1,104 @@
+<!--// $Id$ //-->
+{$xajax}
+<TABLE class="lmsbox lms-ui-tab-container lms-ui-sortable" id="gpon-nokia-onu" data-label="{trans("Nokia GPON ONU's")}">
+	<COLGROUP>
+		<COL style="width: 100%;">
+	</COLGROUP>
+	<THEAD>
+	<TR class="hand lmsbox-titlebar" data-lmsbox-content="gpon-nokia-onu-panel" onclick="showOrHide('gpon-nokia-onu-panel')">
+		<TD class="fall text-left bold nobr">
+			<IMG SRC="img/mac.gif" alt="" class="lms-ui-sortable-handle">
+			{if empty($gponnokiaonus)}
+			{$gponnokiaonucount=0}
+			{else}
+			{$gponnokiaonucount=count($gponnokiaonus)}
+			{/if}
+			{t a=$gponnokiaonucount}Nokia GPON ONU's ($a):{/t}
+		</TD>
+	</TR>
+	</THEAD>
+	<TBODY>
+	<TR id="gpon-nokia-onu-panel" style="display: none;">
+		<TD class="fall">
+			<TABLE cellpadding="5" cellspacing="0" WIDTH="100%">
+	<TR class="dark">
+		<TD class="fleftu" style="width: 57%;">
+			<IMG src="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gpononu.gif" ALT=""> <span class="bold">{trans("Name")} / {trans("Profile")} / {trans("Model")}:</span><BR>
+			<IMG src="img/home.gif" ALT=""> {trans("Location:")}
+			<br>{trans("ONU description:")}
+		</TD>
+		<TD class="fleftu" style="border-left:0px; width: 10%;">
+			&nbsp;
+		</TD>
+		<TD class="fleftu" style="border-left:0px; width: 10%;">
+			<img src="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gponolt.gif" ALT=""> <A href="?m=gponnokiaonulist&o=gponolt{if $listdata.direction == "asc" && $listdata.order == "gponolt"},desc{/if}">OLT</A>{if $listdata.order == "gponolt"} <IMG SRC="img/{if $listdata.direction == "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
+		</TD>
+		<TD class="fbt text-right nobr" style="width: 1%;">
+			{trans("ID:")}<br>
+			<IMG src="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gpononu_takenports.gif" ALT=""> {trans("ONU ID:")}
+		</TD>
+		<TD class="fbt nobr" style="width: 1%;">
+			<IMG src="img/port.gif" ALT=""> {trans("ONU Port Count:")}
+		</TD>
+		<TD class="frightu" style="width: 1%;">
+			&nbsp;
+		</TD>
+	</TR>
+	{cycle values="light,lucid" print=false}
+	{foreach $gponnokiaonus as $netdev}
+	<TR class="{cycle advance=false} highlight">
+		<TD style="width: 57%;" class="valign-top nobr"
+			data-target-url="?m=gponnokiaonuinfo&id={$netdev.id}">
+			<IMG src="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gpononu.gif" ALT=""> <a name="{$netdev.id}">
+			<B>{$netdev.name} {if $netdev.producer}/ {$netdev.producer}{/if} {if $netdev.model}/ {$netdev.model}{/if}</B></A><BR>
+			<IMG src="img/home.gif" ALT=""> {$netdev.location}
+			<br>{if $netdev.onudescription}{$netdev.onudescription}{/if}
+		</TD>
+		<TD style="width: 10%; border-left: 0px;" class="valign-top text-center nobr">
+			{if $netdev.gponoltnetdevicesid gt 0}
+			<input type="button" value="{trans("Show parameters")}" id="pokaz_parametry_{$netdev.id}" OnClick="xajax_ONU_get_param_Xj({$netdev.gponoltid},'{$netdev.gponoltnumport}',{$netdev.onuid},{$netdev.id},'{$netdev.name}');">
+			{/if}
+		</TD>
+		<TD style="width: 30%; border-left: 0px;" class="valign-top nobr">
+			{if $netdev.gponoltnetdevicesid gt 0}
+			<A href="?m=gponnokiaoltinfo&id={$netdev.gponoltnetdevicesid}"><img src="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gponolt.gif" ALT=""> {$netdev.gponolt}</A><br>
+			{trans("OLT Port:")} <span class="bold">{if $netdev.gponoltnumportf}{$netdev.gponoltnumportf}{else}{$netdev.gponoltnumport}{/if}, {$netdev.onuid}</span>
+			{/if}
+		</TD>
+		<TD style="width: 1%;" class="text-right nobr"
+			data-target-url="?m=gponnokiaonuinfo&id={$netdev.id}">
+			<IMG src="img/empty.gif" height="16"><BR>
+			({$netdev.id|string_format:"%04d"})
+			<br>
+			<span class="bold">{$netdev.onuid}</span>
+		</TD>
+		<TD style="width: 1%;" class="nobr"
+			data-target-url="?m=gponnokiaonuinfo&id={$netdev.id}">
+			<BR><IMG SRC="img/port.gif" ALT=""> {$netdev.ports}
+		</TD>
+		<TD style="width: 1%;" class="fright text-right nobr">
+			<a href="?m=gponnokiaonuedit&id={$netdev.id}"><IMG src="img/edit.gif" alt="{trans("Edit")}" title="{trans("Edit")}"></A>
+			<a href="?m=gponnokiaonuinfo&id={$netdev.id}"><IMG src="img/info.gif" alt="{trans("Info")}" title="{trans("Info")}"></A>
+		</TD>
+	</TR>
+	<TR class="{cycle}">
+		<TD colspan="6" class="text-center" id="ONU_param_{$netdev.id}"></TD>
+	</TR>
+	{foreachelse}
+	<TR>
+		<TD colspan="6" class="empty-table">
+			<P>{trans("No such connected devices.")}</P>
+		</TD>
+	</TR>
+	{/foreach}
+</TABLE>
+		</TD>
+	</TR>
+	</TBODY>
+</TABLE>
+<SCRIPT type="text/javascript">
+<!--
+	if (getCookie('gpon-nokia-onu-panel') == '1')
+		document.getElementById('gpon-nokia-onu-panel').style.display = '';
+//-->
+</SCRIPT>

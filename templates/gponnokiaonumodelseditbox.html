@@ -1,0 +1,153 @@
+<!-- $Id$ -->
+
+<script src="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gpon.js""></script>
+
+<form name="netdevedit" id="gponnokiaonumodel" method="POST" action="?m=gponnokiaonumodelsedit&id={$netdevinfo.id}">
+	<input type="submit" class="hiddenbtn">
+	<input type="hidden" name="netdev[gpononumodelsid]" value="{$netdevinfo.gpononumodelsid}">
+</form>
+
+<table class="lmsbox">
+	<colgroup>
+		<col style="width: 1%;">
+		<col style="width: 1%;">
+		<col style="width: 98%;">
+	</colgroup>
+	<thead>
+		<tr>
+			<td colspan="3">
+				<img src="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gpononumodels.gif">
+				<strong>{trans("Name:")}</strong>
+				<input type="text" name="netdev[name]" value="{$netdevinfo.name|escape}" form="gponnokiaonumodel"
+					maxlength="32" {tip trigger="name" text="Enter device name" bold=1}>
+			</td>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td colspan="3">
+				<table class="lmsbox-inner">
+					<colgroup>
+						<col style="width: 50%;">
+						<col style="width: 50%;">
+					</colgroup>
+					<tr>
+						<td class="valign-top">
+							<table width="100%" cellpadding="3">
+								<colgroup>
+									<col style="width: 1%;">
+									<col style="width: 1%;">
+									<col style="width: 98%;">
+								</colgroup>
+								<tr>
+									<td>
+										<img src="img/producer.gif">
+									</td>
+									<td class="nobr">
+										<strong>{trans("Producer:")}</strong>
+									</td>
+									<td>
+										<input type="text" name="netdev[producer]" value="{$netdevinfo.producer}"
+											form="gponnokiaonumodel" {tip text="Enter device producer (optional)"}>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<img src="img/desc.gif">
+									</TD>
+									<td class="nobr">
+										<strong>{trans("Description:")}</strong>
+									</td>
+									<td>
+										<textarea name="netdev[description]" cols="40" rows="5"
+											form="gponnokiaonumodel" {tip text="Enter additional information (optional)"}
+										>{$netdevinfo.description|escape}</textarea>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<i class="lms-ui-icon-web"></i>
+									</td>
+									<td class="nobr">
+										<strong>{trans("Management URL template")}</strong>
+									</td>
+									<td>
+										<input name="netdev[urltemplate]" type="text" size="35" form="gponnokiaonumodel"
+											{tip text="Enter management URL template (optional)<br><br>Supported substitution symbols:<br><strong>%ip</strong> - IP address of GPON terminal."}
+											value="{$netdevinfo.urltemplate|escape}">
+									</td>
+								</tr>
+								<!--<tr>
+									<td>
+										<img src="img/folder.gif">
+									</td>
+									<td class="nobr">
+										<strong>{trans("XML file name template")}</strong>
+									</td>
+									<td>
+										<input name="netdev[xmlfilename]" type="text" size="50" form="gponnokiaonumodel"
+											value="{$netdevinfo.xmlfilename|escape}">
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<img src="img/folder.gif">
+									</td>
+									<td class="nobr">
+										<strong>{trans("XML configuration template")}</strong>
+									</td>
+									<td>
+										<textarea name="netdev[xmltemplate]" cols="80" rows="25" form="gponnokiaonumodel"
+											{tip text="Enter XML configuration template contents (optional)"}>{$netdevinfo.xmltemplate|escape}</textarea>
+									</td>
+								</tr>-->
+								<tr>
+									<td>
+										<img src="img/port.gif">
+									</td>
+									<td class="nobr">
+										<strong>{trans("Ports:")}</strong>
+									</td>
+									<td>
+										<table cellpadding="1" cellspacing="1" border="0">
+											{foreach $portstype as $type}
+												<tr>
+													<td>
+														<strong>{$type.name}</strong>
+													</td>
+													<td>
+														<input type="text" name="portstype[{$type.id}]" value="{$portstype2models[$type.id].portscount}"
+															form="gponnokiaonumodel"
+															onkeyup="ZamienNaLiczbe(this)" {tip text="Enter the number of ports"}>
+													</td>
+												</tr>
+											{/foreach}
+										</table>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<img src="img/netdev_model.gif">
+									</td>
+									<td class="nobr">
+										<strong>XGSPON</strong>
+									</td>
+									<td>
+										<input type="checkbox" name="netdev[xgspon]" value="1" form="gponnokiaonumodel"
+											{if $netdevinfo.xgspon == 1}checked{/if}
+											{tip text="Check if the device supports XGSPON"}>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="3" class="lms-ui-box-buttons">
+				{button icon="save" label="Submit" onclick="document.netdevedit.submit()"}
+				{button icon="cancel" label="Cancel" href="?m=gponnokiaonumodelsinfo&id={$netdevinfo.id}"}
+			</td>
+		</tr>
+	</tbody>
+</table>

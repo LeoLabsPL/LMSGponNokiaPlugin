@@ -1,0 +1,10 @@
+{block name="netdevinfobox-buttons" prepend}
+{if isset($netdev)}
+{$netdevinfo=$netdev}
+{/if}
+{if $netdevinfo.gpondasanonuid}
+<a href="?m=gpondasanonuinfo&id={$netdevinfo.gpondasanonuid}">{trans("GPON ONU")} <img src="img/{LMSGponDasanPlugin::PLUGIN_DIRECTORY_NAME}/gpononu.gif" alt="{trans("GPON ONU")}"></a>
+{elseif $netdevinfo.gpondasanoltid}
+<a href="?m=gpondasanoltinfo&id={$netdevinfo.gpondasanoltid}">{trans("GPON OLT")} <img src="img/{LMSGponDasanPlugin::PLUGIN_DIRECTORY_NAME}/gponolt.gif" alt="{trans("GPON OLT")}"></a>
+{/if}
+{/block}

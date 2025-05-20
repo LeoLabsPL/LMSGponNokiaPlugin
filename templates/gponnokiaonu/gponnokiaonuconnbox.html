@@ -1,0 +1,173 @@
+<!--// $Id$ //-->
+{$xajax}
+
+<form method="GET" action="?m=gponnokiaonuedit" name="connect" id="connect">
+	<input type="submit" class="hiddenbtn">
+	<input type="hidden" name="m" value="gponnokiaonuedit">
+	<input type="hidden" name="id" value="{$netdevinfo.id}">
+	<input type="hidden" name="action" value="connect">
+</form>
+
+<table class="lmsbox lms-ui-sortable lms-ui-tab-container" id="gpon-nokia-onu-connbox">
+	<thead>
+		<tr class="hand lmsbox-titlebar" data-lmsbox-content="gpon-nokia-onu-connbox-panel">
+			<td>
+				{icon name="mac" class="fa-fw lms-ui-sortable-handle"}
+				{if empty($netdevlist)}
+					{$count = 0}
+				{else}
+					{$count = count($netdevlist)}
+				{/if}
+				<strong>{t a=$count}Connected to OLT ($a){/t}</strong>
+			</td>
+		</tr>
+	</thead>
+	<tbody>
+		<tr id="gpon-nokia-onu-connbox-panel" style="display: none;">
+			<td width="100%" class="fall">
+				<table cellpadding="5" cellspacing="0" width="100%" class="lmsbox-inner lms-ui-background-cycle">
+					<colgroup>
+						<col style="width: 97%;">
+						<col style="width: 1%;">
+						<col style="width: 1%;">
+						<col style="width: 1%;">
+					</colgroup>
+					<thead>
+						<TR class="fall">
+							<TD>
+								<IMG src="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gponolt.gif" ALT=""> <B>{trans("Name")} / {trans("Producer")} / {trans("Model")}:</B><BR>
+								<IMG src="img/home.gif" ALT=""> {trans("Location:")}
+							</TD>
+							<TD class="text-right nobr valign-bottom">
+								{trans("ID:")}
+							</TD>
+							<TD class="nobr">
+								<IMG src="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gpononu_takenports.gif" ALT=""> {trans("Port OLT:")}<BR>
+								<IMG src="img/port.gif" ALT=""> {trans("Number of OLT ports:")}
+							</TD>
+							<TD>
+								&nbsp;
+							</TD>
+						</TR>
+					</thead>
+					<tbody>
+						{section name=netdevlist loop=$netdevlist start=$start}
+						<tr class="highlight">
+							<td data-target-url="?m=gponnokiaoltinfo&id={$netdevlist[netdevlist].id}" class="valign-top nobr">
+								<img src="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gponolt.gif" ALT="">
+								<a name="{$netdevlist[netdevlist].id}">
+									<strong>{$netdevlist[netdevlist].name} {if $netdevlist[netdevlist].producer}/ {$netdevlist[netdevlist].producer}{/if} {if $netdevlist[netdevlist].model}/ {$netdevlist[netdevlist].model}{/if}</strong>
+								</a>
+								<br>
+								<img src="img/home.gif" alt="">
+								{$netdevlist[netdevlist].location}
+							</td>
+							<td class="text-right nobr" data-target-url="?m=gponnokiaonuinfo&id={$netdevlist[netdevlist].id}">
+								<img src="img/empty.gif" height="16">
+								<br>
+								({$netdevlist[netdevlist].id|string_format:"%04d"})
+							</td>
+							<td class="nobr" data-target-url="?m=gponnokiaonuinfo&id={$netdevlist[netdevlist].id}">
+								<img src="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gpononu_takenports.gif" alt="">
+								[{if $netdevlist[netdevlist].numport}
+								{if $netdevlist[netdevlist].numportf}
+									{$netdevlist[netdevlist].numportf}
+								{else}
+									{$netdevlist[netdevlist].numport}{/if}
+								{/if}]
+								<br>
+								<img src="img/port.gif" alt="">
+								{$netdevlist[netdevlist].ports}
+							</td>
+							<td>
+								{button type="link" icon="delete" tip="Delete connection" class="delete-connection"
+									href="?m=gponnokiaonuedit&action=disconnect&id={$netdevinfo.id}&devid={$netdevlist[netdevlist].id}&numport={$netdevlist[netdevlist].numport}"}
+							</td>
+						</tr>
+						{sectionelse}
+						<tr>
+							<td colspan="4" class="empty-table">
+								<p>{trans("Not connected to OLT")}</p>
+							</td>
+						</tr>
+						{/section}
+					</tbody>
+					{if !$count}
+						<tfoot>
+							<tr>
+								<td class="ftop text-center nobr" colspan="4">
+									{if $netdevinfo.ports eq $netdevinfo.takenports}
+										<strong>{trans("All ports in that device are in use.")}</strong>
+									{elseif !$restnetdevlist}
+										<strong>{trans("No such devices for connection.")}</strong>
+									{else}
+										<table width="100%">
+											<colgroup>
+												<col style="width: 99%;">
+												<col style="width: 1%;">
+											</colgroup>
+											<tbody>
+												<tr>
+													<td class="nobr">
+														<strong>{trans("Connect to OLT:")}</strong>
+														<select name="netdevicesid" style="width: 300px" form="connect"
+															{tip trigger="linkolt" text="Select OLT"}
+															onchange="xajax_GetFreeOltPort_Xj(this.value);">
+															{section name=restnetdevlist loop=$restnetdevlist}
+																{assign var=netdevname value=$restnetdevlist[restnetdevlist].name}
+																{if $restnetdevlist[restnetdevlist].producer}{assign var=netdevname value=$netdevname|cat:" - "|cat:$restnetdevlist[restnetdevlist].producer}{/if}
+																{if $restnetdevlist[restnetdevlist].model}{assign var=netdevname value=$netdevname|cat:" / "|cat:$restnetdevlist[restnetdevlist].model}{/if}
+																{if $restnetdevlist[restnetdevlist].location}{assign var=netdevname value=$netdevname|cat:" ("|cat:$restnetdevlist[restnetdevlist].location|cat:")"}{/if}
+																<option value="{$restnetdevlist[restnetdevlist].id}"
+																	{if $connect.id == $restnetdevlist[restnetdevlist].id} selected{/if}
+																	>{$netdevname|truncate:120:"...":true}</option>
+															{/section}
+														</select>
+														{trans("Port")}:
+														<select name="numport" id="numport" form="connect"
+															{tip trigger="numport" text="Select a port number"}>
+															{foreach $numports as $port}
+																<option value="{$port.numport}">{$port.numport}</option>
+															{/foreach}
+														</select>
+													</td>
+													<td class="nobr">
+														{button icon="save" label="Connect" onclick="document.connect.submit();"}
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									{/if}
+								</td>
+							</tr>
+						</tfoot>
+					{/if}
+				</table>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+{if $connect.linkolt}
+	<div style="background-color:white;border:1px solid black;margin:3px;padding:3px;">
+		<strong><span class="red">{$connect.linkolt}</span></strong>
+		<br><br>
+	</div>
+{/if}
+
+<script>
+
+	if (getStorageItem('gpon-nokia-onu-connbox-panel', 'local') == '1') {
+		$('#gpon-nokia-onu-connbox-panel').show();
+	}
+
+	$(function() {
+		$('.delete-connection').click(function() {
+			confirmDialog('{trans("Are you sure, you want to delete that connection?")}', this).done(function() {
+				location.href = $(this).attr('href');
+			});
+			return false;
+		});
+	});
+
+</script>

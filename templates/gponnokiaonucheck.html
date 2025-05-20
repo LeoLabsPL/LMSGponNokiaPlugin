@@ -1,0 +1,98 @@
+{extends file="layout.html"}
+{block name=module_content}
+<!--// $Id$ //-->
+{$xajax}
+<h1>{$layout.pagetitle}</h1>
+<table cellpadding="3" class="lmsbox lms-ui-background-cycle">
+	<colgroup>
+		<col style="width: 57%;">
+		<col style="width: 30%;">
+		<col style="width: 1%;">
+		<col style="width: 1%;">
+		<col style="width: 1%;">
+	</colgroup>
+	<thead>
+		<tr>
+			<td>
+				<img src="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gpononu.gif">
+				<strong>{trans("Name:")}</strong>
+				<br>
+				{trans("Model:")}
+				<br>
+				{trans("Description:")}
+			</td>
+			<td style="border-left:0px;">
+				<img src="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gponolt.gif">
+				OLT
+			</td>
+			<td>
+			</td>
+			<td>
+			</td>
+			<td class="text-right bold nobr">
+				{trans("Total:")} {$listdata.total|default:"0"}
+			</td>
+		</tr>
+	</thead>
+	<tbody>
+		{foreach $netdevlist as $onu}
+			<tr class="{if !$onu.onu_model and $onu.onu_id != 0} blend{/if} highlight">
+				<td class="valign-top">
+					<img src="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gpononu.gif" alt="">
+					<strong>{$onu.onu_serial}</strong>
+					<br>
+					<IMG src="img/producer.gif" ALT="">
+					{if $onu.onu_model}{$onu.onu_model}{/if}
+					<br>
+					{if $onu.onu_description}{$onu.onu_description}{/if}
+				</td>
+				<td class="valign-top">
+					<a href="?m=gponnokiaoltinfo&id={$onu.olt_netdevicesid}">
+						<img src="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gponolt.gif" alt="">
+						{$onu.olt_name}
+					</a>
+					<br>
+					{trans("Port OLT:")}
+					<strong>{$onu.olt_port_formatted}</strong>
+					/ {trans("ONU ID:")} <strong>{$onu.onu_id}</strong>
+				</td>
+				<td>
+				</td>
+				<td>
+				</td>
+				<td class="text-right nobr">
+					{if $onu.onu_error == 1}
+						<div style="color:#CC0000;" class="bold">{trans($onu.onu_error_text)}</div>
+					{else}
+						{if $onu.onu_exists == 1}
+							<strong>{trans("Auto connected")}</strong>
+						{else}
+							<form method="POST" name="olt_{$onu.olt_netdevicesid}_{$onu.olt_port}_{$onu.onu_id}_{$onu.onu_serial}" action="?m=gponnokiaonuadd">
+								{foreach $onu as $k => $v}
+									<input type="hidden" name="onucheck[{$k}]" value="{$v}">
+								{/foreach}
+							</form>
+							{if  $onu.onu_id != 0}
+							<a href="?m=gponnokiaonuedit&action=disconnect&gponoltid={$onu.olt_netdevicesid}&numport={$onu.olt_port_formatted}&onuid={$onu.onu_id}">
+								<i class="lms-ui-icon-clean" style="color: black;" title="{trans("Disconnect")}"></i>
+							</a>
+							{/if}
+							{if  $onu.onu_exists != 2}
+								<a href="#" onclick="document.forms['olt_{$onu.olt_netdevicesid}_{$onu.olt_port}_{$onu.onu_id}_{$onu.onu_serial}'].submit(); return false;">
+									<i class="lms-ui-icon-add" style="color: black;" title="{trans("Add")}"></i>
+								</a>
+							{/if}
+						{/if}
+					{/if}
+				</td>
+			</tr>
+		{foreachelse}
+			<tr>
+				<td colspan="5" class="empty-table">
+					<p>{trans("There are no devices in your database.")}</p>
+				</td>
+			</tr>
+		{/foreach}
+	</tbody>
+</table>
+{/block}

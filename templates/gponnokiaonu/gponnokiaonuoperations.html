@@ -1,0 +1,58 @@
+<script>
+
+    $(function() {
+        function opCall(btn, confirmMessage, op) {
+            var that = this;
+            this.btn = btn;
+            this.ajaxCall = function() {
+                that.btn.hide();
+                $.ajax({
+                    url: '?m=gponnokiaonuinfo',
+                    method: "GET",
+                    dataType: 'json',
+                    data: {
+                        ajax: 1,
+                        api: 1,
+                        op: op,
+                        id: that.btn.attr('data-onu-id')
+                    },
+                    success: function(data) {
+                        that.btn.show();
+                        if (data.hasOwnProperty('error')) {
+                            if (typeof(alertDialog) == 'function') {
+                                alertDialog(data.error, that.btn);
+                            } else {
+                                alert(data.error);
+                            }
+                        }
+                    }
+                });
+            };
+            if (typeof(confirmDialog) == 'function') {
+                confirmDialog(confirmMessage, that.btn).done(function() {
+                    that.ajaxCall();
+                });
+            } else {
+                if (confirm(confirmMessage)) {
+                    that.ajaxCall();
+                }
+            }
+        }
+
+        $('.onu-disconnect-button').click(function() {
+            new opCall($(this), '{trans("Are you sure you want to disconnect ONU?")}', 'onu-radius-disconnect');
+            return false;
+        });
+
+        $('.onu-reset-button').click(function() {
+            new opCall($(this), '{trans("Are you sure you want to reset ONU?")}', 'onu-reset');
+            return false;
+        });
+
+        $('.onu-factory-settings-button').click(function() {
+            new opCall($(this), '{trans("Are you sure you want to reset ONU to factory settings?")}', 'onu-factory-settings');
+            return false;
+        });
+    });
+
+</script>

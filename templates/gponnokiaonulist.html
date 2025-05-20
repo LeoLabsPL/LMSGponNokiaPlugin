@@ -1,0 +1,236 @@
+{extends file="layout.html"}
+{block name=module_content}
+<!--// $Id$ //-->
+
+<style>
+
+	.onu-snmp-properties {
+		border-bottom: 1px dotted grey;
+	}
+
+</style>
+
+<style>
+
+	.gpon-nokia-onu-dynamic-properties {
+		flex-direction: column;
+		width: 90%;
+		align-items: center;
+		margin: 0 auto;
+	}
+
+	.gpon-nokia-onu-snmp-properties {
+		padding-top: 1em;
+	}
+
+</style>
+{$xajax}
+
+<h1>{$layout.pagetitle}</h1>
+
+<table cellpadding class="lmsbox">
+	<colgroup>
+		<col style="width: 57%;">
+		<col style="width: 10%;">
+		<col style="width: 10%;">
+		<col style="width: 30%;">
+		<col style="width: 1%;">
+		<col style="width: 1%;">
+		<col style="width: 1%;">
+	</colgroup>
+	<thead>
+		<tr {tip text="Click on column name to change sorting order"}>
+			<td>
+				<i class="lms-ui-icon-netdev fa-fw"></i>
+				<a href="?m=gponnokiaonulist&o=name{if $listdata.direction eq "asc" && $listdata.order eq "name"},desc{/if}">
+					<strong>{trans("Name:")}</strong>
+				</a>
+				{if $listdata.order eq "name"}
+					<img src="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">
+				{/if}
+				<br>
+				<i class="lms-ui-icon-description fa-fw"></i>
+				<a href="?m=gponnokiaonulist&o=profil{if $listdata.direction eq "asc" && $listdata.order eq "profil"},desc{/if}">
+					{trans("Profile:")}
+				</a>
+				{if $listdata.order eq "profil"}
+					<img src="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">
+				{/if}
+				/
+				<a href="?m=gponnokiaonulist&o=model{if $listdata.direction eq "asc" && $listdata.order eq "model"},desc{/if}">
+					{trans("Model:")}
+				</a>
+				{if $listdata.order eq "model"}
+					<img src="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">
+				{/if}
+				/
+				<a href="?m=gponnokiaonulist&o=location{if $listdata.direction eq "asc" && $listdata.order eq "location"},desc{/if}">
+					{trans("Location:")}
+				</a>
+				{if $listdata.order eq "location"}
+					<img src="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">
+				{/if}
+			</td>
+			<td>
+				<a href="?m=gponnokiaonulist&o=onudescription{if $listdata.direction eq "asc" && $listdata.order eq "onudescription"},desc{/if}">
+					{trans("ONU description:")}
+				</a>
+				{if $listdata.order eq "onudescription"}
+					<img src="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">
+				{/if}
+			</td>
+			<td>
+				&nbsp;
+			</TD>
+			<td>
+				<i class="lms-ui-icon-fiberoptic fa-fw"></i>
+				<a href="?m=gponnokiaonulist&o=gponolt{if $listdata.direction eq "asc" && $listdata.order eq "gponolt"},desc{/if}">
+					OLT
+				</a>
+				{if $listdata.order eq "gponolt"}
+					<img SRC="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">
+				{/if}
+			</td>
+			<td class="text-right valign-top">
+				<a href="?m=gponnokiaonulist&o=id{if $listdata.direction eq "asc" && $listdata.order eq "id"},desc{/if}">
+					ID:
+				</a>
+				{if $listdata.order eq "id"}
+					<img src="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">
+				{/if}
+			</td>
+			<td class="nobr">
+				<i class="lms-ui-icon-port fa-fw"></i>
+				<a href="?m=gponnokiaonulist&o=ports{if $listdata.direction eq "asc" && $listdata.order eq "ports"},desc{/if}">
+					{trans("Number of ONU ports:")}
+				</a>
+				{if $listdata.order eq "ports"}
+					<img src="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">
+				{/if}
+				<br>
+				<i class="lms-ui-icon-barcode fa-fw"></i>
+				<a href="?m=gponnokiaonulist&o=serialnumber{if $listdata.direction eq "asc" && $listdata.order eq "serialnumber"},desc{/if}">
+					{trans("Serial number:")}
+				</a>
+				{if $listdata.order eq "serialnumber"}
+					<img src="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">
+				{/if}
+			</td>
+			<td class="text-right nobr">
+				<strong>{trans("Total:")} {$listdata.total|default:"0"}</strong>
+			</td>
+		</tr>
+		{if $listdata.total != 0}
+			<tr>
+				<td colspan="7" class="text-center">
+					{include file="scroller.html" loop=$netdevlist}
+				</td>
+			</tr>
+		{/if}
+	</thead>
+	<tbody>
+		{cycle values="lucid,light" print=false}
+		{section name=netdevlist loop=$netdevlist start=$start max=$pagelimit}
+			<tr class="highlight {cycle advance=false}">
+				<td data-target-url="?m=gponnokiaonuinfo&id={$netdevlist[netdevlist].id}" class="valign-top">
+					<i class="lms-ui-icon-netdev fa-fw"></i> <a name="{$netdevlist[netdevlist].id}"><B>{$netdevlist[netdevlist].name}</B></A><BR>
+					<i class="lms-ui-icon-description fa-fw"></i> {$netdevlist[netdevlist].serviceprofile} {if $netdevlist[netdevlist].profil}/ {$netdevlist[netdevlist].profil}{/if} {if $netdevlist[netdevlist].model}/ {$netdevlist[netdevlist].model}{/if}{if $netdevlist[netdevlist].location} / {$netdevlist[netdevlist].location}{/if}
+				</td>
+				<td class="valign-top">
+					 {if $netdevlist[netdevlist].onudescription}{$netdevlist[netdevlist].onudescription}{/if}
+				</td>
+				<td class="valign-top">
+					{if $netdevlist[netdevlist].gponoltnetdevicesid gt 0}
+						<input type="button" value="{trans("Show parameters")}" id="pokaz_parametry_{$netdevlist[netdevlist].id}" OnClick="xajax_ONU_get_param_Xj({$netdevlist[netdevlist].gponoltid},'{$netdevlist[netdevlist].gponoltnumport}',{$netdevlist[netdevlist].onuid},{$netdevlist[netdevlist].id},'{$netdevlist[netdevlist].name}');" />
+					{/if}
+				</td>
+				<td data-target-url="?m=gponnokiaonuinfo&id={$netdevlist[netdevlist].id}" class="valign-top">
+					{if $netdevlist[netdevlist].gponoltnetdevicesid gt 0}
+						<i class="lms-ui-icon-fiberoptic fa-fw"></i>
+						<a href="?m=gponnokiaoltinfo&id={$netdevlist[netdevlist].gponoltnetdevicesid}">
+							{$netdevlist[netdevlist].gponolt}
+						</a>
+						<br>
+						<span class="nobr">
+							{trans("Port OLT:")}
+							<strong>
+								{if $netdevlist[netdevlist].gponoltnumportf}
+									{$netdevlist[netdevlist].gponoltnumportf}
+								{else}
+									{$netdevlist[netdevlist].gponoltnumport}
+								{/if},
+								{$netdevlist[netdevlist].onuid}
+							</strong>
+						</span>
+					{/if}
+				</td>
+				<td data-target-url="?m=gponnokiaonuinfo&id={$netdevlist[netdevlist].id}" class="text-right valign-top">
+					({$netdevlist[netdevlist].id|string_format:"%04d"})
+				</td>
+				<td data-target-url="?m=gponnokiaonuinfo&id={$netdevlist[netdevlist].id}" class="nobr">
+					<i class="lms-ui-icon-port fa-fw"></i>
+					{$netdevlist[netdevlist].ports}
+					<br>
+					<i class="lms-ui-icon-barcode fa-fw"></i>
+					{$netdevlist[netdevlist].serialnumber}
+				</td>
+				<td class="nobr text-right">
+					<a href="#"
+						class="lms-ui-button"
+						data-onu-id="{$netdevlist[netdevlist].id}"
+						title="{trans("<!gpon-nokia>Reset")}">
+						<i class="lms-ui-icon-restore"></i>
+					</a>
+					<a href="?m=gponnokiaonudel&id={$netdevlist[netdevlist].id}"
+						class="lms-ui-button"
+						title="{trans("Delete")}"
+						onClick="return confirmLink(this, '{t a=$netdevlist[netdevlist].name}Are you sure, you want to remove device \'$a\' from database?{/t}');">
+						<i class="lms-ui-icon-delete"></i>
+					</a>
+					<a href="?m=gponnokiaonuedit&id={$netdevlist[netdevlist].id}"
+						class="lms-ui-button"
+						title="{trans("Edit")}">
+						<i class="lms-ui-icon-edit"></i>
+					</a>
+					<a href="?m=gponnokiaonuinfo&id={$netdevlist[netdevlist].id}"
+						class="lms-ui-button"
+						title="{trans("Info")}">
+						<i class="lms-ui-icon-info"></i>
+					</a>
+				</td>
+			</tr>
+			<tr class="onu-snmp-properties {cycle}">
+				<td colspan="7" class="text-center">
+					<div class="gpon-nokia-onu-dynamic-properties">
+						<div class="gpon-nokia-onu-snmp-properties" id="ONU_param_{$netdevlist[netdevlist].id}"></div></div></td>
+			</tr>
+		{sectionelse}
+			<tr>
+				<td colspan="7" class="empty-table">
+					<p>{trans("There are no devices in your database.")}</p>
+				</td>
+			</tr>
+		{/section}
+	</tbody>
+	<tfoot>
+		{if $listdata.total != 0}
+			<tr class="dark text-center">
+				<td colspan="7">
+					{include file="scroller.html" loop=$netdevlist}
+				</td>
+			</tr>
+		{/if}
+		<tr>
+			<td colspan="6" class="text-right">
+				<strong>
+					{trans("Total:")} {$listdata.total|default:"0"}
+				</strong>
+			</td>
+			<td></td>
+		</tr>
+	</tfoot>
+</table>
+
+{include file="gponnokiaonu/gponnokiaonuoperations.html"}
+
+{/block}

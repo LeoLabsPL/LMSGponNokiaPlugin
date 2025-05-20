@@ -1,0 +1,79 @@
+<script type="text/javascript">
+<!--
+	function AutoFillNetworkSettings() {
+		var lan_netaddress = xjx.$('lan_netaddress').value;
+		var lan_netmask = xjx.$('lan_netmask').value;
+		{literal}
+		if (xjx.$('lan_gateway').value.length || xjx.$('lan_firstdhcpip').value.length || xjx.$('lan_lastdhcpip').value.length
+			|| !/^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$/.test(lan_netaddress)
+			|| !/^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$/.test(lan_netmask))
+			return;
+		{/literal}
+		xajax_ONU_AutoFillNetworkSettings(lan_netaddress, lan_netmask);
+	}
+//-->
+</script>
+<tr class="light" id="lansettings"{if !$netdevinfo.xmlprovisioning} style="display: none;"{/if}>
+	<TD colspan="3">
+		<fieldset style="width: 1%;" class="nobr">
+			<legend class="bold"><IMG SRC="img/netdev.gif" ALT=""> {trans("LAN settings")}</legend>
+			<table cellpadding="2">
+				<tr>
+					<TD class="bold nobr">
+						{trans("Network address:")}
+					</TD>
+					<TD>
+						<input type="text" name="netdev[properties][lan_netaddress]" id="lan_netaddress" placeholder="{trans("4 octets")}" value="{$netdevinfo.properties.lan_netaddress}" size="25" {tip trigger="lan_netaddress"} onchange="javascript:AutoFillNetworkSettings();">
+					</TD>
+				</tr>
+				<tr>
+					<TD class="bold nobr">
+						{trans("Network mask:")}
+					</TD>
+					<TD>
+						<input type="text" name="netdev[properties][lan_netmask]" id="lan_netmask" placeholder="{trans("4 octets")}" value="{$netdevinfo.properties.lan_netmask}" size="25" {tip trigger="lan_netmask"} onchange="javascript:AutoFillNetworkSettings();">
+					</TD>
+				</tr>
+				<tr>
+					<TD class="bold nobr">
+						{trans("Gateway:")}
+					</TD>
+					<TD>
+						<input type="text" name="netdev[properties][lan_gateway]" id="lan_gateway" placeholder="{trans("4 octets")}" value="{$netdevinfo.properties.lan_gateway}" size="25" {tip trigger="lan_gateway"}>
+					</TD>
+				</tr>
+				<tr>
+					<TD class="bold nobr">
+						{trans("First DHCP address:")}
+					</TD>
+					<TD>
+						<input type="text" name="netdev[properties][lan_firstdhcpip]" id="lan_firstdhcpip" placeholder="{trans("4 octets")}" value="{$netdevinfo.properties.lan_firstdhcpip}" size="25" {tip trigger="lan_firstdhcpip"}>
+					</TD>
+				</tr>
+				<tr>
+					<TD class="bold nobr">
+						{trans("Last DHCP address:")}
+					</TD>
+					<TD>
+						<input type="text" name="netdev[properties][lan_lastdhcpip]" id="lan_lastdhcpip" placeholder="{trans("4 octets")}" value="{$netdevinfo.properties.lan_lastdhcpip}" size="25" {tip trigger="lan_lastdhcpip"}>
+					</TD>
+				</tr>
+				{if !empty($lannetworks)}
+				<tr>
+					<TD colspan="2" class="bold text-center" style="padding-top: 10px;">
+						<label>
+							{trans("Load settings:")}
+							<SELECT onchange="javascript:xajax_ONU_LoadNetworkSettings(this.options[this.selectedIndex].value);">
+							<OPTION value="">{trans("- none -")}</OPTION>
+							{foreach $lannetworks as $net}
+							<OPTION value="{$net.name}">{$net.name}</OPTION>
+							{/foreach}
+							</SELECT>
+						</label>
+					</TD>
+				</tr>
+				{/if}
+			</table>
+		</fieldset>
+	</td>
+</tr>

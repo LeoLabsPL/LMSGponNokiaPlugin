@@ -1,0 +1,529 @@
+<!--// $Id$ //-->
+{$xajax}
+
+<style>
+
+	.gpon-nokia-onu-dynamic-properties {
+		flex-direction: column;
+		width: 90%;
+		align-items: center;
+		margin: 0 auto;
+	}
+
+	.gpon-nokia-onu-snmp-properties {
+		padding-top: 1em;
+	}
+
+</style>
+
+<table class="lmsbox" id="gpon-nokia-onu-info-box">
+	<colgroup>
+		<col style="width: 1%;">
+		<col style="width: 99%;">
+	</colgroup>
+	<thead>
+		<tr>
+			<td>
+				{icon name="netdevice"}
+			</td>
+			<td>
+				<strong>{$netdevinfo.name} ({$netdevinfo.id|string_format:"#%d"})</strong>
+			</td>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td colspan="2">
+				<table class="lmsbox-inner">
+					<colgroup>
+						<col style="width: 50%;">
+						<col style="width: 50%;">
+					</colgroup>
+					<tr>
+						<td class="valign-top">
+							<table class="lmsbox-inner">
+								<colgroup>
+									<col style="width: 1%;">
+									<col style="width: 1%;">
+									<col style="width: 98%;">
+								</colgroup>
+								<tbody>
+									<tr>
+										<td>
+											<img src="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gpononu.gif">
+										</td>
+										<td>
+											<strong>{trans("ONU ID:")}</strong>
+										</td>
+										<td>
+											<strong>{$netdevinfo.onuid}</strong>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											{icon name="configuration"}
+										</td>
+										<td class="nobr">
+											<strong>{trans("Auto provisioning")}</strong>
+										</td>
+										<td>
+											{if $netdevinfo.autoprovisioning == 1}
+												{trans("yes")}
+											{else}
+												{trans("no")}
+											{/if}
+										</td>
+									</tr>
+									<!--<tr>
+										<td>
+											{icon name="configuration"}
+										</td>
+										<td class="nobr">
+											<strong>{trans("XML provisioning")}</strong>
+										</td>
+										<td>
+											{if $netdevinfo.xmlprovisioning}
+												{trans("yes")}
+											{else}
+												{trans("no")}
+											{/if}
+										</td>
+									</tr>-->
+									<tr>
+										<td>
+											{icon name="configuration"}
+										</td>
+										<td>
+											<strong>{trans("Service profile:")}</strong>
+										</td>
+										<td>
+											{$netdevinfo.serviceprofile}
+										</td>
+									</tr>
+									<tr>
+										<td>
+											{icon name="configuration"}
+										</td>
+										<td class="nobr">
+											<strong>{trans("Profile QOS")}</strong>
+										</td>
+										<td>
+											{$netdevinfo.profil_olt}
+										</td>
+									</tr>
+									{if $netdevinfo.producer}
+										<tr>
+											<td>
+												{icon name="hardware"}
+											</td>
+											<td>
+												<strong>{trans("Producer")}</strong>
+											</td>
+											<td>
+												{$netdevinfo.producer}
+											</td>
+										</tr>
+									{/if}
+									{if $netdevinfo.model}
+										<tr>
+											<td>
+												{icon name="hardware"}
+											</td>
+											<td class="bold">
+												<strong>{trans("Model")}</strong>
+											</td>
+											<td>
+												<a href="?m=gponnokiaonumodelsinfo&id={$netdevinfo.gpononumodelsid}">{$netdevinfo.model}</a>
+											</td>
+										</tr>
+									{/if}
+									<tr>
+										<td>
+											{icon name="password"}
+										</td>
+										<td>
+											<strong>{trans("Password")}</strong>
+										</td>
+										<td>
+											{if $netdevinfo.password eq ''}
+												(auto-learning)
+											{else}
+												{$netdevinfo.password}
+											{/if}
+										</td>
+									</tr>
+									{if $netdevinfo.onudescription}
+										<tr>
+											<td>
+												<img src="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gpononu.gif">
+											</td>
+											<td>
+												<strong>{trans("ONU description")}</strong>
+											</td>
+											<td>
+												{$netdevinfo.onudescription}
+											</td>
+										</tr>
+									{/if}
+									<tr>
+										<td>
+											{icon name="netdevice"}
+										</td>
+										<td class="nobr">
+											<strong>{trans("Network device")}</strong>
+										</td>
+										<td>
+											{if $netdevinfo.netdevid}
+												<a href="?m=netdevinfo&id={$netdevinfo.netdevid}">{$netdevinfo.netdevname}</a>
+											{else}
+												{trans("- none -")}
+											{/if}
+										</td>
+									</tr>
+									<tr>
+										<td>
+											{icon name="customer"}
+										</td>
+										<td colspan="2">
+											<ol>
+												{foreach $gpononu2customers as $c}
+													<li>
+														<a href="?m=customerinfo&id={$c.customersid}">{$c.customersname|escape}</a>
+													</li>
+												{/foreach}
+											</ol>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							{if isset($netdevinfo.portdetails.pots.portscount)}
+								<table id="show_voip">
+									<colgroup>
+										<col style="width: 1%;">
+										<col style="width: 1%;">
+										<col style="width: 98%;">
+									</colgroup>
+									<tbody>
+										<tr>
+											<td>
+												{icon name="phone"}
+											</td>
+											<td class="nobr">
+												<strong>VoIP</strong>
+											</tdTD>
+											<td id="ONU_Voip_Phone" class="text-left">
+												<table>
+													<tr>
+														<td class="text-right">
+															1.
+														</td>
+														<td>
+															{$netdevinfo.voipaccountsid1_phone}
+														</td>
+													</tr>
+													<tr>
+														<td class="text-right">
+															2.
+														</td>
+														<td>
+															{$netdevinfo.voipaccountsid2_phone}
+														</td>
+													</tr>
+												</table>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							{/if}
+							<table>
+								<colgroup>
+									<col style="width: 1%;">
+									<col style="width: 1%;">
+									<col style="width: 98%;">
+								</colgroup>
+								<tr>
+									<td>
+										{icon name="node"}
+									</td>
+									<td class="nobr">
+										<strong>Host</strong>
+									</td>
+									<TD style="width: 98%;" id="ONU_Host_id" class="text-left">
+										<table>
+											<tr>
+												<td class="text-right">1.</td>
+												<td>
+													{if $netdevinfo.host_id1_host}
+														<a href="?m=nodeinfo&id={$netdevinfo.host_id1}">{$netdevinfo.host_id1_host}</a>
+													{else}
+														{trans("- none -")}
+													{/if}
+												</td>
+											</tr>
+											<tr>
+												<td class="text-right">2.</td>
+												<td>
+													{if $netdevinfo.host_id2_host}
+														<a href="?m=nodeinfo&id={$netdevinfo.host_id2}">{$netdevinfo.host_id2_host}</a>
+													{else}
+														{trans("- none -")}
+													{/if}
+												</td>
+											</tr>
+										</table>
+									</TD>
+								</tr>
+							</table>
+						</td>
+						<td class="valign-top">
+							<table class="lmsbox-inner">
+								<colgroup>
+									<col style="width: 1%;">
+									<col style="width: 1%;">
+									<col style="width: 98%;">
+								</colgroup>
+								<tbody>
+									{if $netdevinfo.xmlprovisioning}
+										{if $netdevinfo.properties.admin_password
+											|| $netdevinfo.properties.telnet_password
+											|| $netdevinfo.properties.user_password}
+											<tr>
+												<td colspan="3">
+													<fieldset style="width: 1%;" class="nobr">
+														<legend>
+															{icon name="password"}
+															<strong>{trans("<!gpon-nokia>Passwords")}</strong>
+														</legend>
+														<table>
+															<tr>
+																<td class="nobr">
+																	<strong>{trans("Administrator")}</strong>
+																</td>
+																<td>
+																	{$netdevinfo.properties.admin_password|default:trans("<!gpon-nokia>— default —")}
+																</td>
+															</tr>
+															<tr>
+																<td class="nobr">
+																	<strong>{trans("Telnet")}</strong>
+																</td>
+																<td>
+																	{$netdevinfo.properties.telnet_password|default:trans("<!gpon-nokia>— default —")}
+																</td>
+															</tr>
+															<tr>
+																<td class="nobr">
+																	<strong>{trans("User")}</strong>
+																</td>
+																<td>
+																	{$netdevinfo.properties.user_password|default:trans("- none -")}
+																</td>
+															</tr>
+														</table>
+													</fieldset>
+												</td>
+											</tr>
+										{/if}
+										<tr>
+											<td colspan="3">
+												<fieldset style="width: 1%;" class="nobr">
+													<legend>
+														{icon name="netdevice"}
+														<strong>{trans("LAN settings")}</strong>
+													</legend>
+													<table>
+														{if $netdevinfo.properties.lan_netaddress}
+															<tr>
+																<td class="nobr">
+																	<strong>{trans("Network address")}</strong>
+																</td>
+																<td>
+																	{$netdevinfo.properties.lan_netaddress}
+																</td>
+															</tr>
+															<tr>
+																<td class="nobr">
+																	<strong>{trans("Network mask")}</strong>
+																</td>
+																<TD>
+																	{$netdevinfo.properties.lan_netmask}
+																</TD>
+															</tr>
+															<tr>
+																<td class="nobr">
+																	<strong>{trans("Gateway")}</strong>
+																</td>
+																<td>
+																	{$netdevinfo.properties.lan_gateway}
+																</td>
+															</tr>
+															{if $netdevinfo.properties.lan_firstdhcpip != '' && $netdevinfo.properties.lan_lastdhcpip != ''}
+																<tr>
+																	<td class="nobr">
+																		<strong>{trans("First DHCP address")}</strong>
+																	</td>
+																	<td>
+																		{$netdevinfo.properties.lan_firstdhcpip}
+																	</td>
+																</tr>
+																<tr>
+																	<td class="nobr">
+																		<strong>{trans("Last DHCP address")}</strong>
+																	</td>
+																	<td>
+																		{$netdevinfo.properties.lan_lastdhcpip}
+																	</td>
+																</tr>
+															{/if}
+														{else}
+															<tr>
+																<td class="text-center nobr" colspan="2">
+																	<strong>{trans("DHCP server disabled")}</strong>
+																</td>
+															</tr>
+														{/if}
+													</table>
+												</fieldset>
+											</td>
+										</tr>
+										{if isset($netdevinfo.portdetails.wifi.portscount)
+											&& ($netdevinfo.properties.wifi_ssid
+											|| $netdevinfo.properties.wifi_password)}
+											<tr>
+												<td colspan="3">
+													<fieldset style="width: 1%;" class="nobr">
+														<legend>
+															{icon name="wireless"}
+															<strong>{trans("WiFi settings")}</strong>
+														</legend>
+														<table>
+															<tr>
+																<td class="nobr">
+																	<strong>{trans("SSID")}</strong>
+																</td>
+																<td>
+																	{$netdevinfo.properties.wifi_ssid}
+																</td>
+															</tr>
+															<tr>
+																<td class="nobr">
+																	<strong>{trans("Password")}</strong>
+																</td>
+																<td>
+																	{$netdevinfo.properties.wifi_password}
+																</td>
+															</tr>
+														</table>
+													</fieldset>
+												</td>
+											</tr>
+										{/if}
+									{/if}
+									<tr>
+										<td>
+											{icon name="user"}
+										</td>
+										<td class="nobr">
+											<strong>
+												{trans("Created")}
+												<br>
+												{trans("Modified")}
+											</strong>
+										</td>
+										<td>
+											{if $netdevinfo.creationdate}
+												{$netdevinfo.createdby}, {$netdevinfo.creationdateh}
+											{else}
+												-
+											{/if}
+											<br>
+											{if $netdevinfo.moddate}
+												{$netdevinfo.modifiedby}, {$netdevinfo.moddateh}
+											{else}
+												-
+											{/if}
+										</td>
+									</tr>
+									{if $netdevinfo.gponoltid gt 0}
+										<tr>
+											<td colspan="3">
+												{trans("Signal history")} 1490nm/<font color="#00c080">1310nm</font>
+												{trans("Received on ONU / OLT (RxPower)")}
+												<br>
+												<br>
+												{if $netdevinfo.rrd == 1}
+													<a href="?m=gponnokiaonuinfo&id={$netdevinfo.id}&rrd=0">
+														<img src="?m=gponnokiaonusignalimage&id={$netdevinfo.id}" title="{trans("Signal chart")}">
+													</a>
+												{else}
+													<a href="?m=gponnokiaonuinfo&id={$netdevinfo.id}&rrd=1">
+														<img src="?m=gponnokiaonusignalimage&id={$netdevinfo.id}" title="{trans("Signal chart")}">
+													</a>
+												{/if}
+											</td>
+										</tr>
+									{/if}
+								</tbody>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" class="lms-ui-box-buttons">
+				{if ConfigHelper::checkConfig('gpon-nokia.use_radius')}
+					{button type="link-button" class="onu-disconnect-button" data_onu_id=$netdevinfo.id
+						icon="disconnected" label="<!gpon-nokia>Disconnect"}
+				{/if}
+				{if $netdevinfo.xmlprovisioning}
+					{button type="link-button" class="onu-xml-provisioning-button" data_onu_id=$netdevinfo.id
+						icon="xml" label="XML provisioning"}
+				{/if}
+				{button type="link-button" class="onu-reset-button" data_onu_id=$netdevinfo.id
+					icon="reload" label="<!gpon-nokia>Reset"}
+				{button type="link-button" class="onu-factory-settings-button" data_onu_id={$netdevinfo.id}
+					icon="reload" label="<!gpon-nokia>Factory settings"}
+				{button type="link-button" accesskey="E" icon="edit" label="Edit" href="?m=gponnokiaonuedit&id={$netdevinfo.id}"}
+				{button icon="delete" label="Delete" data_href="?m=gponnokiaonudel&id={$netdevinfo.id}"
+					id="gpon-nokia-onu-delete-button"}
+			</td>
+		</tr>
+		{if $netdevinfo.gponoltid > 0}
+			<tr>
+				<td colspan="2" class="text-center" style="border-top: 1px dotted gray;">
+					<button type="submit" class="lms-ui-button" id="pokaz_parametry_{$netdevinfo.id}" OnClick="xajax_ONU_get_param_Xj({$netdevinfo.gponoltid},'{$netdevinfo.gponoltnumport}',{$netdevinfo.onuid},{$netdevinfo.id},'{$netdevinfo.name}');">
+						{icon name="info"}
+						<span class="lms-ui-label">
+							{trans("Show SNMP settings")}
+						</span>
+					</button>
+					<div class="gpon-nokia-onu-dynamic-properties" style="display: none;" id="odswiez_parametry_{$netdevinfo.id}">
+						<button type="submit" class="lms-ui-button" OnClick="xajax_ONU_get_param_Xj({$netdevinfo.gponoltid},'{$netdevinfo.gponoltnumport}',{$netdevinfo.onuid},{$netdevinfo.id},'{$netdevinfo.name}');">
+							{icon name="reload"}
+							<span class="lms-ui-label">
+								{trans("Refresh SNMP settings")}
+							</span>
+						</button>
+						<div class="gpon-nokia-onu-snmp-properties" id="ONU_param_{$netdevinfo.id}"></div>
+					</div>
+				</td>
+			</tr>
+		{/if}
+		<tr>
+			<td colspan="2"></td>
+		</tr>
+	</tbody>
+</table>
+
+<script>
+
+	$(function() {
+		$("#gpon-nokia-onu-delete-button").click(function() {
+			confirmDialog("{t a=$netdevinfo.name}Are you sure, you want to remove device \'$a\' from database?{/t}", this).done(function() {
+				location.href = $(this).attr("data-href");
+			});
+		});
+	});
+</script>
+{include file="gponnokiaonu/gponnokiaonuoperations.html"}

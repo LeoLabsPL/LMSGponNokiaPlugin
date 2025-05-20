@@ -1,0 +1,45 @@
+<!--// $Id$ //-->
+<table class="lmsbox lms-ui-sortable lms-ui-tab-container" id="gpon-nokia-onu-stats">
+	<thead>
+		<tr class="hand lmsbox-titlebar" data-lmsbox-content="gpon-nokia-onu-stats-panel">
+			<td>
+				{icon name="stats" class="fa-fw lms-ui-sortable-handle"}
+				<strong>{trans("ONU statistics")} {$netdevinfo.name} ({$netdevinfo.id|string_format:"%04d"})</strong>
+			</td>
+		</tr>
+	</thead>
+	<tbody>
+		<tr id="gpon-nokia-onu-stats-panel" style="display: none;">
+			<td>
+				<table class="lmsbox-inner">
+					<colgroup>
+						<col style="width: 100%;">
+					</colgroup>
+					<tr>
+						<td class="text-center">
+							<img src="?m=gponnokiaonusignalimage&id={$netdevinfo.id}&ext=1&period=7d" title="signal 7d">
+						</td>
+					</tr>
+					<tr>
+						<td class="text-center">
+							<img src="?m=gponnokiaonusignalimage&id={$netdevinfo.id}&ext=1&period=60d" title="signal 60d">
+						</td>
+					</tr>
+					<tr>
+						<td class="text-center">
+							<img src="?m=gponnokiaonusignalimage&id={$netdevinfo.id}&ext=1&period=730d" title="signal 730d">
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<script>
+
+	if (getStorageItem('gpon-nokia-onu-stats-panel', 'local') == '1') {
+		$('#gpon-nokia-onu-stats-panel').show();
+	}
+
+</script>

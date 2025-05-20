@@ -1,0 +1,98 @@
+{extends file="layout.html"}
+{block name=title}LMS: {$layout.pagetitle|striphtml}{/block}
+{block name=module_content}
+<!--// $Id$ //-->
+{$xajax}
+<H1>{$layout.pagetitle}</H1>
+<TABLE class="lmsbox lms-ui-background-cycle">
+	<COLGROUP>
+		<COL style="width: 97%;">
+		<COL style="width: 1%;">
+		<COL style="width: 1%;">
+		<COL style="width: 1%;">
+	</COLGROUP>
+	<thead>
+	<TR {tip text="Click on column name to change sorting order"}>
+		<TD scope="col" class="nobr">
+			<IMG src="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gponolt.gif" ALT="">&nbsp;<A href="?m=gponnokiaoltlist&o=name{if $listdata.direction eq "asc" && $listdata.order eq "name"},desc{/if}"><B>{trans("Name:")}</B></A> {if $listdata.order eq "name"}<IMG src="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}<BR>
+			<IMG src="img/producer.gif" ALT="">&nbsp;<A href="?m=gponnokiaoltlist&o=producer{if $listdata.direction eq "asc" && $listdata.order eq "producer"},desc{/if}">{trans("Manufacturer:")}</A> {if $listdata.order eq "producer"}<IMG src="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">{/if} /
+			<A href="?m=gponnokiaoltlist&o=model{if $listdata.direction eq "asc" && $listdata.order eq "model"},desc{/if}">{trans("Model:")}</A> {if $listdata.order eq "model"}<IMG src="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">{/if} /
+			<A href="?m=gponnokiaoltlist&o=location{if $listdata.direction eq "asc" && $listdata.order eq "location"},desc{/if}">{trans("Location:")}</A> {if $listdata.order eq "location"}<IMG src="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
+		</TD>
+		<TD scope="col" class="nobr">
+			<A href="?m=gponnokiaoltlist&o=id{if $listdata.direction eq "asc" && $listdata.order eq "id"},desc{/if}">ID:</A> {if $listdata.order eq "id"}<IMG src="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
+		</TD>
+		<TD scope="col" class="nobr">
+			<IMG src="img/port.gif" ALT="">&nbsp;<A href="?m=gponnokiaoltlist&o=ports{if $listdata.direction eq "asc" && $listdata.order eq "ports"},desc{/if}">{trans("Number of OLT ports:")}</A> {if $listdata.order eq "ports"}<IMG src="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
+			<BR>
+			<IMG src="img/serialnumber.gif" ALT="">&nbsp;<A href="?m=gponnokiaoltlist&o=serialnumber{if $listdata.direction eq "asc" && $listdata.order eq "serialnumber"},desc{/if}">{trans("Serial number:")}</A> {if $listdata.order eq "serialnumber"}<IMG src="img/{if $listdata.direction eq "desc"}asc{else}desc{/if}_order.gif" alt="">{/if}
+		</TD>
+		<TD scope="col" class="text-right nobr">
+			<B>{trans("Total:")} {$listdata.total|default:"0"}</B>
+		</TD>
+	</TR>
+	{if $listdata.total != 0}
+	<TR>
+		<TD class="lms-ui-pagination" colspan="4">
+			{include file="scroller.html" loop=$netdevlist}
+		</TD>
+	</TR>
+	{/if}
+	</thead>
+	<tbody>
+	{section name=netdevlist loop=$netdevlist start=$start max=$pagelimit}
+	<TR class="highlight" data-name="{$netdevlist[netdevlist].id}">
+		<TD data-target-url="?m=gponnokiaoltinfo&id={$netdevlist[netdevlist].id}">
+			<IMG src="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gponolt.gif" ALT=""> <a name="{$netdevlist[netdevlist].id}"><B>{$netdevlist[netdevlist].name}</B></A><BR>
+			<IMG src="img/producer.gif" ALT=""> {$netdevlist[netdevlist].producer} {if $netdevlist[netdevlist].model}/ {$netdevlist[netdevlist].model}{/if}{if $netdevlist[netdevlist].location} / {$netdevlist[netdevlist].location}{/if}
+		</TD>
+		<TD data-target-url="?m=gponnokiaoltinfo&id={$netdevlist[netdevlist].id}">
+			({$netdevlist[netdevlist].id|string_format:"%04d"})
+		</TD>
+		<TD data-target-url="?m=gponnokiaoltinfo&id={$netdevlist[netdevlist].id}">
+			<IMG src="img/port.gif" ALT=""> {$netdevlist[netdevlist].gponports}<BR>
+			<IMG src="img/serialnumber.gif" ALT=""> {$netdevlist[netdevlist].serialnumber}
+		</TD>
+		<TD class="lms-ui-buttons nobr">
+		{button type="link" icon="delete" class="delete-olt" tip="Delete" href="?m=gponnokiaoltdel&id={$netdevlist[netdevlist].id}"}
+		{button type="link" icon="delete" class="delete-olt" tip="Delete with network device" href="?m=gponnokiaoltdel&id={$netdevlist[netdevlist].id}&netdev=1"}
+		{button type="link" icon="edit" href="?m=gponnokiaoltedit&id={$netdevlist[netdevlist].id}"}
+		{button type="link" icon="info" href="?m=gponnokiaoltinfo&id={$netdevlist[netdevlist].id}"}
+		</TD>
+	</TR>
+	{if $netdevlist[netdevlist.index_next].ownerid eq $netdevlist[netdevlist].ownerid && $listdata.order eq "owner"}{cycle print=false}{/if}
+	{sectionelse}
+	<TR>
+		<TD colspan="4" class="empty-table">
+			{trans("There are no devices in your database.")}
+		</TD>
+	</TR>
+	{/section}
+	</tbody>
+	<tfoot>
+	{if $listdata.total != 0}
+	<TR>
+		<TD colspan="4" class="lms-ui-pagination" >
+			{include file="scroller.html" loop=$netdevlist}
+		</TD>
+	</TR>
+	{/if}
+	<TR>
+		<TD COLSPAN="4" class="text-right bold">
+				{trans("Total:")} {$listdata.total|default:"0"}
+		</TD>
+	</TR>
+</tfoot>
+</TABLE>
+<script>
+$(function(){
+	$('.delete-olt').click(function() {
+		var name = $(this).closest('tr').attr('data-name');
+		confirmDialog($t("Are you sure, you want to remove device \'$a\' from database?", name), this).done(function() {
+			location.href = $(this).attr('href');
+		});
+		return false;
+	});
+});
+</script>
+{/block}

@@ -1,0 +1,365 @@
+<!-- $Id$ -->
+<script>
+
+	function customerlist_change() {
+		customerids = '';
+		$('[name^="netdev[cid]"]').each(function() {
+			customerids += $(this).val() + ';';
+		});
+		customerids += '0;';
+		xajax_ONU_Voip_Phone_Xj(customerids,
+			document.getElementById('pots_1_phone').value,
+			document.getElementById('pots_2_phone').value);
+		xajax_ONU_Host_hosts_Xj(customerids,
+			document.getElementById('hostid_1').value,
+			document.getElementById('hostid_2').value);
+	}
+
+</script>
+
+<script src="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gpon.js""></script>
+
+<form name="netdevedit" id="netdevedit" method="POST" action="?m=gponnokiaonuedit&id={$netdevinfo.id}">
+	<input type="submit" class="hiddenbtn">
+	<input type="hidden" name="voipaccountsid1" id="pots_1_phone" value="{$netdevinfo.voipaccountsid1}">
+	<input type="hidden" name="voipaccountsid2" id="pots_2_phone" value="{$netdevinfo.voipaccountsid2}">
+	<input type="hidden" name="host_id1" id="hostid_1" value="{$netdevinfo.host_id1}">
+	<input type="hidden" name="host_id2" id="hostid_2" value="{$netdevinfo.host_id2}">
+
+<table class="lmsbox" id="gpon-nokia-onu-edit-box">
+	<colgroup>
+		<col style="width: 1%;">
+		<col style="width: 1%;">
+		<col style="width: 98%;">
+	</colgroup>
+	<thead>
+		<tr>
+			<td>
+				{icon name="netdevice"}
+			</td>
+			<td>
+				<strong>{trans("Name")}</strong>
+			</td>
+			<td>
+				<strong>{$netdevinfo.name} ({$netdevinfo.id|string_format:"#%d"})</strong>
+			</td>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td colspan="3">
+				<table class="lmsbox-inner">
+					<colgroup>
+						<col style="width: 50%;">
+						<col style="width: 50%;">
+					</colgroup>
+					<tbody>
+						<tr>
+							<td class="valign-top">
+								<table class="lmsbox-inner">
+									<colgroup>
+										<col style="width: 1%;">
+										<col style="width: 1%;">
+										<col style="width: 98%;">
+									</colgroup>
+									<tbody>
+										<tr>
+											<td>
+												<img src="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gpononu.gif">
+											</td>
+											<td>
+												<strong>{trans("ONU ID")}</strong>
+											</td>
+											<td>
+												<strong>{$netdevinfo.onuid}</strong>
+											</td>
+										</tr>
+
+										<tr>
+											<td>
+												{icon name="configuration"}
+											</td>
+											<td class="nobr">
+												<label for="netdev[autoprovisioning]">
+													<strong>{trans("Auto provisioning")}</strong>
+												</label>
+											</td>
+											<td>
+												<input type="checkbox" name="netdev[autoprovisioning]" id="netdev[autoprovisioning]" value="1"
+													{if $netdevinfo.autoprovisioning} checked{/if}{if $netdevinfo.autoscript == 1} disabled{/if}
+													{tip trigger="autoprovisioning"}>
+												{if $netdevinfo.autoscript == 1}
+													<input type="hidden" NAME="netdev[autoprovisioning]" id="netdev[autoprovisioning]" value="{$netdevinfo.autoprovisioning}">
+												{/if}
+											</td>
+										</tr>
+
+										<tr style="display:none;">
+											<td>
+												{icon name="configuration"}
+											</td>
+											<td class="nobr">
+												<label for="xmlprovisioning">
+													<strong>{trans("XML provisioning")}</strong>
+												</label>
+											</td>
+											<td>
+												<input type="checkbox" name="netdev[xmlprovisioning]" id="xmlprovisioning"
+													value="1"{if $netdevinfo.xmlprovisioning} checked{/if}
+													onchange="javascript:xajax_ONU_UpdateProperties(this.checked, xjx.$('gpononumodelsid').value);">
+											</td>
+										</tr>
+
+										<tr>
+											<td>
+												{icon name="hardware"}
+											</td>
+											<td class="nobr">
+												<strong>{trans("Model")}</strong>
+											</td>
+											<td>
+												<select size="1" name="netdev[gpononumodelsid]" id="gpononumodelsid"
+													{tip text="Select ONU model"}
+													onchange="javascript:xajax_ONU_UpdateProperties(xjx.$('xmlprovisioning').checked, this.options[this.selectedIndex].value);">
+													{foreach $gpononumodels as $model}
+														<option value="{$model.id}"
+															{if $netdevinfo.gpononumodelsid == $model.id} selected{/if}>{$model.name}</option>
+													{/foreach}
+												</select>
+											</td>
+										</tr> 
+
+										<tr>
+											<td>
+												{icon name="configuration"}
+											</td>
+											<td class="nobr">
+												<strong>{trans("Service profile:")}</strong>
+											</td>
+											<td>
+												<select size="1" name="netdev[serviceprofile]"
+													{tip trigger="serviceprofiles" text="Select service profile"}
+													{if !empty($netdevinfo.autoscript)} disabled{/if}>
+													<option value="">{trans("none")}</option>
+													{foreach $serviceprofiles as $qname}
+														<option value="{$qname}"
+															{if $netdevinfo.serviceprofile == $qname} selected{/if}>{$qname}</option>
+													{/foreach}
+												</select>
+												{*if $netdevinfo.autoscript eq 1*}
+												<input type="hidden" name="netdev[oldserviceprofile]"
+													id="netdev[oldserviceprofile]" value="{$netdevinfo.serviceprofile}">
+												{*/if*}
+											</td>
+										</tr>
+
+										<tr>
+											<td>
+												{icon name="configuration"}
+											</td>
+											<td class="nobr">
+												<strong {tip text="The field can be changed with the new, not yet connected one"}>{trans("Profile QOS")}</strong>
+											</td>
+											<td>
+												<select {tip trigger="gponoltprofiles"} size="1" name="netdev[gponoltprofilesid]"
+													id="profile-selection"
+													{tip text="Select the profile that is to be configured on the new ONU"}>
+													<option value="">{trans("— select —")}</option>
+													{foreach $gponoltprofiles as $profile}
+														<option value="{$profile.id}"{if $netdevinfo.gponoltprofilesid == $profile.id} selected{/if}
+															>{$profile.name}{if array_key_exists('oltname', $profile)} ({$profile.oltname}){/if}</option>
+													{/foreach}
+												</select>
+
+												{if !empty($netdevlist)}
+													{button type="link" icon="reload" id="update-profiles" tip="update ONU profiles"}
+												{/if}
+
+												{if $netdevinfo.autoscript == 1}
+													<input type="hidden" name="netdev[gponoltprofilesid]" id="netdev[gponoltprofilesid]"
+														value="{$netdevinfo.gponoltprofilesid}">
+												{/if}
+											</td>
+										</tr>
+
+										<tr style="display:none;">
+											<td>
+												{icon name="password"}
+											</td>
+											<td>
+												<strong>{trans("Password")}</strong>
+											</td>
+											<td>
+												{if $netdevinfo.password eq ''}
+													(auto-learning)
+												{else}
+													{$netdevinfo.password}
+												{/if}
+												<input type="hidden" name="netdev[password]" id="password" value="{$netdevinfo.password}">
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<img src="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gpononu.gif">
+											</td>
+											<td>
+												<strong {tip text="The field can be changed with the new, not yet connected one"}>{trans("ONU description:")} </strong>
+											</td>
+											<td>
+												<input type="text" name="netdev[onudescription]" value="{$netdevinfo.onudescription}"
+													maxlength="32" {if $netdevinfo.autoscript eq 1} disabled style="border:1px solid grey;color:grey;" {/if}>
+												{if $netdevinfo.autoscript eq 1}
+													<input type="hidden" name="netdev[onudescription]" id="netdev[onudescription]" value="{$netdevinfo.onudescription}">
+												{/if}
+											</td>
+										</tr>
+										<tr>
+											<td>
+												{icon name="netdevice"}
+											</td>
+											<td class="nobr">
+												<storng>{trans("Network device")}</storng>
+											</td>
+											<td>
+												<select name="netdev[netdevid]" {tip text="Select assigned network device" class="lms-ui-advanced-select"}>
+													<option value="0">{trans("- none -")}</option>
+													{foreach $notgpononudevices as $device}
+														<option value="{$device.id}"{if $netdevinfo.netdevid == $device.id} selected{/if}>{$device.name}</option>
+													{/foreach}
+												</select>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												{icon name="customer"}
+											</td>
+											<td colspan="2">
+												<table>
+													{for $index=0 to $onu_customerlimit-1}
+														<tr>
+															<td>
+																{$index+1}.
+															</td>
+															<td>
+																{customerlist form="netdevedit" customers=$customers selected=$netdevinfo.cid[$index]
+																	selectname="netdev[customerid][$index]" inputname="netdev[cid][$index]"
+																	ersion=2 customOnChange="customerlist_change();"}
+															</td>
+														</tr>
+													{/for}
+													<script>
+
+														customerlist_change();
+
+													</script>
+												</TABLE>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								{if isset($netdevinfo.portdetails.pots.portscount)}
+									<table id="show_voip" class="lmsbox-inner">
+										<colgroup>
+											<col style="width: 1%;">
+											<col style="width: 1%;">
+											<col style="width: 98%;">
+										</colgroup>
+										<tbody>
+											<tr>
+												<td>
+													{icon name="phone"}
+												</td>
+												<td class="nobr">
+													<strong>VoIP</strong>
+												</td>
+												<td id="ONU_Voip_Phone">
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								{/if}
+								<table id="show_host" style="display:block;">
+									<colgroup>
+										<col style="width: 1%;">
+										<col style="width: 1%;">
+										<col style="width: 49%;">
+										<col style="width: 49%;">
+									</colgroup>
+									<tbody>
+										<tr>
+											<td>
+												{icon name="node"}
+											</td>
+											<td class="nobr">
+												<strong>Host</strong>
+											</td>
+											<td id="ONU_Host_hosts">
+											</td>
+											<td>
+												
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</td>
+							<td class="valign-top">
+								<table class="lmsbox-inner">
+									<colgroup>
+										<col style="width: 1%;">
+										<col style="width: 1%;">
+										<col style="width: 98%;">
+									</colgroup>
+			
+									<tr>
+										<td>
+											{icon name="user"}
+										</td>
+										<td class="nobr">
+											<strong>
+												{trans("Created")}
+												<br>
+												{trans("Modified")}
+											</strong>
+										</td>
+										<td>
+											{if $netdevinfo.creationdateh}
+												{$netdevinfo.createdby}, {$netdevinfo.creationdateh}
+											{else}
+												-
+											{/if}
+											<br>
+											{if $netdevinfo.moddate}
+												{$netdevinfo.modifiedby}, {$netdevinfo.moddateh}
+											{else}
+												-
+											{/if}
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="3" class="lms-ui-box-buttons">
+				{button type="submit" accesskey="S" icon="save" label="Submit"}
+				{button icon="cancel" label="Cancel" href="?m=gponnokiaonuinfo&id={$netdevinfo.id}"}
+			</td>
+		</tr>
+		{if $netdevinfo.gponoltid gt 0}
+			<tr>
+				<td colspan="3">
+					<div style="border:1px solid black;padding:3px;margin:2px;">
+						{$snmponudata}
+					</div>
+				</td>
+			</tr>
+		{/if}
+	</tbody>
+</table>
+
+</form>
+
+

@@ -1,0 +1,83 @@
+<!--// $Id$ //-->
+<table class="lmsbox lms-ui-sortable lms-ui-tab-container" id="gpon-nokia-onu-syslog">
+	<thead>
+		<tr class="hand lmsbox-titlebar" data-lmsbox-content="gpon-nokia-onu-syslog-panel">
+			<td>
+				{icon name="log" class="fa-fw lms-ui-sortable-handle"}
+				<strong>{trans("Last system log entries")}</strong>
+			</td>
+		</tr>
+	</thead>
+	<tbody>
+		<tr id="gpon-nokia-onu-syslog-panel" style="display: none;">
+			<td>
+				<table class="lmsbox-inner lms-ui-background-cycle">
+					<colgroup>
+						<col style="width: 1%;">
+						<col style="width: 10%;">
+						<col style="width: 10%;">
+						<col style="width: 10%;">
+						<col style="width: 69%;">
+					</colgroup>
+					<thead>
+						<tr class="dark">
+							<td>
+								<strong>{trans("Date")}</strong>
+							</td>
+							<td>
+								<strong>{trans("OLT")}</strong>
+							</td>
+							<td>
+								<strong>{trans("OLT Port")}</strong>
+							</td>
+							<td>
+								<strong>{trans("ONU ID")}</strong>
+							</td>
+							<td>
+								<strong>{trans("Event log message")}</strong>
+							</td>
+						</tr>
+					</thead>
+					<tbody>
+						{foreach array_slice($onusyslog, 0, 30) as $onusyslogitem}
+							<tr class="highlight">
+								<td class="nobr">
+									{$onusyslogitem.time|date_format:"Y-m-d H:i:s"}
+								</td>
+								<td class="nobr">
+									{if !empty($onusyslogitem.oltid)}
+										<a href="?m=gponnokiaoltinfo&id={$onusyslogitem.oltid}">
+									{/if}
+									{if !empty($onusyslogitem.oltname)}
+										{$onusyslogitem.oltname|escape}
+									{/if}
+									({$onusyslogitem.oltip})
+									{if !empty($onusyslogitem.oltid)}
+										</a>
+									{/if}
+								</td>
+								<td class="nobr">
+									{$onusyslogitem.gponport}
+								</td>
+								<td class="nobr">
+									{$onusyslogitem.gpononuid}
+								</td>
+								<td>
+									{$onusyslogitem.message|escape}
+								</td>
+							</tr>
+						{/foreach}
+					</tbody>
+				</table>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<script>
+
+	if (getStorageItem('gpon-nokia-onu-syslog-panel', 'local') == '1') {
+		$('#gpon-nokia-onu-syslog-panel').show();
+	}
+
+</script>

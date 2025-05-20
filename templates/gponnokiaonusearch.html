@@ -1,0 +1,121 @@
+{extends file="layout.html"}
+{block name=module_content}
+<!--// $Id$ //-->
+<H1>{$layout.pagetitle}</H1>
+<SCRIPT type="text/javascript">
+<!--
+	function setOperator(id)
+	{
+		document.search.elements[id].checked = true;
+	}
+//-->
+</SCRIPT>
+<FORM NAME="search" METHOD="POST" ACTION="?m=gponnokiaonusearch&search=1">
+<INPUT type="submit" class="hiddenbtn">
+<TABLE WIDTH="100%" CELLPADDING="3">
+	<TR class="dark">
+		<TD class="fall" COLSPAN="3">
+			<B>{trans("Find devices matching the following search criteria:")}</B>
+		</TD>
+	</TR>
+	<TR class="light">
+		<TD WIDTH="1%" class="fleft">
+			<IMG SRC="img/search.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%">
+			<B>{trans("Name:")}</B>
+		<TD WIDTH="98%" class="fright">
+			<INPUT TYPE="TEXT" NAME="search[name]" VALUE="" {tip text="Enter device name or it's fragment"}> 
+		</TD>
+	</TR>
+	<TR class="light">
+		<TD WIDTH="1%" class="fleft">
+			<IMG SRC="img/producer.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Manufacturer:")}</B>
+		</TD>
+		<TD WIDTH="98%" class="fright">
+			<INPUT TYPE="TEXT" NAME="search[producer]" VALUE="" {tip text="Enter producer name or it's fragment"}>
+		</TD>
+	</TR>
+	<TR class="light">
+		<TD WIDTH="1%" class="fleft">
+			<IMG SRC="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gpononu_model.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Model:")}</B>
+		</TD>	
+		<TD WIDTH="98%" class="fright">
+			<INPUT TYPE="TEXT" NAME="search[model]" VALUE="" {tip text="Enter device model or it's fragment"}>
+		</TD>
+	</TR>
+	<TR class="light">
+		<TD WIDTH="1%" class="fleft">
+			<IMG SRC="img/settings.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Profil:")}</B>
+		</TD>
+		<TD WIDTH="98%" class="fright">
+			<INPUT TYPE="TEXT" NAME="search[profil]" VALUE="" {tip text="Enter device profil or it's fragment"}>
+		</TD>
+	</TR>
+	<TR class="light">
+		<TD WIDTH="1%" class="fleft">
+			<IMG SRC="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gpononu_takenports.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Port OLT:")}</B>
+		</TD>
+		<TD WIDTH="98%" class="fright">
+			<INPUT TYPE="TEXT" NAME="search[portolt]" VALUE="" {tip text="Port on OLT"}>
+		</TD>
+	</TR>
+	<TR class="light">
+		<TD WIDTH="1%" class="fleft">
+			<IMG SRC="img/port.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("ONU ID:")}</B>
+		</TD>
+		<TD WIDTH="98%" class="fright">
+			<INPUT TYPE="TEXT" NAME="search[onuid]" VALUE="" {tip text="Onu id"}>
+		</TD>
+	</TR>
+	
+	<TR class="light">
+		<TD WIDTH="1%" class="fleft">
+			<IMG SRC="img/desc.gif" ALT="">
+		</TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Description:")}</B>
+		</TD>
+		<TD WIDTH="98%" class="fright">
+			<INPUT TYPE="TEXT" NAME="search[onudescription]" VALUE="" {tip text="Enter additional information"}>
+		</TD>
+	</TR>
+	<TR class="light">
+		<TD class="fleft" WIDTH="1%"></TD>
+		<TD WIDTH="1%" NOWRAP>
+			<B>{trans("Qualification operator:")}</B>
+		</TD>
+		<TD class="fright" WIDTH="98%">
+			<INPUT class="radio light" type="radio" id="operator0" value="AND" name="k"{if $k!='OR'} CHECKED{/if}><A HREF="javascript:setOperator('operator0')"> {trans("AND")} </A>
+			<INPUT class="radio light" type="radio" id="operator1" value="OR" name="k"{if $k=='OR'} CHECKED{/if}><A HREF="javascript:setOperator('operator1')"> {trans("OR")} </A>
+		</TD>
+	</TR>
+	<TR class="light">
+		<TD WIDTH="100%" class="fbottomu" COLSPAN="3" ALIGN="RIGHT">
+			<A HREF="javascript:document.search.submit();" ACCESSKEY="s">{trans("Submit")} <IMG SRC="img/save.gif" alt=""></A>
+			<A HREF="?m=gponnokiaonulist">{trans("Cancel")} <IMG SRC="img/cancel.gif" alt=""></A>
+		</TD>
+	</TR>	
+</TABLE>
+</FORM>
+<SCRIPT type="text/javascript">
+<!--
+document.forms['search'].elements['search[name]'].focus();
+//-->
+</SCRIPT>
+{/block}

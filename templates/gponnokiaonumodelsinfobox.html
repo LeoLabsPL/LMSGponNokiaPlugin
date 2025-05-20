@@ -1,0 +1,176 @@
+<!--// $Id$ //-->
+<table class="lmsbox">
+	<colgroup>
+		<col style="width: 1%;">
+		<col style="width: 99%;">
+	</colgroup>
+	<thead>
+		<tr{if $devicepanel} class="dark hand" onClick="showOrHide('devicepanel');"{else} class="dark"{/if}>
+			<td>
+				<img src="img/{LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME}/gpononumodels.gif">
+			</td>
+			<td>
+				<strong>{$netdevinfo.name|escape} ({$netdevinfo.id|string_format:"%04d"})</strong>
+			</td>
+		</tr>
+	</thead>
+	<tr{if $devicepanel} id="devicepanel" style="display:none;"{/if}>
+		<td colspan="2"{if $devicepanel} class="fall" class="text-right"{/if}>
+			<table class="lmsbox-inner">
+				<colgroup>
+					<col style="width: 50%;">
+					<col style="width: 50%;">
+				</colgroup>
+				<tr>
+					<td class="valign-top">
+						<table width="100%" celpadding="3">
+							<colgroup>
+								<col style="width: 1%;">
+								<col style="width: 1%;">
+								<col style="width: 98%;">
+							</colgroup>
+							{if $netdevinfo.producer}
+								<tr>
+									<td>
+										<img src="img/producer.gif">
+									</td>
+									<td>
+										<strong>{trans("Producer:")}</strong>
+									</td>
+									<td>
+										{$netdevinfo.producer|escape}
+									</td>
+								</tr>
+							{/if}
+							{if $netdevinfo.description}
+								<tr>
+									<td>
+										<img src="img/desc.gif">
+									</td>
+									<td colspan="2">
+										<table style="width: 100%;" cellpadding="5">
+											<tr>
+												<td class="fall superlight">
+													{$netdevinfo.description|escape|nl2br}
+												</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							{/if}
+							<tr>
+								<td>
+									<img src="img/port.gif">
+								</td>
+								<td class="nobr">
+									<strong>{trans("Ports:")}</strong>
+								</td>
+								<td>
+									<table style="width: 200px;" cellpadding="2" cellspacing="1" border="1">
+										{foreach $portstype as $type}
+											<tr class="{if $portstype2models[$type.id].portscount == 0} blend{/if}">
+												<td class="text-right">
+													<strong>{$type.name}:</strong>
+												</td>
+												<td style="width: 30%;" class="text-right">
+													{$portstype2models[$type.id].portscount}
+												</td>
+											</tr>
+										{/foreach}
+									</table>
+								</td>
+							</tr>
+							{if $netdevinfo.urltemplate}
+								<tr>
+									<td>
+										<i class="lms-ui-icon-web"></i>
+									</td>
+									<td class="nobr">
+										<strong>{trans("Management URL template")}</strong>
+									</td>
+									<td>
+										{$netdevinfo.urltemplate|escape}
+									</td>
+								</tr>
+							{/if}
+							{if $Netdevinfo.xmlfilename}
+								<tr>
+									<td>
+										<img src="img/folder.gif">
+									</td>
+									<td class="nobr">
+										<strong>{trans("XML file name template")}</strong>
+									</td>
+									<td>
+										{$netdevinfo.xmlfilename|escape}
+									</td>
+								</tr>
+							{/if}
+							{if $netdevinfo.xmltemplate}
+								<tr>
+									<td>
+										<img src="img/folder.gif">
+									</td>
+									<td colspan="2">
+										<table style="width: 100%;" cellpadding="5">
+											<tr>
+												<td class="fall superlight">
+													{$netdevinfo.xmltemplate|escape|replace:" ":"&nbsp;"|nl2br}
+												</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							{/if}
+							{if $netdevinfo.xgspon}
+								<tr>
+									<td>
+										<img src="img/netdev_model.gif">
+									</td>
+									<td class="nobr">
+										<strong>XGSPON</strong>
+									</td>
+									<td>
+										{if $netdevinfo.xgspon == 1}
+										Tak
+										{else}
+										Nie
+										{/if}
+									</td>
+								</tr>
+							{/if}
+						</table>
+					</td>
+				</tr>
+			</table>
+{if !$devicepanel}
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" class="lms-ui-box-buttons">
+{/if}
+			{button icon="edit" label="Edit" onclick="location.href='?m=gponnokiaonumodelsedit&id={$netdevinfo.id}';"}
+			{button icon="delete" label="Delete" id="model-delete"}
+		</td>
+	</tr>
+</table>
+ 
+<script>
+
+	$(function() {
+		$('#model-delete').click(function() {
+			this.href = "?m=gponnokiaonumodelsdel&id={$netdevinfo.id}";
+			if (confirmLink(this, '{t a=$netdevinfo.name}Are you sure, you want to remove device \'$a\' from database?{/t}')) {
+				location.href = this.href;
+			}
+			return false;
+		});
+	});
+
+	{if $devicepanel}
+		if (getCookie('devicepanel') == '1') {
+			$('#devicepanel').show();
+		}
+	{/if}
+
+</script>
