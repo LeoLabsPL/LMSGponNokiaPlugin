@@ -460,12 +460,12 @@ class GPON_NOKIA_SNMP
         $ONU_id=intval($ONU_id);
 
         echo 'ONU delete: '.$OLT_id.'/'.$ONU_id.'<br />';
-       //die;
+       
         if ($OLT_id!='' && $ONU_id>0) {
             
  
             $ont_index = self::calc_ont_index($OLT_id.'/'.$ONU_id);
-            // czyścimy tablice
+            
             $oid = array();
             $type = array();
             $value = array();
@@ -491,7 +491,7 @@ class GPON_NOKIA_SNMP
         $result = array();
         $OLT_numport = $OLT_numport;
         $ONU_name = trim($ONU_name);
-       //$xgspon = false; // w kolejnym etapie dorobić aby to dolatywało z modelu lub z serviceprofile
+      
         if($xgspon == '' or $xgspon == '0' or $xgspon == 'false')
         {
             $xgspon = false;
@@ -501,10 +501,7 @@ class GPON_NOKIA_SNMP
             $xgspon = true;
         }
         
-        //echo 'test';
-        var_dump($xgspon);
-        //die;
-        //$ONU_password = trim($ONU_password);
+       
         $ONU_description = trim($ONU_description);
         if ($OLT_numport && strlen($ONU_name) == 12) {
            
@@ -517,13 +514,9 @@ class GPON_NOKIA_SNMP
                 // to juz dodajemy onu !!!!!!!!!!!!!! ***************** !!!!!!!!!!!!!!!!!!!
                 $config = $this->GPON->LoadServiceProfile($serviceprofile, '');
 
-                echo '<pre>';
-                print_r($config);
-                //die;
                 $ont_index = self::calc_ont_index($OLT_numport.'/'.$ONU_id, $xgspon);
                 $eth_slot = self::calc_eth_slot($OLT_numport.'/'.$ONU_id, $xgspon);
              
-
                 $oid = array();
                 $type = array();
                 $value = array();
@@ -550,14 +543,14 @@ class GPON_NOKIA_SNMP
                 $type[3] = "i";
                 $value[3] = 1;
 
-                // .1.3.6.1.4.1.637.61.1.35.10.1.1.75.${ONTID} i 1 # AES (0 - disabled, 1 - enabled)
+                // .1.3.6.1.4.1.637.61.1.35.10.1.1.75.${ONTID} i 1 #  (0 - disabled, 1 - enabled)
                 $oid[4] = ".1.3.6.1.4.1.637.61.1.35.10.1.1.75.".$ont_index;
                 $type[4] = "i";
                 $value[4] = 1;
 
                 if ($xgspon == true)
                 {
-                    // .1.3.6.1.4.1.637.61.1.35.10.1.1.122.${ONTID} i 1 # AES (0 - disabled, 1 - enabled)
+                    // .1.3.6.1.4.1.637.61.1.35.10.1.1.122.${ONTID} i 1 #  (0 - disabled, 1 - enabled)
                     $oid[5] = ".1.3.6.1.4.1.637.61.1.35.10.1.1.122.".$ont_index;
                     $type[5] = "i";
                     $value[5] = 2;

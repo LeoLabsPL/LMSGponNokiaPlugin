@@ -94,7 +94,7 @@ class LMSGponNokiaPlugin extends LMSPlugin
                 'method' => 'nodeInfoBeforeDisplay'
             ),
             'nodeedit_before_display' => array(
-                'class' => 'GponNokianNodeHandler',
+                'class' => 'GponNokiaNodeHandler',
                 'method' => 'nodeEditBeforeDisplay'
             ),
             'nodescan_on_load' => array(
