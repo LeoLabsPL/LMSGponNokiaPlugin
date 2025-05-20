@@ -182,6 +182,7 @@ class GPON_NOKIA_SNMP
         $value=str_replace('INTEGER: ', '', $value);
         $value=str_replace('STRING: ', '', $value);
         $value=str_replace('Counter64: ', '', $value);
+        $value=str_replace('Gauge32: ', '', $value);
         $value=str_replace('BITS: ', '', $value);
         $value=str_replace('Hex-STRING: ', '', $value);
         $value=str_replace('Hex-', '', $value);
@@ -1018,7 +1019,7 @@ class GPON_NOKIA_SNMP
     }
     public function secondsToTime($s)
     {
-        return 0;
+        //return 0;
         $h = floor($s / 3600);
         $s -= $h * 3600;
         $m = floor($s / 60);
@@ -1112,7 +1113,16 @@ class GPON_NOKIA_SNMP
             //$result['Upgrade Status']=$this->get('...'.$OLT_id.'.'.$ONU_id);
             //$result['OLTMac']=$this->walk('...'.$OLT_id.'.'.$ONU_id);
 
-            //$result['Sys Up Time']=$this->get('...'.$OLT_id.'.'.$ONU_id);
+            $result['Sys Up Time']=$this->clean_snmp_value($this->get('1.3.6.1.4.1.637.61.1.35.10.4.1.11.'.$ONU_index, 'x'));
+
+            if( $result['Sys Up Time'] == 0)
+            {
+                $result['Sys Up Time'] = '';
+            }
+            else
+            {
+                $result['Sys Up Time'] = round($result['Sys Up Time']/100, 0);
+            }
         }
         return $result;
     }
@@ -1236,9 +1246,9 @@ class GPON_NOKIA_SNMP
                     <tr><td class="text-right bold">'.trans('Attenuation of the route to the subscriber:').'</td><td>'.$tlumienie.'</td></tr>
                     <tr><td class="text-right bold">'.trans('TX OLT:').'</td><td'.$this->style_gpon_tx_power($PON).'>'.$PON.' dBm</td></tr>
 					<tr><td class="text-right bold">'.trans('Signal Level 1310nm').'<br />'.trans('Received on OLT:').'</td><td'.$this->style_gpon_rx_power($snmp_result['Rx Power OLT']).'>'.$snmp_result['Rx Power OLT'].'</td></tr>    
-					<tr><td class="text-right bold">'.trans('Distance:').'</td><td>'.$snmp_result['Distance'].'</td></tr>';
-					//<tr><td class="text-right bold">'.trans('Link working time:').'</td><td>'.$snmp_result['Link Up Time'].'</td></tr>'
-					//<tr><td class="text-right bold">'.trans('Device Uptime:').'</td><td>'.$this->secondsToTime($snmp_result['Sys Up Time']).'</td></tr>
+					<tr><td class="text-right bold">'.trans('Distance:').'</td><td>'.$snmp_result['Distance'].'</td></tr>
+					<tr><td class="text-right bold">'.trans('Device Uptime:').'</td><td>'.$this->secondsToTime($snmp_result['Sys Up Time']).'</td></tr>';
+                    //<tr><td class="text-right bold">'.trans('Link working time:').'</td><td>'.$snmp_result['Link Up Time'].'</td></tr>'
 					//<tr><td class="text-right bold">'.trans('Time of inactivity:').'</td><td>'.$snmp_result['Inactive Time'].'</td></tr>
 					//<tr><td class="text-right bold">'.trans('ONU MAC address:').'</td><td>'.$snmp_result['Mac'].'</td></tr>
 					$result .= '<tr><td class="text-right bold">OS1 Standby Version:</td><td>'.$snmp_result['OS1 Standby Version'].'</td></tr>
