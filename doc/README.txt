@@ -1,4 +1,4 @@
-Dodatek GPON / XGSPON NOKIA do LMS (ver 1.0.1) 
+Dodatek GPON / XGSPON NOKIA do LMS (ver 1.0.2) 
 
 ==========================================================
 Wymagania:
@@ -75,6 +75,10 @@ CHANGELOG
 ## [1.0.1] - 2025-05-19
 ### Naprawiono
 - gponsignalrrd.php nie odczytywało sygnałów z powodu błędego oida
+
+## [1.0.2] - 2025-05-20
+### Naprawiono
+- funkcji get_min_free był błąd i zawsze zwracała 1
 
 ===========================================================
 
