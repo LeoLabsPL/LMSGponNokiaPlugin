@@ -44,7 +44,7 @@ unset($netdevlist['order']);
 unset($netdevlist['direction']);
 
     /* Using AJAX plugins */
-function ONU_get_param_Xj($gponoltid, $OLT_id, $ONU_id, $id, $ONU_name = '')
+function ONU_nokia_get_param_Xj($gponoltid, $OLT_id, $ONU_id, $id, $ONU_name = '')
 {
     // xajax response
     $GPON = LMSGponNokiaPlugin::getGponInstance();
@@ -54,13 +54,13 @@ function ONU_get_param_Xj($gponoltid, $OLT_id, $ONU_id, $id, $ONU_name = '')
     $error_snmp=$GPON->snmp->get_correct_connect_snmp();
     $table_param=$GPON->snmp->ONU_get_param_table($OLT_id, $ONU_id, $ONU_name);
     $objResponse->script("document.getElementById('pokaz_parametry_".$id."').value='".trans("Hide parameters")."';");
-    $objResponse->script("document.getElementById('pokaz_parametry_".$id."').onclick=function(){document.getElementById('ONU_param_".$id."').innerHTML='';document.getElementById('pokaz_parametry_".$id."').value='".trans("Show parameters")."';document.getElementById('pokaz_parametry_".$id."').onclick=function(){xajax_ONU_get_param_Xj(".$gponoltid.",'".$OLT_id."',".$ONU_id.",".$id.",'".$ONU_name."');}};");
+    $objResponse->script("document.getElementById('pokaz_parametry_".$id."').onclick=function(){document.getElementById('ONU_param_".$id."').innerHTML='';document.getElementById('pokaz_parametry_".$id."').value='".trans("Show parameters")."';document.getElementById('pokaz_parametry_".$id."').onclick=function(){xajax_ONU_nokia_get_param_Xj(".$gponoltid.",'".$OLT_id."',".$ONU_id.",".$id.",'".$ONU_name."');}};");
     $objResponse->assign("ONU_param_".$id, "innerHTML", $error_snmp.$table_param);
     return $objResponse;
 }
     
     $LMS->InitXajax();
-    $LMS->RegisterXajaxFunction('ONU_get_param_Xj');
+    $LMS->RegisterXajaxFunction('ONU_nokia_get_param_Xj');
     $SMARTY->assign('xajax', $LMS->RunXajax());
     /* end AJAX plugin stuff */
 

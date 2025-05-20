@@ -148,7 +148,7 @@ function GetFreeOltPort_Xj($netdevicesid)
     return $objResponse;
 }
 
-function ONU_get_param_Xj($gponoltid, $OLT_id, $ONU_id, $id, $ONU_name = '')
+function ONU_nokia_get_param_Xj($gponoltid, $OLT_id, $ONU_id, $id, $ONU_name = '')
 {
     // xajax response
     $GPON = LMSGponNokiaPlugin::getGponInstance();
@@ -164,7 +164,7 @@ function ONU_get_param_Xj($gponoltid, $OLT_id, $ONU_id, $id, $ONU_name = '')
         . "document.getElementById('pokaz_parametry_".$id."').value='" . trans("Show SNMP settings") . "';"
         . "document.getElementById('odswiez_parametry_".$id."').style.display='none';"
         . "document.getElementById('pokaz_parametry_".$id."').onclick=function()"
-        . "{xajax_ONU_get_param_Xj(".$gponoltid.",'".$OLT_id."',".$ONU_id.",".$id.",'".$ONU_name."');}};");
+        . "{xajax_ON_nokia_get_param_Xj(".$gponoltid.",'".$OLT_id."',".$ONU_id.",".$id.",'".$ONU_name."');}};");
     $objResponse->assign("ONU_param_".$id, "innerHTML", $error_snmp.$table_param);
     return $objResponse;
 }
@@ -173,7 +173,7 @@ $LMS->InitXajax();
 $LMS->RegisterXajaxFunction(
     array(
         'GetFreeOltPort_Xj',
-        'ONU_get_param_Xj',
+        'ONU_nokia_get_param_Xj',
     )
 );
 $SMARTY->assign('xajax', $LMS->RunXajax());

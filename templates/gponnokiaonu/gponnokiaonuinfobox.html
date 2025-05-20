@@ -492,14 +492,14 @@
 		{if $netdevinfo.gponoltid > 0}
 			<tr>
 				<td colspan="2" class="text-center" style="border-top: 1px dotted gray;">
-					<button type="submit" class="lms-ui-button" id="pokaz_parametry_{$netdevinfo.id}" OnClick="xajax_ONU_get_param_Xj({$netdevinfo.gponoltid},'{$netdevinfo.gponoltnumport}',{$netdevinfo.onuid},{$netdevinfo.id},'{$netdevinfo.name}');">
+					<button type="submit" class="lms-ui-button" id="pokaz_parametry_{$netdevinfo.id}" OnClick="xajax_ONU_nokia_get_param_Xj({$netdevinfo.gponoltid},'{$netdevinfo.gponoltnumport}',{$netdevinfo.onuid},{$netdevinfo.id},'{$netdevinfo.name}');">
 						{icon name="info"}
 						<span class="lms-ui-label">
 							{trans("Show SNMP settings")}
 						</span>
 					</button>
 					<div class="gpon-nokia-onu-dynamic-properties" style="display: none;" id="odswiez_parametry_{$netdevinfo.id}">
-						<button type="submit" class="lms-ui-button" OnClick="xajax_ONU_get_param_Xj({$netdevinfo.gponoltid},'{$netdevinfo.gponoltnumport}',{$netdevinfo.onuid},{$netdevinfo.id},'{$netdevinfo.name}');">
+						<button type="submit" class="lms-ui-button" OnClick="xajax_ONU_nokia_get_param_Xj({$netdevinfo.gponoltid},'{$netdevinfo.gponoltnumport}',{$netdevinfo.onuid},{$netdevinfo.id},'{$netdevinfo.name}');">
 							{icon name="reload"}
 							<span class="lms-ui-label">
 								{trans("Refresh SNMP settings")}

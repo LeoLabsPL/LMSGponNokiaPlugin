@@ -56,7 +56,7 @@
 		</TD>
 		<TD style="width: 10%; border-left: 0px;" class="valign-top text-center nobr">
 			{if $netdev.gponoltnetdevicesid gt 0}
-			<input type="button" value="{trans("Show parameters")}" id="pokaz_parametry_{$netdev.id}" OnClick="xajax_ONU_get_param_Xj({$netdev.gponoltid},'{$netdev.gponoltnumport}',{$netdev.onuid},{$netdev.id},'{$netdev.name}');">
+			<input type="button" value="{trans("Show parameters")}" id="pokaz_parametry_{$netdev.id}" OnClick="xajax_ONU_nokia_get_param_Xj({$netdev.gponoltid},'{$netdev.gponoltnumport}',{$netdev.onuid},{$netdev.id},'{$netdev.name}');">
 			{/if}
 		</TD>
 		<TD style="width: 30%; border-left: 0px;" class="valign-top nobr">
