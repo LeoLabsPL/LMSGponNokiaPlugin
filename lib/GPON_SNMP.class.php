@@ -1019,7 +1019,6 @@ class GPON_NOKIA_SNMP
     }
     public function secondsToTime($s)
     {
-        //return 0;
         $h = floor($s / 3600);
         $s -= $h * 3600;
         $m = floor($s / 60);
@@ -1115,11 +1114,7 @@ class GPON_NOKIA_SNMP
 
             $result['Sys Up Time']=$this->clean_snmp_value($this->get('1.3.6.1.4.1.637.61.1.35.10.4.1.11.'.$ONU_index, 'x'));
 
-            if( $result['Sys Up Time'] == 0)
-            {
-                $result['Sys Up Time'] = '';
-            }
-            else
+            if( $result['Sys Up Time'] > 0)
             {
                 $result['Sys Up Time'] = round($result['Sys Up Time']/100, 0);
             }
