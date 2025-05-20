@@ -75,6 +75,7 @@ CHANGELOG
 ## [1.0.2] - 2025-05-20
 ### Naprawiono
 - funkcji get_min_free był błąd i zawsze zwracała 1
+- AJAX plugins - błąd z redeklaracją funkcji
 
 ## [1.0.1] - 2025-05-19
 ### Naprawiono
