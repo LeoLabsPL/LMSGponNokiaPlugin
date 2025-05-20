@@ -141,7 +141,7 @@
 				</td>
 				<td class="valign-top">
 					{if $netdevlist[netdevlist].gponoltnetdevicesid gt 0}
-						<input type="button" value="{trans("Show parameters")}" id="pokaz_parametry_{$netdevlist[netdevlist].id}" OnClick="xajax_ONU_get_param_Xj({$netdevlist[netdevlist].gponoltid},'{$netdevlist[netdevlist].gponoltnumport}',{$netdevlist[netdevlist].onuid},{$netdevlist[netdevlist].id},'{$netdevlist[netdevlist].name}');" />
+						<input type="button" value="{trans("Show parameters")}" id="pokaz_parametry_{$netdevlist[netdevlist].id}" OnClick="xajax_ONU_nokia_get_param_Xj({$netdevlist[netdevlist].gponoltid},'{$netdevlist[netdevlist].gponoltnumport}',{$netdevlist[netdevlist].onuid},{$netdevlist[netdevlist].id},'{$netdevlist[netdevlist].name}');" />
 					{/if}
 				</td>
 				<td data-target-url="?m=gponnokiaonuinfo&id={$netdevlist[netdevlist].id}" class="valign-top">
