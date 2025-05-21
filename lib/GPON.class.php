@@ -1405,8 +1405,9 @@ class GPON_NOKIA
                             //print_r($onu_data['xgspon']);
                            // die;
                             $xgspon = $this->GetOnuXgsponStatusByName($onu_serial);
+                            $swverpland = $this->GetOnuSwverplandByName($onu_serial);
                             // dodajemy onu do olt
-                            $onu_id = $this->snmp->ONU_add($olt_port, $onu_serial, '', $onu_data['onudescription'], $onu_data['serviceprofile'], $onu_data['profil_olt'], $xgspon, $onu_data['portdetails']);
+                            $onu_id = $this->snmp->ONU_add($olt_port, $onu_serial, '', $onu_data['onudescription'], $onu_data['serviceprofile'], $onu_data['profil_olt'], $xgspon, $onu_data['portdetails'], $swverpland);
               
                             $description=$this->snmp->ONU_set_description($olt_port, $onu_id, $onu_data['onudescription']);
                             if ($debug==1) {
@@ -1690,6 +1691,16 @@ class GPON_NOKIA
     public function GetOnuXgsponStatusByName($name)
     {
         return $this->DB->GetOne('SELECT m.xgspon
+            FROM ' . self::SQL_TABLE_GPONONUMODELS . ' m
+            JOIN ' . self::SQL_TABLE_GPONONU . ' o ON o.gpononumodelsid = m.id
+            WHERE o.name = ?',
+            array($name)
+        );
+    }    
+    
+    public function GetOnuSwverplandByName($name)
+    {
+        return $this->DB->GetOne('SELECT m.swverpland
             FROM ' . self::SQL_TABLE_GPONONUMODELS . ' m
             JOIN ' . self::SQL_TABLE_GPONONU . ' o ON o.gpononumodelsid = m.id
             WHERE o.name = ?',

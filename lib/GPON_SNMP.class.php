@@ -543,7 +543,16 @@ class GPON_NOKIA_SNMP
                 }
                 else
                 {
-                    $value[2] = $swverpland;
+                    $walksw = $this->walk('1.3.6.1.4.1.637.61.1.35.26.2.1.2', 'x');
+                    foreach($walksw as $key => $var)
+                    {
+                        $var = $this->clean_snmp_value($var);
+                        if ($var == $swverpland)
+                        {
+                            $value[2] = $swverpland;
+                            break;
+                        }       
+                    }           
                 }
 
                 // .1.3.6.1.4.1.637.61.1.35.10.1.1.39.${ONTID} i 1 # FEC Upstream (1 - enabled, 2 - disabled)
@@ -621,6 +630,7 @@ class GPON_NOKIA_SNMP
                         $key = explode('47.3.24.1.2.', $key);
                         $key = $key[1];
                         $qosid = $key;
+                        break;
                     }
                 }
 
