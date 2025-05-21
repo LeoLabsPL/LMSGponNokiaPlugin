@@ -537,9 +537,10 @@ class GPON_NOKIA_SNMP
                     // .1.3.6.1.4.1.637.61.1.35.10.1.1.11.${ONTID} s "DISABLED" # (wersja softu jako string)
                 $oid[2] = ".1.3.6.1.4.1.637.61.1.35.10.1.1.11.".$ont_index;
                 $type[2] = "s";
+                $value[2] = "DISABLED";
                 if(trim($swverpland) == '' or $swverpland == null)
                 {
-                    $value[2] = "DISABLED";
+                    
                 }
                 else
                 {
@@ -573,6 +574,7 @@ class GPON_NOKIA_SNMP
                     $value[5] = 2;
                 }
 
+               
                 $result[] = $this->set_CLI($oid, $type, $value, 'x');  // ***********************
 
 
