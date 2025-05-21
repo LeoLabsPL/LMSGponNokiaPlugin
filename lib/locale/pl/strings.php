@@ -1,7 +1,7 @@
 <?php
 
 $_LANG['Software Planned Version'] = 'Planowana wersja oprogramowania';
-$_LANG['Enter software planned version (optional)'] = 'Wprowadź planowaną wersję oprogramowania (opcjonalnie)';
+$_LANG['Enter software planned version (optional)'] = 'Wprowadź planowaną wersję oprogramowania (opcjonalnie)<br> Plik musi znajdować się na OLT';
 $_LANG['GPON Nokia Hardware Support'] = 'Obsługa sprzętu GPON firmy Nokia';
 $_LANG['Number of OLT ports:'] = 'Liczba portów OLT:';
 $_LANG['Number of ONU ports:'] = 'Liczba portów ONU:';
