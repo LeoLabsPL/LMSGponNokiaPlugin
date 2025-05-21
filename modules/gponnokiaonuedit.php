@@ -117,7 +117,7 @@ switch ($action) {
                     }
                     $GPON->set_bussy($netdevdata['gponoltid'], 1);
 
-                    $snmp_result=$GPON->snmp->ONU_add($_GET['numport'], $gpon_onu['name'], $gpon_onu['password'], $gpon_onu['onudescription'], $gpon_onu['serviceprofile'], $gpon_onu['profil_olt'], $gpon_onu['xgspon'], $gpon_onu['portdetails']);
+                    $snmp_result=$GPON->snmp->ONU_add($_GET['numport'], $gpon_onu['name'], $gpon_onu['password'], $gpon_onu['onudescription'], $gpon_onu['serviceprofile'], $gpon_onu['profil_olt'], $gpon_onu['xgspon'], $gpon_onu['portdetails'], $gpon_onu['swverpland']);
                     $snmp_error=$GPON->snmp->parse_result_error($snmp_result);
                     if (strlen($snmp_error)>0) {
                         $dev['linkolt'] = trans('Can not assign this ONU - SNMP error.').$snmp_error;

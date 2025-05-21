@@ -139,6 +139,19 @@
 									</td>
 								</tr>
 							{/if}
+							{if $netdevinfo.swverpland}
+							<tr>
+								<td>
+									<img src="img/producer.gif">
+								</td>
+								<td>
+									<strong>{trans("Software Planned Version:")}</strong>
+								</td>
+								<td>
+									{$netdevinfo.swverpland|escape}
+								</td>
+							</tr>
+							{/if}
 						</table>
 					</td>
 				</tr>

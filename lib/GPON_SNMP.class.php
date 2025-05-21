@@ -487,7 +487,7 @@ class GPON_NOKIA_SNMP
         return array_unique($result);
     }
 
-    public function ONU_add($OLT_numport, $ONU_name, $ONU_password = '', $ONU_description = '', $serviceprofile, $qosprofile = '', $xgspon, $portdetails) //ok
+    public function ONU_add($OLT_numport, $ONU_name, $ONU_password = '', $ONU_description = '', $serviceprofile, $qosprofile = '', $xgspon, $portdetails, $swverpland = '') //ok
     {
         $result = array();
         $OLT_numport = $OLT_numport;
@@ -537,7 +537,14 @@ class GPON_NOKIA_SNMP
                     // .1.3.6.1.4.1.637.61.1.35.10.1.1.11.${ONTID} s "DISABLED" # (wersja softu jako string)
                 $oid[2] = ".1.3.6.1.4.1.637.61.1.35.10.1.1.11.".$ont_index;
                 $type[2] = "s";
-                $value[2] = "DISABLED";
+                if(trim($swverpland) == '' or $swverpland == null)
+                {
+                    $value[2] = "DISABLED";
+                }
+                else
+                {
+                    $value[2] = $swverpland;
+                }
 
                 // .1.3.6.1.4.1.637.61.1.35.10.1.1.39.${ONTID} i 1 # FEC Upstream (1 - enabled, 2 - disabled)
                 $oid[3] = ".1.3.6.1.4.1.637.61.1.35.10.1.1.39.".$ont_index;

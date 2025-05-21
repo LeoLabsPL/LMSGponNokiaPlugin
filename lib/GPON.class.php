@@ -905,7 +905,7 @@ class GPON_NOKIA
 
     public function GetGponOnu($id)
     {
-        $result = $this->DB->GetRow("SELECT g.*, d.model AS oltmodel, d.name AS netdevname, gom.name AS model, gom.xgspon ,
+        $result = $this->DB->GetRow("SELECT g.*, d.model AS oltmodel, d.name AS netdevname, gom.name AS model, gom.xgspon, gom.swverpland
 				(SELECT SUM(portscount) FROM " . self::SQL_TABLE_GPONONUPORTTYPE2MODELS
                     . " WHERE gpononumodelsid = g.gpononumodelsid) AS ports, gom.producer,
 				(SELECT nd.name FROM " . self::SQL_TABLE_GPONONU2OLT . " go2o
@@ -1635,7 +1635,7 @@ class GPON_NOKIA
     public function GponOnuModelsUpdate($gpononumodelsdata)
     {
         $this->DB->Execute(
-            'UPDATE ' . self::SQL_TABLE_GPONONUMODELS . ' SET name=?, description=?, producer=?, urltemplate = ?, xmlfilename = ?, xmltemplate=?, xgspon=?
+            'UPDATE ' . self::SQL_TABLE_GPONONUMODELS . ' SET name=?, description=?, producer=?, urltemplate = ?, xmlfilename = ?, xmltemplate=?, xgspon=?, swverpland=?
 			WHERE id=?',
             array(
                 $gpononumodelsdata['name'],
@@ -1645,6 +1645,7 @@ class GPON_NOKIA
                 empty($gpononumodelsdata['xmlfilename']) ? null : $gpononumodelsdata['xmlfilename'],
                 $gpononumodelsdata['xmltemplate'],
                 isset($gpononumodelsdata['xgspon']) ? $gpononumodelsdata['xgspon'] : 0,
+                isset($gpononumodelsdata['swverpland']) ? $gpononumodelsdata['swverpland'] : '',
                 $gpononumodelsdata['id']
             )
         );
@@ -1656,7 +1657,7 @@ class GPON_NOKIA
     {
         if ($this->DB->Execute(
             'INSERT INTO ' . self::SQL_TABLE_GPONONUMODELS
-            . ' (name, description, producer, urltemplate, xmlfilename, xmltemplate, xgspon) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            . ' (name, description, producer, urltemplate, xmlfilename, xmltemplate, xgspon, swverpland) VALUES (?, ?, ?, ?, ?, ?, ?)',
             array(
                 $gpononumodelsdata['name'],
                 $gpononumodelsdata['description'],
@@ -1664,7 +1665,8 @@ class GPON_NOKIA
                 empty($gpononumodelsdata['urltemplate']) ? null : $gpononumodelsdata['urltemplate'],
                 empty($gpononumodelsdata['xnlfilename']) ? null : $gpononumodelsdata['xmlfilename'],
                 $gpononumodelsdata['xmltemplate'],
-                isset($gpononumodelsdata['xgspon']) ? $gpononumodelsdata['xgspon'] : 0
+                isset($gpononumodelsdata['xgspon']) ? $gpononumodelsdata['xgspon'] : 0,
+                isset($gpononumodelsdata['swverpland']) ? $gpononumodelsdata['swverpland'] : ''
             )
         )) {
             $id = $this->DB->GetLastInsertID(self::SQL_TABLE_GPONONUMODELS);
