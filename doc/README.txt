@@ -72,6 +72,10 @@ Autoprovisioning (skrypt bin/gponautoscript.php)
 
 CHANGELOG
 
+## [1.0.3] - 2025-05-21
+### Dodano
+- Uptime ONT 
+
 ## [1.0.2] - 2025-05-20
 ### Naprawiono
 - funkcji get_min_free był błąd i zawsze zwracała 1
