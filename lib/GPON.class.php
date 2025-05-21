@@ -901,8 +901,6 @@ class GPON_NOKIA
 			ORDER BY name');
     }
 
-
-
     public function GetGponOnu($id)
     {
         $result = $this->DB->GetRow("SELECT g.*, d.model AS oltmodel, d.name AS netdevname, gom.name AS model, gom.xgspon, gom.swverpland,

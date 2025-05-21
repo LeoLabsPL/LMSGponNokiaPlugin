@@ -75,6 +75,7 @@ CHANGELOG
 ## [1.0.3] - 2025-05-21
 ### Dodano
 - Uptime ONT 
+- Software Planned Version - upgrade ONT do planowanej wersji przy dodawaniu ONT
 ### Naprawiono
 - dodawanie opisu portu przy dodawaniu nowego ONT
 
