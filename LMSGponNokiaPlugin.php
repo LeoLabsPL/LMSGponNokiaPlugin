@@ -33,7 +33,7 @@
 class LMSGponNokiaPlugin extends LMSPlugin
 {
     const PLUGIN_DIRECTORY_NAME = 'LMSGponNokiaPlugin';
-    const PLUGIN_DB_VERSION = '2025051500';
+    const PLUGIN_DB_VERSION = '2025052100';
     const PLUGIN_NAME = 'GPON Nokia';
     const PLUGIN_ALIAS = 'gpon-nokia';
     const PLUGIN_DESCRIPTION = 'GPON/XGSPON Nokia Hardware Support';

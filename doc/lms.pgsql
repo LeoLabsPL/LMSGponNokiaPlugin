@@ -140,6 +140,7 @@ CREATE TABLE gponnokiaonumodels (
 	xmlfilename text DEFAULT NULL,
 	urltemplate varchar(120) DEFAULT NULL,
 	xgspon smallint NOT NULL DEFAULT 0,
+	swverpland varchar(120) DEFAULT NULL,
 	PRIMARY KEY (id)
 );
 
@@ -210,4 +211,4 @@ INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('gpon-
 
 INSERT INTO gponnokiaonuporttypes (name) VALUES ('eth'), ('pots'), ('video'), ('virtual-eth'), ('wifi');
 
-INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSGponNokiaPlugin', '2025051500');
+INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSGponNokiaPlugin', '2025052100');

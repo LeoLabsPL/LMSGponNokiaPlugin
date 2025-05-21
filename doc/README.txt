@@ -75,6 +75,8 @@ CHANGELOG
 ## [1.0.3] - 2025-05-21
 ### Dodano
 - Uptime ONT 
+### Naprawiono
+- dodawanie opisu portu przy dodawaniu nowego ONT
 
 ## [1.0.2] - 2025-05-20
 ### Naprawiono
@@ -90,5 +92,6 @@ CHANGELOG
 ===========================================================
 
 TODO
+
 
 
