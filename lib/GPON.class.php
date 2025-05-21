@@ -905,7 +905,7 @@ class GPON_NOKIA
 
     public function GetGponOnu($id)
     {
-        $result = $this->DB->GetRow("SELECT g.*, d.model AS oltmodel, d.name AS netdevname, gom.name AS model, gom.xgspon, gom.swverpland
+        $result = $this->DB->GetRow("SELECT g.*, d.model AS oltmodel, d.name AS netdevname, gom.name AS model, gom.xgspon, gom.swverpland,
 				(SELECT SUM(portscount) FROM " . self::SQL_TABLE_GPONONUPORTTYPE2MODELS
                     . " WHERE gpononumodelsid = g.gpononumodelsid) AS ports, gom.producer,
 				(SELECT nd.name FROM " . self::SQL_TABLE_GPONONU2OLT . " go2o
