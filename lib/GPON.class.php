@@ -2032,8 +2032,15 @@ class GPON_NOKIA
             }
 
             $multicast = isset($values['multicast']) && ConfigHelper::checkValue($values['multicast']);
+            $iphost = isset($values['iphost']) && ConfigHelper::checkValue($values['iphost']);
             $config['vlans'][$vlanid] = array(
-                'multicast' => $multicast);
+                'multicast' => $multicast,  'iphost' => $iphost);           
+            
+            if($iphost == 1)
+            {
+                $config['iphost_vlan'] = $vlanid;
+            }
+      
 
             foreach (array('tagged', 'untagged') as $porttype) {
                 if (isset($values[$porttype]) && preg_match('/^([0-9]+,)*[0-9]+$/', $values[$porttype])) {

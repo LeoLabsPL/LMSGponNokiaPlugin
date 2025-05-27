@@ -514,7 +514,9 @@ class GPON_NOKIA_SNMP
             if ($ONU_id) {
                 // to juz dodajemy onu !!!!!!!!!!!!!! ***************** !!!!!!!!!!!!!!!!!!!
                 $config = $this->GPON->LoadServiceProfile($serviceprofile, '');
-
+                echo '<pre>';
+                print_r($config);
+                //die;
                 $ont_index = self::calc_ont_index($OLT_numport.'/'.$ONU_id, $xgspon);
                 $eth_slot = self::calc_eth_slot($OLT_numport.'/'.$ONU_id, $xgspon);
              
@@ -566,12 +568,19 @@ class GPON_NOKIA_SNMP
                 $type[4] = "i";
                 $value[4] = 1;
 
+                if(isset($config['iphost_vlan']) && $config['iphost_vlan'] > 0)
+                {
+                    // .1.3.6.1.4.1.637.61.1.35.10.1.1.89.${ONTID} i 1 # IPHC (0 - disabled, 1 - enabled)
+                    $oid[5] = ".1.3.6.1.4.1.637.61.1.35.10.1.1.89.".$ont_index;
+                    $type[5] = "i";
+                    $value[5] = 1;
+                }
                 if ($xgspon == true)
                 {
                     // .1.3.6.1.4.1.637.61.1.35.10.1.1.122.${ONTID} i 1 #  (0 - disabled, 1 - enabled)
-                    $oid[5] = ".1.3.6.1.4.1.637.61.1.35.10.1.1.122.".$ont_index;
-                    $type[5] = "i";
-                    $value[5] = 2;
+                    $oid[6] = ".1.3.6.1.4.1.637.61.1.35.10.1.1.122.".$ont_index;
+                    $type[6] = "i";
+                    $value[6] = 2;
                 }
 
                
@@ -677,6 +686,10 @@ class GPON_NOKIA_SNMP
 
                 foreach($config['ports']['tagged'] as $port => $vlanindex)
                 {
+                    if(isset($config['ports']['untagged'][$port]))
+                    {
+                        continue; // port jest już w untagged
+                    }
                     $eth_index = self::calc_eth_index($OLT_numport.'/'.$ONU_id, $xgspon, $port);
 
                     echo 'port: '.$port.' '.$eth_index.'<br />';
@@ -845,7 +858,83 @@ class GPON_NOKIA_SNMP
                     
                     
                 }
+                // konfiguracja iphost
+                if(isset($config['iphost_vlan']) && $config['iphost_vlan'] > 0)
+                {
+                    $iphost_index = $this->calc_iphost_index($OLT_numport.'/'.$ONU_id);
+                    $bridgeport = self::calc_bridgeport_iphost($OLT_numport.'/'.$ONU_id);
 
+                    echo 'iphost_vlan: '.$config['iphost_vlan'].' iphost_index: '.$iphost_index.' bridgeport: '.$bridgeport.'<br />';
+                    $oid = array();
+                    $type = array();
+                    $value = array();
+
+                    //$oid[0] = ".1.3.6.1.4.1.637.61.1.47.6.1.1.28.".$iphost_index;
+                    $oid[0] = ".1.3.6.1.4.1.637.61.1.47.5.2.1.3.".$iphost_index.".0";
+                    $type[0] = "i";
+                    $value[0] = $qosid;
+
+                    $result['qos'] = $this->set_CLI($oid, $type, $value, 'x');   
+
+                    $oid = array();
+                    $type = array();
+                    $value = array();
+                    # Bridge Port
+                    $oid[0] = ".1.3.6.1.4.1.637.61.1.31.2.25.1.2.".$iphost_index; 
+                    $type[0] = "i";
+                    $value[0] = 4;  // 4 create
+
+                    $result['bridgeport1'] = $this->set_CLI($oid, $type, $value, 'x');
+
+                    $oid = array();
+                    $type = array();
+                    $value = array();
+
+                    $oid[] = ".1.3.6.1.4.1.637.61.1.31.2.12.1.2.".$bridgeport.".".$config['iphost_vlan']; 
+                    $type[] = "i";
+                    $value[] = 4; // 4 create
+                    $oid[] = ".1.3.6.1.4.1.637.61.1.31.2.12.1.4.".$bridgeport.".".$config['iphost_vlan']; 
+                    $type[] = "i";
+                    $value[] = 1;
+                    $oid[] = ".1.3.6.1.2.1.17.7.1.4.5.1.1.".$bridgeport; 
+                    $type[] = "u";
+                    $value[] = $config['iphost_vlan'];
+
+                    $result['bridgeport2'] = $this->set_CLI($oid, $type, $value, 'x');
+
+                    $oid = array();
+                    $type = array();
+                    $value = array();
+
+                    $oid[] = ".1.3.6.1.4.1.637.61.1.35.27.2.1.2.".$iphost_index; // create 
+                    $type[] = "i";
+                    $value[] = 4;
+
+                    $oid[] = ".1.3.6.1.4.1.637.61.1.35.27.2.1.3.".$iphost_index; // dhcp enable
+                    $type[] = "i";
+                    $value[] = 1;
+
+                    $oid[] = ".1.3.6.1.4.1.637.61.1.35.27.2.1.14.".$iphost_index; 
+                    $type[] = "i";
+                    $value[] = 24;      
+
+                    $oid[] = ".1.3.6.1.4.1.637.61.1.35.27.2.1.13.".$iphost_index; // vlan pointer
+                    $type[] = "u";
+                    $value[] = $config['iphost_vlan'];
+
+                    $result['iphost'] = $this->set_CLI($oid, $type, $value, 'x');    
+
+                    $oid = array();
+                    $type = array();
+                    $value = array();
+
+                    $oid[0] = ".1.3.6.1.2.1.2.2.1.7.".$iphost_index;
+                    $type[0] = "i";
+                    $value[0] = 1;
+
+                    $result['iphostup'] = $this->set_CLI($oid, $type, $value, 'x');    
+
+                }
                 $oid = array();
                 $type = array();
                 $value = array();
@@ -861,7 +950,7 @@ class GPON_NOKIA_SNMP
                     $this->ONU_set_description($OLT_numport, $ONU_id, $ONU_description);
                 }
                 print_r($result);
-                //die;  
+                //die;
                 $result = array_unique($result);
                 if (!strlen($this->parse_result_error($result))) {
                     $result['ONU_id']=$ONU_id;
@@ -1209,6 +1298,8 @@ class GPON_NOKIA_SNMP
         return $result;
     }
 
+
+
     public function ONU_get_param_table($OLT_id, $ONU_id, $ONU_name = '')
     {
         static $onumodels = array();
@@ -1277,6 +1368,23 @@ class GPON_NOKIA_SNMP
                 $OLT_index = $this->calc_ont_index($OLT_id.'/'.$ONU_id);
 
                 $result.='</td><td class="valign-top">';
+
+                $onu_host=$this->ONU_get_host($OLT_id, $ONU_id);
+                if (is_array($onu_host) && count($onu_host)>0) {
+                    $result.='<h1>'.trans('IP addresses assigned to the ONU').'</h1>';
+
+                    $result.='<table class="lmsbox lms-ui-background-cycle">';
+                    $result.='<thead><tr class="text-center"><th>IP Address:</th><th>Net Mask</th><th>Gateway</td><th>VLAN ID:</th></tr></thead>';
+                    $result.='<tbody>';
+                    foreach ($onu_host as $k => $v) {
+                        $result.='<tr><td>'.$this->clean_snmp_value($v['ip']).'</td><td>'.$this->clean_snmp_value($v['netmask']).'</td>'.
+                        '<td>'.$this->clean_snmp_value($v['gateway']).'</td><td>'.$this->clean_snmp_value($v['vlanid']).'</td></tr>';
+                    }
+                    $result.='</tbody>';
+                    $result.='</table>';
+                    
+                }
+
                 $result.='<h1>'.trans('Port status on ONT').'</h1>
 					<table class="lmsbox lms-ui-background-cycle">
 					<thead><tr class="text-center"><th>Port:</th><th>'.trans('Oper Status:').'</th><th>Admin Status:</th><th>AutoNego:</th><th>Speed:</th></tr></thead>';
@@ -1607,6 +1715,31 @@ class GPON_NOKIA_SNMP
         return $result;
     }
 
+    public function ONU_get_host($OLT_id, $ONU_id)
+    {
+        $result=array();
+        $ONU_id=intval($ONU_id);
+        if($ONU_id>0)
+        {
+            $i = 0;
+            $iphost_index = $this->calc_iphost_index($OLT_id.'/'.$ONU_id);
+            //echo $iphost_index.' ';
+            $iphost_ip=$this->get('1.3.6.1.4.1.637.61.1.35.27.2.1.8.'.$iphost_index, 'x');
+            //print_r($iphost_ip);
+            //die;
+            if($iphost_ip != '')
+            {
+                $result[$i]['ip'] = $iphost_ip;
+                $result[$i]['netmask']=$this->get('1.3.6.1.4.1.637.61.1.35.27.2.1.9.'.$iphost_index, 'x');
+                $result[$i]['gateway']=$this->get('1.3.6.1.4.1.637.61.1.35.27.2.1.10.'.$iphost_index, 'x');
+                $result[$i]['vlanid']=$this->get('1.3.6.1.4.1.637.61.1.35.27.2.1.13.'.$iphost_index, 'x');
+
+                $i++;
+            }
+        }
+        return $result;
+    }
+
     public function OLT_write_config()
     {
        return false; // do sprawdzenia czy się da 
@@ -1752,6 +1885,34 @@ class GPON_NOKIA_SNMP
         $index .= "0000000000000000";
     
         
+        return bindec($index);
+    }
+
+    private static function calc_bridgeport_iphost($ont, $xgspon = false)
+    {
+        $var = explode("/", $ont);
+        
+        $index = "00";
+        $index .= sprintf( "%05d", decbin($var[2]+1)); //SLOT
+        $index .= "0110"; // level
+        $index .= sprintf( "%05d", decbin($var[3]-1)); //PON
+        $index .= sprintf( "%07d", decbin($var[4]-1)); //ONT
+        $index .= sprintf( "%04d", decbin(15));   
+        $index .= sprintf( "%05d", decbin(15));   
+    
+        return bindec($index);
+    }
+
+    public function calc_iphost_index($ont, $xgspon = false)
+    {
+        $var = explode("/", $ont);
+        $index = "00";
+        $index .= sprintf( "%05d", decbin($var[2]+1)); 
+        $index .= "0000"; // level
+        $index .= sprintf( "%05d", decbin($var[3]-1)); 
+        $index .= sprintf( "%07d", decbin($var[4]-1));
+        $index .= sprintf( "%04d", decbin(15));   
+        $index .= sprintf( "%05d", decbin(15));   
         return bindec($index);
     }
 
