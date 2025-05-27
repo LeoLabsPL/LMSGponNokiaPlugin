@@ -72,6 +72,11 @@ Autoprovisioning (skrypt bin/gponautoscript.php)
 
 CHANGELOG
 
+## [1.0.4] - 2025-06-04
+### Dodano
+- wyświetlanie adresu ip przypisanego do iphost na ont
+- mozliwość konfiguracji iphost na ONT
+
 ## [1.0.3] - 2025-05-21
 ### Dodano
 - Uptime ONT 

@@ -1374,11 +1374,22 @@ class GPON_NOKIA_SNMP
                     $result.='<h1>'.trans('IP addresses assigned to the ONU').'</h1>';
 
                     $result.='<table class="lmsbox lms-ui-background-cycle">';
-                    $result.='<thead><tr class="text-center"><th>IP Address:</th><th>Net Mask</th><th>Gateway</td><th>VLAN ID:</th></tr></thead>';
+                    $result.='<thead><tr class="text-center"><th>IP Address:</th><th>Net Mask</th><th>Gateway</td><th>VLAN ID</th><th width="10px"></th><th>MAC Address</th></tr></thead>';
                     $result.='<tbody>';
+                    $i = 0;
                     foreach ($onu_host as $k => $v) {
+                        $i++;
+                        $mac = $this->clean_snmp_value($v['mac']);
+                        $mac_replace = str_replace('"', '', $mac);
+                        $mac_replace = trim(str_replace('&nbsp;', ' ', $mac));
+                        $mac_replace = str_replace(' ', ':', $mac_replace);
+
                         $result.='<tr><td>'.$this->clean_snmp_value($v['ip']).'</td><td>'.$this->clean_snmp_value($v['netmask']).'</td>'.
-                        '<td>'.$this->clean_snmp_value($v['gateway']).'</td><td>'.$this->clean_snmp_value($v['vlanid']).'</td></tr>';
+                        '<td>'.$this->clean_snmp_value($v['gateway']).'</td><td>'.$this->clean_snmp_value($v['vlanid']).'</td>';
+                        $result .= '<td class="text-right"><i class="lms-ui-icon-configuration" style="cursor: pointer;" onclick="javascript:changeMacFormat(\'mac-list-' . $i . '\')"
+                            title="' . trans('Change the format of presentation of the MAC address.') . '"></i></td>
+                        <td width="150px"><span id="mac-list-' . $i . '">' . $mac_replace  . '</span></td> ';
+                        $result .= '</tr>';
                     }
                     $result.='</tbody>';
                     $result.='</table>';
@@ -1724,15 +1735,17 @@ class GPON_NOKIA_SNMP
             $i = 0;
             $iphost_index = $this->calc_iphost_index($OLT_id.'/'.$ONU_id);
             //echo $iphost_index.' ';
-            $iphost_ip=$this->get('1.3.6.1.4.1.637.61.1.35.27.2.1.8.'.$iphost_index, 'x');
+            //$iphost_ip=$this->get('1.3.6.1.4.1.637.61.1.35.27.2.1.8.'.$iphost_index, 'x');
+            $iphost_ip=$this->get('.1.3.6.1.4.1.637.61.1.35.27.3.1.3.'.$iphost_index, 'x');
             //print_r($iphost_ip);
             //die;
             if($iphost_ip != '')
             {
                 $result[$i]['ip'] = $iphost_ip;
-                $result[$i]['netmask']=$this->get('1.3.6.1.4.1.637.61.1.35.27.2.1.9.'.$iphost_index, 'x');
-                $result[$i]['gateway']=$this->get('1.3.6.1.4.1.637.61.1.35.27.2.1.10.'.$iphost_index, 'x');
-                $result[$i]['vlanid']=$this->get('1.3.6.1.4.1.637.61.1.35.27.2.1.13.'.$iphost_index, 'x');
+                $result[$i]['netmask']=$this->get('.1.3.6.1.4.1.637.61.1.35.27.3.1.4.'.$iphost_index, 'x');
+                $result[$i]['gateway']=$this->get('.1.3.6.1.4.1.637.61.1.35.27.3.1.5.'.$iphost_index, 'x');
+                $result[$i]['vlanid']=$this->get('.1.3.6.1.4.1.637.61.1.35.27.2.1.13.'.$iphost_index, 'x');
+                $result[$i]['mac']=$this->get('.1.3.6.1.4.1.637.61.1.35.27.3.1.2.'.$iphost_index, 'x');
 
                 $i++;
             }
