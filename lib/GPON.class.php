@@ -1656,7 +1656,7 @@ class GPON_NOKIA
     {
         if ($this->DB->Execute(
             'INSERT INTO ' . self::SQL_TABLE_GPONONUMODELS
-            . ' (name, description, producer, urltemplate, xmlfilename, xmltemplate, xgspon, swverpland) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            . ' (name, description, producer, urltemplate, xmlfilename, xmltemplate, xgspon, swverpland) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
             array(
                 $gpononumodelsdata['name'],
                 $gpononumodelsdata['description'],

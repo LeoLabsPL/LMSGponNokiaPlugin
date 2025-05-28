@@ -1487,10 +1487,6 @@ class GPON_NOKIA_SNMP
     }
     public function ONU_get_param_table_edit($OLT_id, $ONU_id, $id, $phonesvoip = array(), $ONU_name = '')
     {
-        //print_r($OLT_id);
-        //$OLT_id=1;
-        //$ONU_id=7;
-        //echo $ONU_name;
         $result='';
         if ($this->ONU_is_real($OLT_id, $ONU_id, $ONU_name)) {
             $onchange=' onchange="this.style.borderColor=\'red\';"';
