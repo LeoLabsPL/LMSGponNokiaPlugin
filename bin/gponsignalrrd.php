@@ -141,6 +141,7 @@ if (!empty($olts)) {
     $pids = array();
 
     foreach ($olts as $olt) {
+        print_r($olt);
         $pid = pcntl_fork();
         if ($pid == -1) {
             die('pcntl_fork() failed!' . PHP_EOL);
@@ -167,7 +168,7 @@ if (!empty($olts)) {
             
             wait2olt($olt['id'], $GPON, 30);
 
-            $olt_ports = $GPON->snmp->walk('1.3.6.1.4.1.637.61.1.35.10.4.1.2', 'x'); // ale to pobiera wszystkie onty na olt i teraz trzeba sobie port policzyć
+            $olt_ports = $GPON->snmp->walk('1.3.6.1.4.1.637.61.1.35.10.4.1.2', 'x'); 
             if (empty($olt_ports) || !is_array($olt_ports)) {
                 continue;
             }
@@ -192,18 +193,20 @@ if (!empty($olts)) {
                 
                 wait2olt($olt['id'], $GPON, 2);
 
-                $signal=($GPON->snmp->get('1.3.6.1.4.1.637.61.1.35.10.14.1.2.'.$port, 'x'))*0.002;
-                if($signal== 65.536)
+                $signal=($GPON->snmp->get('1.3.6.1.4.1.637.61.1.35.10.14.1.2.'.$port, 'x'));
+                //echo "Signal: $signal" . PHP_EOL;
+
+                if($signal == 32768)
                 {
                     $signal = '';
                 }
                 else
                 {
-                    $signal = round($signal, 1);
+                    $signal = round($signal, 1)*0.002;
                 }
 
-                $oltrx=($GPON->snmp->get('1.3.6.1.4.1.637.61.1.35.10.18.1.2.'.$port, 'x'));
-                if($oltrx== 65534)
+                $oltrx=($GPON->snmp->get('.1.3.6.1.4.1.637.61.1.35.10.18.1.2.'.$port, 'x'));
+                if($oltrx == 65534)
                 {
                     $oltrx = '';
                 }
@@ -236,7 +239,7 @@ if (!empty($olts)) {
             $pids[$pid] = $olt['id'];
         }
     }
-
+    
     do {
         $pid_finished = pcntl_wait($status);
         if ($pid_finished == -1) {

@@ -2003,14 +2003,22 @@ class GPON_NOKIA
         $config['vlans'] = array();
         $config['ports']['tagged'] = array();
         $config['ports']['untagged'] = array();
-        //$config['ports']['locked'] = array();
-        //$config['ports']['dhcp_external'] = array();
-        //$config['ports']['router'] = array();
-        //$config['ports']['hybrid'] = array();
-        $config['ports']['access'] = array();
+        $config['ports']['enable'] = array();
 
         foreach ($ini as $section => $values) {
 
+            if ($section == 'general')
+            {
+                if(isset($values['ports_enable']))
+                {
+                    foreach (explode(',', $values['ports_enable']) as $port)
+                    {
+                        $config['ports']['enable'][$port] = 1;
+                    }
+                }
+
+                continue;
+            }
             if (isset($values['vlanid'])) {
                 $vlanRange = strpos($values['vlanid'], '-') !== false;
                 if (!$vlanRange) {
@@ -2019,6 +2027,8 @@ class GPON_NOKIA
                     $vlanid = $values['vlanid'];
                 }
             }
+
+            $router = (isset($values['type']) && ($values['type'] == 'router' || $values['type'] == 'nat'));
 
             $config['vlans'][$vlanid] = array(
                 'priority' => (isset($values['priority']) ? intval($values['priority']) : 0),
@@ -2033,14 +2043,18 @@ class GPON_NOKIA
 
             $multicast = isset($values['multicast']) && ConfigHelper::checkValue($values['multicast']);
             $iphost = isset($values['iphost']) && ConfigHelper::checkValue($values['iphost']);
+            $veip = isset($values['veip']) && ConfigHelper::checkValue($values['veip']);
             $config['vlans'][$vlanid] = array(
-                'multicast' => $multicast,  'iphost' => $iphost);           
+                'multicast' => $multicast,  'iphost' => $iphost, 'veip' => $veip);           
             
             if($iphost == 1)
             {
                 $config['iphost_vlan'] = $vlanid;
             }
-      
+            if($veip == 1)
+            {
+                $config['veip'] = 'true';
+            }
 
             foreach (array('tagged', 'untagged') as $porttype) {
                 if (isset($values[$porttype]) && preg_match('/^([0-9]+,)*[0-9]+$/', $values[$porttype])) {
@@ -2052,20 +2066,6 @@ class GPON_NOKIA
                         }
                         $config['ports'][$porttype][$port][] = $vlanid;
                         
-                        /*
-                        // dla nokii niepotrzebne
-                        if ($porttype == 'untagged') {
-                            if (isset($config['ports']['tagged'][$port])) {
-                                $config['ports']['hybrid'][$port] = intval($vlanid);
-                            } else {
-                                $config['ports']['access'][$port] = intval($vlanid);
-                            }
-                        } else {
-                            if (isset($config['ports']['access'][$port])) {
-                                $config['ports']['hybrid'][$port] = $config['ports']['access'][$port];
-                                unset($config['ports']['access'][$port]);
-                            }
-                        }*/
                     }
                 }
             }
