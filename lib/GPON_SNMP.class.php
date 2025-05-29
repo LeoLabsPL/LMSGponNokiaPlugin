@@ -447,6 +447,7 @@ class GPON_NOKIA_SNMP
                     break;
                 case 3:
                     $result=@snmp3_get($this->get_options('snmp_host'), $this->get_options('snmp_username'), $this->get_options('snmp_sec_level'), $this->get_options('snmp_auth_protocol'), $this->get_options('snmp_password'), $this->get_options('snmp_privacy_protocol'), $this->get_options('snmp_privacy_passphrase'), $OID, 5000000, 5);
+                    // dodany timeout 5000000 i retries 5 bo czasami nie działało na snmp v3
                     break;
                 default:
                     break;
