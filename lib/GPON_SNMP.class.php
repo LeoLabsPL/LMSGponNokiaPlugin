@@ -1201,9 +1201,7 @@ class GPON_NOKIA_SNMP
         $resultm.='<thead><tr class="text-center"><th>no:</th><th>Port:</th><th colspan="2">MAC Address:</th><th>'.trans('Manufacturer:').'</th><th>VID:</th></tr></thead>';
         $num=1;
         for ($k = 0; $k < count($snmp_ports); $k++) {
-
             $bridgeport = self::calc_bridgeport($OLT_id.'/'.$ONU_id, $xgspon, $k+1);
-          
             $vlanport =$this->walk('.1.3.6.1.4.1.637.61.1.31.2.12.1.9.'.$bridgeport , 'x');
             if (is_array($vlanport) && count($vlanport)>0) {
                 foreach ($vlanport as $d => $v) {
@@ -1229,10 +1227,37 @@ class GPON_NOKIA_SNMP
                         $num++;
                     }
                 }
-            }
-            
-           
+            }  
         }
+
+        $bridgeport = self::calc_bridgeport($OLT_id.'/'.$ONU_id, $xgspon, 10);
+        $vlanport =$this->walk('.1.3.6.1.4.1.637.61.1.31.2.12.1.9.'.$bridgeport , 'x');
+        if (is_array($vlanport) && count($vlanport)>0) {
+            foreach ($vlanport as $d => $v) {
+                $v = $this->clean_snmp_value($v);
+                $macwalk = $this->walk('.1.3.6.1.4.1.637.61.1.31.5.10.1.1.'.$v , 'x');
+                $vlanid = explode($bridgeport.'.', $d);
+                $vlanid = $vlanid[1];       
+
+                foreach ($macwalk as $vm) {
+                    $mac = $this->clean_snmp_value($vm);
+                    $mac_replace = str_replace('"', '', $mac);
+                    $mac_replace = trim(str_replace('&nbsp;', ' ', $mac));
+                    $mac_replace = str_replace(' ', ':', $mac_replace);
+                        $resultm.='<tr>
+                    <td>'.$num.'</td>
+                    <td>VEIP</td>
+                    <td class="text-right"><i class="lms-ui-icon-configuration" style="cursor: pointer;" onclick="javascript:changeMacFormat(\'mac-list-' . $num . '\')"
+                        title="' . trans('Change the format of presentation of the MAC address.') . '"></i></td>
+                    <td width="150px"><span id="mac-list-' . $num . '">' . $mac_replace . '</span></td>
+                    <td>'.get_producer($mac_replace).'</td>
+                    <td>'.$vlanid.'</td>
+                    </tr>';
+                    $num++;
+                }
+            }
+        }
+        
         if($num == 1)
         {
             $resultm.='<tr>
@@ -1539,8 +1564,8 @@ class GPON_NOKIA_SNMP
 
                         $ETH_slot = $this->calc_eth_slot(1, $xgspon, ($k+1));
 
-                        $snmp_ports_id=$this->get('ifOperStatus.'.($ETH_index + $k) ,'x');
-                        $snmp_ports_admin_status=$this->get('ifAdminStatus.'.($ETH_index+$k) , 'x');
+                        $snmp_ports_id=$this->get('1.3.6.1.2.1.2.2.1.8.'.($ETH_index + $k) ,'x');
+                        $snmp_ports_admin_status=$this->get('1.3.6.1.2.1.2.2.1.7.'.($ETH_index+$k) , 'x');
                         $snmp_ports_autonego=$this->get('1.3.6.1.4.1.637.61.1.35.13.2.1.5.'.$OLT_index.'.'.$ETH_slot, 'x');
                         $snmp_ports_speed=$this->get('1.3.6.1.4.1.637.61.1.35.13.6.1.3.'.$OLT_index.'.'.$ETH_slot, 'x');
 
@@ -1715,8 +1740,8 @@ class GPON_NOKIA_SNMP
     
                             $ETH_slot = $this->calc_eth_slot(1, $xgspon, ($k+1));
     
-                            $snmp_ports_id=$this->get('ifOperStatus.'.($ETH_index + $k) ,'x');
-                            $portstatus=$this->get('ifAdminStatus.'.($ETH_index+$k) , 'x');
+                            $snmp_ports_id=$this->get('1.3.6.1.2.1.2.2.1.8.'.($ETH_index + $k) ,'x');
+                            $portstatus=$this->get('1.3.6.1.2.1.2.2.1.7.'.($ETH_index+$k) , 'x');
                             $snmp_ports_autonego=$this->get('1.3.6.1.4.1.637.61.1.35.13.2.1.5.'.$OLT_index.'.'.$ETH_slot, 'x');
                             $snmp_ports_speed=$this->get('1.3.6.1.4.1.637.61.1.35.13.6.1.3.'.$OLT_index.'.'.$ETH_slot, 'x');
     
