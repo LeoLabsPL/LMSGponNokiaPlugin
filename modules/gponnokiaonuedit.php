@@ -241,6 +241,33 @@ if (isset($_POST['netdev']) && (!isset($_POST['snmpsend']) || empty($_POST['snmp
                 $GPON->GponOnuAddCustomer($_GET['id'], $customerid);
             }
         }
+
+        // update serviceprofile poprzez ponowną konfigurację ONU
+        $old_onu_data = $GPON->GetGponOnu($netdevdata['id']);
+        $old_serviceprofile = $old_onu_data['serviceprofile'];
+        $new_serviceprofile = $netdevdata['serviceprofile'];
+        if ($old_serviceprofile !== $new_serviceprofile && !empty($old_serviceprofile) && !empty($new_serviceprofile)) {
+            $olt_port = $old_onu_data['gponoltnumport'];
+            $onu_name = $old_onu_data['name'];
+            $onu_id = $old_onu_data['onuid'];
+            $options_snmp = $GPON->GetGponOlt($old_onu_data['gponoltid']);
+            $GPON->snmp->set_options($options_snmp);
+            $GPON->snmp->ONU_delete($olt_port, $onu_id);
+            sleep(1);
+            $GPON->snmp->ONU_add(
+                $olt_port,
+                $onu_name,
+                $old_onu_data['password'],
+                $old_onu_data['onudescription'],
+                $new_serviceprofile,
+                $old_onu_data['profil_olt'],
+                $old_onu_data['xgspon'],
+                $old_onu_data['portdetails'],
+                $old_onu_data['swverpland']
+            );
+        }
+
+
         $netdevdata_old = $GPON->GetGponOnu($_GET['id']);
         $GPON->GponOnuUpdate($netdevdata);
         $netdevdata_now = $GPON->GetGponOnu($_GET['id']);
