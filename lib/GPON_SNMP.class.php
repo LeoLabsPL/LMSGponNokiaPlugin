@@ -472,11 +472,11 @@ class GPON_NOKIA_SNMP
             $oid = array();
             $type = array();
             $value = array();
-            // .1.3.6.1.2.1.2.2.1.7.${ONTID} i 1 # (1 - up, 2 - down)
+            // .1.3.6.1.2.1.2.2.1.7.${ONTID} i 2 # (1 - up, 2 - down)
             $oid[0] = ".1.3.6.1.2.1.2.2.1.7.".$ont_index;
             $type[0] = "i";
             $value[0] = 2;
-            // .1.3.6.1.4.1.637.61.1.35.10.1.1.2.${ONTID} i 4 # Ont (4 - create, 6 - destroy)
+            // .1.3.6.1.4.1.637.61.1.35.10.1.1.2.${ONTID} i 6 # Ont (4 - create, 6 - destroy)
             $oid[1] = ".1.3.6.1.4.1.637.61.1.35.10.1.1.2.".$ont_index;
             $type[1] = "i";
             $value[1] = 6;
@@ -514,7 +514,7 @@ class GPON_NOKIA_SNMP
             }
             
             if ($ONU_id) {
-                // to juz dodajemy onu !!!!!!!!!!!!!! ***************** !!!!!!!!!!!!!!!!!!!
+                // dodajemy onu !!!!!!!!!!!!!! ***************** !!!!!!!!!!!!!!!!!!!
                 $config = $this->GPON->LoadServiceProfile($serviceprofile, '');
                 echo '<pre>';
                 print_r($config);
@@ -538,7 +538,7 @@ class GPON_NOKIA_SNMP
                 $type[1] = "x";
                 $value[1] = $sn_hex;
 
-                    // .1.3.6.1.4.1.637.61.1.35.10.1.1.11.${ONTID} s "DISABLED" # (wersja softu jako string)
+                // .1.3.6.1.4.1.637.61.1.35.10.1.1.11.${ONTID} s "DISABLED" # (wersja softu jako string)
                 $oid[2] = ".1.3.6.1.4.1.637.61.1.35.10.1.1.11.".$ont_index;
                 $type[2] = "s";
                 $value[2] = "DISABLED";
@@ -630,22 +630,21 @@ class GPON_NOKIA_SNMP
 
                 $result[] = $this->set_CLI($oid, $type, $value, 'x'); // ***********************
 
-
-                 # QoS
-                 $walkqos = $this->walk('.1.3.6.1.4.1.637.61.1.47.3.24.1.2', 'x');
-                 $qosid = 1; // default qos
-                 
-                 foreach($walkqos as $key => $var)
-                 {
-                     $var = $this->clean_snmp_value($var);
-                     if ($var == $qosprofile)
-                     {
-                         $key = explode('47.3.24.1.2.', $key);
-                         $key = $key[1];
-                         $qosid = $key;
-                         break;
-                     }
-                 }
+                # QoS
+                $walkqos = $this->walk('.1.3.6.1.4.1.637.61.1.47.3.24.1.2', 'x');
+                $qosid = 1; // default qos
+                
+                foreach($walkqos as $key => $var)
+                {
+                    $var = $this->clean_snmp_value($var);
+                    if ($var == $qosprofile)
+                    {
+                        $key = explode('47.3.24.1.2.', $key);
+                        $key = $key[1];
+                        $qosid = $key;
+                        break;
+                    }
+                }
 
                 // VEIP
                 if($config['veip'] == 'true')
@@ -747,8 +746,6 @@ class GPON_NOKIA_SNMP
                             $value[1] = 2;
 
                             $result['bridgeportveip'.$vlan] = $this->set_CLI($oid, $type, $value, 'x');
-                            
-                            
                             
                         }
                     }
@@ -985,7 +982,6 @@ class GPON_NOKIA_SNMP
                     $value[0] = 10;
 
                     $result[] = $this->set_CLI($oid, $type, $value, 'x');    
-                    
                     
                 }
 
@@ -1321,8 +1317,6 @@ class GPON_NOKIA_SNMP
             $result['Model Name']=$this->get('1.3.6.1.4.1.637.61.1.35.10.1.1.26.'.$ONU_index, 'x');
             $result['Model Name'] = str_replace('"', '', str_replace('_', '', $result['Model Name']));
                 
-            //$result['Profile']=$this->get('...'.$ONU_index);
-            //$result['Deactive Reason']=$this->get('...'.$ONU_index);
             $result['Rx Power']=($this->get('1.3.6.1.4.1.637.61.1.35.10.14.1.2.'.$ONU_index, 'x'))*0.002;
             if($result['Rx Power']== 65.536)
             {
@@ -1370,11 +1364,9 @@ class GPON_NOKIA_SNMP
                 //$result['Inactive Time'] .= $m=sprintf(" (%dm %02ds)", floor($result['Inactive Time']/60), $result['Inactive Time']%60);
             }*/
 
-            //$result['Mac']=$this->get('...');
             $result['OS1 Standby Version']=$this->get('1.3.6.1.4.1.637.61.1.35.10.1.1.10.'.$ONU_index, 'x');
             $result['OS2 Active Version']=$this->get('1.3.6.1.4.1.637.61.1.35.10.1.1.9.'.$ONU_index, 'x');
             //$result['Upgrade Status']=$this->get('...'.$OLT_id.'.'.$ONU_id);
-            //$result['OLTMac']=$this->walk('...'.$OLT_id.'.'.$ONU_id);
 
             $result['Sys Up Time']=$this->clean_snmp_value($this->get('1.3.6.1.4.1.637.61.1.35.10.4.1.11.'.$ONU_index, 'x'));
 
@@ -1512,10 +1504,10 @@ class GPON_NOKIA_SNMP
                     //<tr><td class="text-right bold">'.trans('Link working time:').'</td><td>'.$snmp_result['Link Up Time'].'</td></tr>'
 					//<tr><td class="text-right bold">'.trans('Time of inactivity:').'</td><td>'.$snmp_result['Inactive Time'].'</td></tr>
 					//<tr><td class="text-right bold">'.trans('ONU MAC address:').'</td><td>'.$snmp_result['Mac'].'</td></tr>
-					$result .= '<tr><td class="text-right bold">OS1 Standby Version:</td><td>'.$snmp_result['OS1 Standby Version'].'</td></tr>
-					<tr><td class="text-right bold">OS2 Active Version:</td><td>'.$snmp_result['OS2 Active Version'].'</td></tr>';
+					$result .= '<tr><td class="text-right bold">OS Active Version:</td><td>'.$snmp_result['OS2 Active Version'].'</td></tr>
+                    <tr><td class="text-right bold">OS Standby Version:</td><td>'.$snmp_result['OS1 Standby Version'].'</td></tr>
+					';
 					//<tr><td class="text-right bold">Upgrade Status:</td><td>'.$snmp_result['Upgrade Status'].'</td></tr>';
-					//<tr><td class="text-right bold">OLT RX Power:</td><td>'.$snmp_result['OltRxPower'].'</td></tr>';
 
 
                 $result.='</table>';
@@ -1568,63 +1560,32 @@ class GPON_NOKIA_SNMP
                         $snmp_ports_admin_status=$this->get('1.3.6.1.2.1.2.2.1.7.'.($ETH_index+$k) , 'x');
                         $snmp_ports_autonego=$this->get('1.3.6.1.4.1.637.61.1.35.13.2.1.5.'.$OLT_index.'.'.$ETH_slot, 'x');
                         $snmp_ports_speed=$this->get('1.3.6.1.4.1.637.61.1.35.13.6.1.3.'.$OLT_index.'.'.$ETH_slot, 'x');
-
-                    
+           
                         $portoperstatus=$this->clean_snmp_value($snmp_ports_id);
                         $portadminstatus=$this->clean_snmp_value($snmp_ports_admin_status);
-                        //print_r($snmp_ports_admin_status);
-                        //die;
                         $autonego='';
                         $speed='';
                         $macs ='';
-                        //if (preg_match('/^ethernet/', $portid)) {
+
                             $autonego=$this->match_autonego($this->clean_snmp_value($snmp_ports_autonego));
                             $speed=$this->match_speed($this->clean_snmp_value($snmp_ports_speed));
-                            //$duplex=$this->clean_snmp_value($snmp_ports_duplex[$this->path_OID.'.'.$OLT_id.'.'.$ONU_id.'.'.$portid]);
-                            //$mediummode=$this->clean_snmp_value($snmp_ports_mediummode[$this->path_OID.'.'.$OLT_id.'.'.$ONU_id.'.'.$portid]);
-                            //mac table on port
                             $macs ='';
                             
-                       // }
-                        
-                        //$result.='<tr class="text-center"><td> eth '.($k+1).' '.$OLT_index.'.'.($ETH_slot+$k) .'</td><td>'
                         $result.='<tr class="text-center"><td> eth '.($k+1).'</td><td>'
                             . (empty($portoperstatus) || $portoperstatus == 'up' ? 'up' : 'down').'</td><td>'
                             . (empty($portadminstatus) || $portadminstatus == 'up' ? 'up' : 'down')
-                            //. '</td><td>' . $autonego . '</td><td>'
+
                             . '</td><td>' . $autonego . '</td><td>'
                             . $speed . '</td></tr>';
-                            //. $speed . '</td><td>' . $duplex . '</td><td>'
-                            //. $macs . '</td></tr>';
+
                     }
                 }
-                $result.='	</table>';
-                
-
-                /*//stara wersja - zła - ale zostawiam jakby to też było potrzebne
-                $result.='<table border="1">
-                    <tr><td><b>Lp.</b></td><td><b>MAC:</b></td></tr>';
-                    if(is_array($snmp_result['OLTMac']) && count($snmp_result['OLTMac'])>0)
-                    {
-                        $i=1;
-                        foreach($snmp_result['OLTMac'] as $k=>$v)
-                        {
-                            $result.='<tr><td align="right">'.$i.'.</td><td>'.$this->clean_snmp_value($v).'</td></tr>';
-                            $i++;
-                        }
-                    }
-
-                    $result.='</table>';
-                    */
-                    //$result.='<td>';
-
-                    
+                $result.='	</table>';                               
                 
                 if (is_array($snmp_ports) && count($snmp_ports)>0) {
                     $result.=$this->ONU_get_UserMacOlt_table($OLT_id, $ONU_id, $snmp_ports, $xgspon);
 
                 }
-                //$result.='</tr>';
                 $IgmpGroup_table=$this->ONU_get_IgmpGroup_table($OLT_id, $ONU_id);
                 $VoipLine_table=$this->ONU_get_VoipLine_table($OLT_id, $ONU_id);
                 
@@ -1675,21 +1636,6 @@ class GPON_NOKIA_SNMP
 					<tr><td class="text-right bold">Description:</td><td><INPUT TYPE="TEXT" NAME="onu_description" id="onu_description" VALUE="'.$snmp_result['Description'].'" MAXLENGTH="32" '.$onchange.'/></td></tr>
 					<tr><td class="text-right bold">Model:</td><td>'.$snmp_result['Model Name'].'</td></tr>';
 
-
-                   /* $result.='<tr><td class="text-right bold">'.trans('ONU Profile:').'</td><td>';
-                    $profiles=$this->GPON_get_profiles();
-                    $result.='<SELECT NAME="onu_profile"'.$onchange.'>';
-                if (is_array($profiles) && count($profiles)>0) {
-                    foreach ($profiles as $k => $v) {
-                        $result.='<OPTION VALUE="'.$v.'" ';
-                        if ($snmp_result['Profile']==$v) {
-                            $result.='selected="selected"';
-                        }
-                        $result.=' >'.$v.'</OPTION>';
-                    }
-                }
-                    $result.='</SELECT>';
-                    $result.='</td></tr>*/
 					$result.='<tr><td class="text-right bold">'.trans('Clear MAC:').'</td><td><input type="button" value="'.trans('Clear').'" id="clear_mac_button" OnClick="document.getElementById(\'clear_mac\').value=1;this.form.submit();" /></td></tr>
 					<tr><td class="text-right bold">Status:</b></td><td>'.$snmp_result['Status'].'</td></tr>
 					<tr><td class="text-right bold"><IMG SRC="img/';
@@ -1718,8 +1664,9 @@ class GPON_NOKIA_SNMP
 					//<tr><td class="text-right bold">'.trans('Link working time:').'</td><td>'.$snmp_result['Link Up Time'].'</td></tr>
 					//<tr><td class="text-right bold">'.trans('Device Uptime:').'</td><td>'.$this->secondsToTime($snmp_result['Sys Up Time']).'</td></tr>
 					//<tr><td class="text-right bold">'.trans('ONU MAC address:').'</td><td>'.$snmp_result['Mac'].'</td></tr>
-					 $result.='<tr><td class="text-right bold">OS1 Standby Version:</td><td>'.$snmp_result['OS1 Standby Version'].'</td></tr>
-					<tr><td class="text-right bold">OS2 Active Version:</td><td>'.$snmp_result['OS2 Active Version'].'</td></tr>';
+					 $result.='<tr><td class="text-right bold">OS Active Version:</td><td>'.$snmp_result['OS2 Active Version'].'</td></tr>
+                     <tr><td class="text-right bold">OS Standby Version:</td><td>'.$snmp_result['OS1 Standby Version'].'</td></tr>
+					';
 
                     $ETH_index = $this->calc_eth_index($OLT_id.'/'.$ONU_id, $xgspon);
                     //$ETH_slot = $this->calc_eth_slot($OLT_id.'/'.$ONU_id);
@@ -1748,19 +1695,14 @@ class GPON_NOKIA_SNMP
                         
                             $portoperstatus=$this->clean_snmp_value($snmp_ports_id);
                             $portstatus=$this->clean_snmp_value($portstatus);
-                            //print_r($snmp_ports_admin_status);
-                            //die;
                             $autonego='';
                             $speed='';
                             $macs ='';
-                            //if (preg_match('/^ethernet/', $portid)) {
                                 $autonego=$this->clean_snmp_value($snmp_ports_autonego);
                                 $speed=$this->match_speed($this->clean_snmp_value($snmp_ports_speed));
 
                                 $portid = $k+1;
                         $result.='<tr class="text-center"><td>eth '.$portid.'</td>';
-                        //echo $portstatus;
-                        //die;
                         $result.='<td>'. (empty($portoperstatus) || $portoperstatus == 'up' ? 'up' : 'down').'</td>';
                         $result.='<td>
 						<select name="onuport_'.$portid.'"'.$onchange.'>
@@ -1859,9 +1801,7 @@ class GPON_NOKIA_SNMP
                         ';
                         
                         $result.='</td><td>';
-                        //if (preg_match('/ethernet/', $portid) && !preg_match('/virtual/', $portid)) {
-                            $result.= $speed;
-                        //}
+                        $result.= $speed;
                         $result.='</td></tr>';
                     }
                 }
@@ -1886,11 +1826,7 @@ class GPON_NOKIA_SNMP
         {
             $i = 0;
             $iphost_index = $this->calc_iphost_index($OLT_id.'/'.$ONU_id);
-            //echo $iphost_index.' ';
-            //$iphost_ip=$this->get('1.3.6.1.4.1.637.61.1.35.27.2.1.8.'.$iphost_index, 'x');
             $iphost_ip=$this->get('.1.3.6.1.4.1.637.61.1.35.27.3.1.3.'.$iphost_index, 'x');
-            //print_r($iphost_ip);
-            //die;
             if($iphost_ip != '')
             {
                 $result[$i]['ip'] = $iphost_ip;

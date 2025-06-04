@@ -317,23 +317,11 @@ class GPON_NOKIA
             }
         }
         
-        // Zwróć wynik w formacie mieszanym: część ASCII + reszta w HEX
-        //if (strlen($serialAscii) >= 4) {
             return $serialAscii . $restHex;
-        //} else {
-            // Jeśli nie ma wystarczająco dużo znaków ASCII, zwróć oryginalny format hex
-          //  return strtoupper($hexString);
-        //}
     }
 
     public function decode_ont_index($index, $typ = 'port')
     {
-        /*  
-        $bin = str_pad(decbin($index), 32, "0", STR_PAD_LEFT); 
-        $card = bindec(substr($bin, -30, 5)) - 1; 
-        $port = bindec(substr($bin, -21, 5)) + 1; 
-        return "1/1/".$card."/".$port;
-        */
         // Konwersja indeksu na 32-bitowy ciąg binarny
         $bin = str_pad(decbin($index), 32, "0", STR_PAD_LEFT); 
         // Wyciąganie poszczególnych fragmentów zgodnie z formatem w calc_ont_index
@@ -353,8 +341,6 @@ class GPON_NOKIA
         }
    
     }
-
-    
 
     public function GponOltPortsUpdate($gponoltportsdata, $oltid)
     {
