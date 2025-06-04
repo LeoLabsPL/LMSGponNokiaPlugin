@@ -1,4 +1,4 @@
-Dodatek GPON / XGSPON NOKIA do LMS (ver 1.0.2) 
+Dodatek GPON / XGSPON NOKIA do LMS (ver 1.0.5) 
 
 ==========================================================
 Wymagania:
@@ -71,6 +71,12 @@ Autoprovisioning (skrypt bin/gponautoscript.php)
 ===========================================================
 
 CHANGELOG
+
+## [1.0.5] - 2025-06-04
+### Dodano
+- możliwość konfiguracji veip
+### Naprawiono
+- poprawiono komunikację po snmp v3 
 
 ## [1.0.4] - 2025-05-28
 ### Dodano
