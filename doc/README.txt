@@ -74,7 +74,8 @@ CHANGELOG
 
 ## [1.0.6] - 2025-06-
 ### Dodano
-- po zmianie serviceprofile ponowna konfiguracja ONT
+- po zmianie profilu usług (serviceprofile) ponowna konfiguracja ONT
+- po zmianie profilu qos (gponoltprofilesid) ponowna konfiguracja ONT
 
 ## [1.0.5] - 2025-06-04
 ### Dodano
