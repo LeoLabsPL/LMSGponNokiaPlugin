@@ -246,7 +246,12 @@ if (isset($_POST['netdev']) && (!isset($_POST['snmpsend']) || empty($_POST['snmp
         $old_onu_data = $GPON->GetGponOnu($netdevdata['id']);
         $old_serviceprofile = $old_onu_data['serviceprofile'];
         $new_serviceprofile = $netdevdata['serviceprofile'];
-        if ($old_serviceprofile !== $new_serviceprofile && !empty($old_serviceprofile) && !empty($new_serviceprofile)) {
+        $old_gponoltprofilesid = $old_onu_data['gponoltprofilesid'];
+        $new_gponoltprofilesid = $netdevdata['gponoltprofilesid'];
+        if (
+            ($old_serviceprofile !== $new_serviceprofile && !empty($old_serviceprofile) && !empty($new_serviceprofile)) ||
+            ($old_gponoltprofilesid !== $new_gponoltprofilesid && !empty($old_gponoltprofilesid) && !empty($new_gponoltprofilesid))
+        ) {
             $olt_port = $old_onu_data['gponoltnumport'];
             $onu_name = $old_onu_data['name'];
             $onu_id = $old_onu_data['onuid'];
@@ -260,7 +265,7 @@ if (isset($_POST['netdev']) && (!isset($_POST['snmpsend']) || empty($_POST['snmp
                 $old_onu_data['password'],
                 $old_onu_data['onudescription'],
                 $new_serviceprofile,
-                $old_onu_data['profil_olt'],
+                $new_gponoltprofilesid,
                 $old_onu_data['xgspon'],
                 $old_onu_data['portdetails'],
                 $old_onu_data['swverpland']
