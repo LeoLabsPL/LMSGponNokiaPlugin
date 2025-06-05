@@ -72,7 +72,7 @@ Autoprovisioning (skrypt bin/gponautoscript.php)
 
 CHANGELOG
 
-## [1.0.6] - 2025-06-
+## [1.0.6] - 2025-06-05
 ### Dodano
 - po zmianie profilu usług (serviceprofile) ponowna konfiguracja ONT
 - po zmianie profilu QOS (gponoltprofilesid) ponowna konfiguracja ONT
