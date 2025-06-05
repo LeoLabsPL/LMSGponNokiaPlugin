@@ -15,7 +15,8 @@ if (!preg_match('/^[0-9]+d$/', $period)) {
     $period = '7d';
 }
 
-$titles = array("7d" => "tydzień",
+$titles = array("1d" => "dzień",
+        "7d" => "tydzień",
         "60d" => "2 miesiące",
         "730d" => "2 lata");
 $timestamp = "now-".$period;

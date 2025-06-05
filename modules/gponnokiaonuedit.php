@@ -257,9 +257,14 @@ if (isset($_POST['netdev']) && (!isset($_POST['snmpsend']) || empty($_POST['snmp
             $onu_id = $old_onu_data['onuid'];
             $options_snmp = $GPON->GetGponOlt($old_onu_data['gponoltid']);
             $GPON->snmp->set_options($options_snmp);
+            if ($GPON->get_bussy($netdevdata['gponoltid'] == 1))
+            {
+                sleep(2); // sleep 1 sekunda tak aby jeśli olt akurat jest zajęty to nie wywalało błędu
+            }
+            $GPON->set_bussy($netdevdata['gponoltid'], 1);
             $GPON->snmp->ONU_delete($olt_port, $onu_id);
             sleep(1);
-            $GPON->snmp->ONU_add(
+            $snmp_result = $GPON->snmp->ONU_add(
                 $olt_port,
                 $onu_name,
                 $old_onu_data['password'],
@@ -270,6 +275,10 @@ if (isset($_POST['netdev']) && (!isset($_POST['snmpsend']) || empty($_POST['snmp
                 $old_onu_data['portdetails'],
                 $old_onu_data['swverpland']
             );
+            if ($snmp_result['ONU_id']>0) {
+                $GPON->GponOnuUpdateOnuId($netdevdata['id'], $snmp_result['ONU_id']);
+            } 
+            $GPON->set_bussy($netdevdata['gponoltid'], 0);
         }
 
 
