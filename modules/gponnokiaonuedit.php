@@ -254,8 +254,8 @@ if (isset($_POST['netdev']) && (!isset($_POST['snmpsend']) || empty($_POST['snmp
                 ($old_serviceprofile !== $new_serviceprofile && !empty($old_serviceprofile) && !empty($new_serviceprofile)) ||
                 ($old_gponoltprofilesid !== $new_gponoltprofilesid && !empty($old_gponoltprofilesid) && !empty($new_gponoltprofilesid))
             ) 
-            && $old_onu_data['onuid'] > 0
-        ) {
+            && $old_onu_data['onuid'] > 0 // i musi być skonfigurowany
+        ) { 
             $olt_port = $old_onu_data['gponoltnumport'];
             $onu_name = $old_onu_data['name'];
             $onu_id = $old_onu_data['onuid'];
