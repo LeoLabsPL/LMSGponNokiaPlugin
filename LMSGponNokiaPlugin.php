@@ -37,7 +37,7 @@ class LMSGponNokiaPlugin extends LMSPlugin
     const PLUGIN_NAME = 'GPON Nokia';
     const PLUGIN_ALIAS = 'gpon-nokia';
     const PLUGIN_DESCRIPTION = 'GPON/XGSPON Nokia Hardware Support';
-    const PLUGIN_VERSION = '1.0.5';
+    const PLUGIN_VERSION = '1.0.6';
     const PLUGIN_AUTHOR = 'Marcin Karwot &lt;marcin.karwot@leolabs.pl&gt;<br>Tomasz Chiliński &lt;tomasz.chilinski@chilan.com&gt;';
     //const PLUGIN_DOC_URL = '';
     const PLUGIN_REPO_URL = 'https://github.com/LeoLabsPL/LMSGponNokiaPlugin';
