@@ -166,9 +166,6 @@ if (is_array($netdevconnected) && count($netdevconnected)>0) {
         $netdevconnected[$k]['numport_js'] = str_replace('/', '-', $v['numport']);
     }
 }
-//echo '<pre>';
-//print_r($netdevconnected);
-//die;
 $SMARTY->assign('netdevlist', $netdevconnected);
 $SMARTY->assign('restnetdevlist', $netdevlist);
 $SMARTY->assign('devlinktype', $SESSION->get('devlinktype'));

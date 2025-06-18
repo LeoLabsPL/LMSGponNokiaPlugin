@@ -57,4 +57,5 @@ $AUTH = null;
 $GPON = new GPON_NOKIA();
 
 $netdevlist = $GPON->GetGponOnuCheckList();
+//print_r($netdevlist);
 die(serialize($netdevlist));

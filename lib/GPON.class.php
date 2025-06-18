@@ -1168,9 +1168,7 @@ class GPON_NOKIA
                     if ($test == "128")
                     {
                         $alarmindex1 = $this->snmp->get('.1.3.6.1.4.1.637.61.1.3.7.1.4.'.$i , 'x');
-                        //echo "Alarm Index 1: ".$alarmindex1."\n";
                         $alarmindex2 = $this->snmp->get('.1.3.6.1.4.1.637.61.1.3.7.1.5.'.$i , 'x');
-                        //echo "Alarm Index 2: ".$alarmindex2."\n";
                         $ont_sn = $this->snmp->get('.1.3.6.1.4.1.637.61.1.35.11.3.1.3.'.$alarmindex1.'.'.$alarmindex2, 'x');
 
                         $onu_item = array(
@@ -1261,7 +1259,6 @@ class GPON_NOKIA
                                     }
                                 }
                             }
-
                             $onu_list[] = $onu_item;
                         }
                     }
@@ -1330,11 +1327,8 @@ class GPON_NOKIA
                             if ($test == "128")
                             {
                                 $alarmindex1 = $this->snmp->get('.1.3.6.1.4.1.637.61.1.3.7.1.4.'.$i , 'x');
-                                //echo "Alarm Index 1: ".$alarmindex1."\n";
                                 $alarmindex2 = $this->snmp->get('.1.3.6.1.4.1.637.61.1.3.7.1.5.'.$i , 'x');
-                                //echo "Alarm Index 2: ".$alarmindex2."\n";
                                 $onu_serial = $this->snmp->get('.1.3.6.1.4.1.637.61.1.35.11.3.1.3.'.$alarmindex1.'.'.$alarmindex2, 'x');
-
                                 $olt_port=self::decode_ont_index($alarmindex1);
 
                                 if ($debug==1) {
@@ -1387,9 +1381,6 @@ class GPON_NOKIA
                             if ($debug==1) {
                                 $output.='<br /><font color="blue"><b>'.trans('ONU # SNMP - START configuration').'</b></font>';
                             }
-                            //var_dump($onu_data);
-                            //print_r($onu_data['xgspon']);
-                           // die;
                             $xgspon = $this->GetOnuXgsponStatusByName($onu_serial);
                             $swverpland = $this->GetOnuSwverplandByName($onu_serial);
                             // dodajemy onu do olt

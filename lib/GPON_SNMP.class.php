@@ -1,7 +1,6 @@
 <?php
 
 use PHPUnit\Event\Runtime\PHP;
-
 use function PHPUnit\Framework\isArray;
 
 class GPON_NOKIA_SNMP
@@ -856,7 +855,7 @@ class GPON_NOKIA_SNMP
 
                 # VLANy (można jako jeden set albo później osobnym setem zmienić typ)
                 foreach($config['ports']['untagged'] as $port => $vlanindex)
-                {      
+                {
                     $bridgeport = self::calc_bridgeport($OLT_numport.'/'.$ONU_id, $xgspon, $port);
                     $oid = array();
                     $type = array();
@@ -898,7 +897,7 @@ class GPON_NOKIA_SNMP
                         $oid = array();
                         $type = array();
                         $value = array();
-
+                        
                         // pbit dla MC
                         $oid[0] = '.1.3.6.1.4.1.637.61.1.29.59.1.31.'.$vporteth;
                         $type[0] = 'i';

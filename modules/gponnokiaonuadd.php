@@ -119,20 +119,11 @@ if (isset($_POST['netdev'])) {
         if ($onu_check_add==1 && intval($netdevid) && isset($_POST['olt_port']) && isset($_POST['onu_id'])) {
             $GPON->set_bussy($_POST['oltid'], 1);
 
-            // tu by trzeba poczarować z add jak nieskonfigurowane onu dodajemy 
             if ($_POST['onu_id'] == 0)
-            {
-                //echo 'Add new ONU';
-                echo'<pre>';
-                print_r($netdevdata);
-                echo'</pre>';
-               // die;
-                
+            {      
                 $options_snmp=$GPON->GetGponOlt($_POST['gponoltid']);
                 $GPON->snmp->set_options($options_snmp);
                 $onu_id=$GPON->snmp->ONU_add($_POST['olt_port'], $netdevdata['name'], $netdevdata['password'], $netdevdata['onu_description'], $netdevdata['serviceprofile'], $gpon_onu['profil_olt'], $onuDetails['xgspon'], $onuDetails['portdetails'],  $onuDetails['swverpland'] );
-                //print_r($onu_id);
-                //die;
                 $GPON->GponOnuUpdateOnuId($netdevid, $onu_id['ONU_id']);
             }
             else

@@ -201,29 +201,9 @@ $netdevinfo['id'] = $_GET['id'];
 $netdevinfo['rrd'] = isset($_GET['rrd']) ? $_GET['rrd'] : 0;
 
 $gpononu2customers=$GPON->GetGponOnu2Customers($_GET['id']);
-/*
-//tak nie działa na wielu klientów - trzeba bardziej inwazyjnie - a miało być jak najmniej inwazyjnie
-if(count($gpononu2customers)>0)
-{
-    foreach($gpononu2customers as $k=>$v)
-    {
-        $customerid = $v['customersid'];
-        include(MODULES_DIR.'/customer.inc.php');
-    }
-}
-$SMARTY->assign('gpononu2customerscount', count($gpononu2customers));
-*/
-
 $modelports = $GPON->GetGponOnuModelPorts($netdevinfo['gpononumodelsid']);
 $onuports = $GPON->GetGponOnuPorts($_GET['id']);
 $netdevinfo['portsettings'] = $GPON->GetGponOnuAllPorts($modelports, $onuports);
-
-/*$vlans = parse_vlans();
-if (empty($vlans)) {
-    $vlans = array();
-}
-$SMARTY->assign('vlans', array_flip($vlans));
-*/
 $onulastauth = $GPON->GetGponOnuLastAuth($_GET['id']);
 if (!empty($onulastauth) && count($onulastauth)) {
     $SMARTY->assign('onulastauth', $onulastauth);
@@ -234,8 +214,6 @@ $SMARTY->assign('gpononu2customers', $gpononu2customers);
 
 $SMARTY->assign('netdevinfo', $netdevinfo);
 $SMARTY->assign('numports', $numports);
-//print_r($netdevconnected) ;
-//die;
 $SMARTY->assign('netdevlist', $netdevconnected);
 $SMARTY->assign('netcomplist', $netcomplist);
 $SMARTY->assign('restnetdevlist', $netdevlist);

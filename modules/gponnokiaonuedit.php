@@ -178,8 +178,6 @@ if (isset($_POST['netdev']) && (!isset($_POST['snmpsend']) || empty($_POST['snmp
     if (isset($_POST['devhost2'])) {
         $netdevdata['host_id2']=$_POST['devhost_id2'];
     }
-    //print_r($_POST);
-    //die;
 
     $cust_list_num = array();
     if (is_array($netdevdata) && count($netdevdata) && is_array($netdevdata['cid'])) {
@@ -263,7 +261,7 @@ if (isset($_POST['netdev']) && (!isset($_POST['snmpsend']) || empty($_POST['snmp
             $GPON->snmp->set_options($options_snmp);
             if ($GPON->get_bussy($netdevdata['gponoltid'] == 1))
             {
-                sleep(2); // sleep 1 sekunda tak aby jeśli olt akurat jest zajęty to nie wywalało błędu
+                sleep(2); 
             }
             $GPON->set_bussy($netdevdata['gponoltid'], 1);
             $GPON->snmp->ONU_delete($olt_port, $onu_id);
@@ -300,7 +298,6 @@ if (isset($_POST['netdev']) && (!isset($_POST['snmpsend']) || empty($_POST['snmp
                 if ($netdevdata_old['onudescription'] != $netdevdata_now['onudescription']) {
                     $GPON->snmp->ONU_set_description($netdevdata_now['gponoltnumport'], $netdevdata_now['onuid'], $netdevdata_now['onudescription']);
                 }
-
             }
         }
         $SESSION->redirect('?m=gponnokiaonuinfo&id='.$_GET['id']);
