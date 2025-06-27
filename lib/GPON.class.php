@@ -2021,8 +2021,9 @@ class GPON_NOKIA
             $multicast = isset($values['multicast']) && ConfigHelper::checkValue($values['multicast']);
             $iphost = isset($values['iphost']) && ConfigHelper::checkValue($values['iphost']);
             $veip = isset($values['veip']) && ConfigHelper::checkValue($values['veip']);
+            $tr69 = isset($values['tr069_profile']) && ConfigHelper::checkValue($values['tr069_profile']);
             $config['vlans'][$vlanid] = array(
-                'multicast' => $multicast,  'iphost' => $iphost, 'veip' => $veip);           
+                'multicast' => $multicast,  'iphost' => $iphost, 'veip' => $veip, 'tr069_profile' => $values['tr069_profile']);           
             
             if($iphost == 1)
             {

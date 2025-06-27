@@ -1060,7 +1060,39 @@ class GPON_NOKIA_SNMP
 
                     $result['iphostup'] = $this->set_CLI($oid, $type, $value, 'x');    
 
+                    if($config['vlans'][$config['iphost_vlan']]['tr069_profile'] > 0)
+                    {
+                        $profil = intval($config['vlans'][$config['iphost_vlan']]['tr069_profile']);
+                        $tr069_index = $this->calc_tr069_index($OLT_numport.'/'.$ONU_id);
+
+                        $oid = array();
+                        $type = array();
+                        $value = array();
+
+                        $oid[] = ".1.3.6.1.4.1.637.61.1.35.21.21.1.6.".$tr069_index; // RowStatus
+                        $type[] = "i";
+                        $value[] = 1;
+
+                        $oid[] = ".1.3.6.1.4.1.637.61.1.35.21.21.1.4.".$tr069_index; // Vlan
+                        $type[] = "u";
+                        $value[] = $config['iphost_vlan'];                        
+                        
+                        $oid[] = ".1.3.6.1.4.1.637.61.1.35.21.21.1.5.".$tr069_index; // pbit
+                        $type[] = "i";
+                        $value[] = 0;
+
+                        $oid[] = ".1.3.6.1.4.1.637.61.1.35.21.21.1.3.".$tr069_index; // profile
+                        $type[] = "i";
+                        $value[] = $profil;
+
+                        $oid[] = ".1.3.6.1.4.1.637.61.1.35.21.21.1.2.".$tr069_index; // admin state
+                        $type[] = "i";
+                        $value[] = 0;
+                       
+                        $result['tr069'] = $this->set_CLI($oid, $type, $value, 'x');    
+                    }
                 }
+
                 $oid = array();
                 $type = array();
                 $value = array();
@@ -1989,6 +2021,21 @@ class GPON_NOKIA_SNMP
         $index .= sprintf( "%07d", decbin($var[4]-1)); //ONT
         $index .= sprintf( "%04d", decbin(15));   
         $index .= sprintf( "%05d", decbin(15));   
+    
+        return bindec($index);
+    }
+
+    private static function calc_tr069_index($ont, $xgspon = false)
+    {
+        $var = explode("/", $ont);
+        
+        $index = "00";
+        $index .= sprintf( "%05d", decbin($var[2]+1)); //SLOT
+        $index .= "0110"; // level
+        $index .= sprintf( "%05d", decbin($var[3]-1)); //PON
+        $index .= sprintf( "%07d", decbin($var[4]-1)); //ONT
+        $index .= sprintf( "%04d", decbin(10));   
+        $index .= sprintf( "%05d", decbin(0));   
     
         return bindec($index);
     }
