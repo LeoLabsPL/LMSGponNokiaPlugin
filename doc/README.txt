@@ -110,5 +110,6 @@ CHANGELOG
 
 TODO
 
+ID slotu - VEIP w konfiguracji modelu ONT
 
 

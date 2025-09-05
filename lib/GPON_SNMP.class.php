@@ -515,11 +515,15 @@ class GPON_NOKIA_SNMP
             if ($ONU_id) {
                 // dodajemy onu !!!!!!!!!!!!!! ***************** !!!!!!!!!!!!!!!!!!!
                 $config = $this->GPON->LoadServiceProfile($serviceprofile, '');
-                echo '<pre>';
+                echo '<pre> config:';
                 print_r($config);
+                echo '<pre> portdetail:';
+                print_r($portdetails);
+                echo '<br> xgspon:';
+                print_r($xgspon);
                 //die;
-                $ont_index = self::calc_ont_index($OLT_numport.'/'.$ONU_id, $xgspon);
-                $eth_slot = self::calc_eth_slot(1, $xgspon);
+                $ont_index = self::calc_ont_index($OLT_numport.'/'.$ONU_id);
+                
              
                 $oid = array();
                 $type = array();
@@ -588,47 +592,112 @@ class GPON_NOKIA_SNMP
                 $result[] = $this->set_CLI($oid, $type, $value, 'x');  // ***********************
 
 
-                
-                $oid = array();
-                $type = array();
-                $value = array();
-                # Dodawanie slotu (jako jeden set)
-                // .1.3.6.1.4.1.637.61.1.35.10.2.1.3.${ONTID}.${ETHSLOT} i 4 # Card Status (4 - create, 6 - destroy)
-                $oid[0] = ".1.3.6.1.4.1.637.61.1.35.10.2.1.3.".$ont_index.".".$eth_slot;
-                $type[0] = "i";
-                $value[0] = 4;
-
-                // .1.3.6.1.4.1.637.61.1.35.10.2.1.4.${ONTID}.${ETHSLOT} i 24 # Card Type (24 - Ethernet)
-                $oid[1] = ".1.3.6.1.4.1.637.61.1.35.10.2.1.4.".$ont_index.".".$eth_slot;
-                $type[1] = "i";
-                $value[1] = 24;
-
-                if(!isset($portdetails['eth']['portscount'])) // ilość portwów ETH z konfiguracji modelu ont
+                if(isset($portdetails['eth'])) 
                 {
-                    $eth_port_count = 1;
+                   if($portdetails['eth']['portslot'] > 0)
+                   {
+                       $eth_slot = self::calc_eth_slot($portdetails['eth']['portslot'], false);
+                   }
+                   else
+                   {
+                       $eth_slot = self::calc_eth_slot(1, false);
+                   }
+
+                    $oid = array();
+                    $type = array();
+                    $value = array();
+                    # Dodawanie slotu (jako jeden set)
+                    // .1.3.6.1.4.1.637.61.1.35.10.2.1.3.${ONTID}.${ETHSLOT} i 4 # Card Status (4 - create, 6 - destroy)
+                    $oid[0] = ".1.3.6.1.4.1.637.61.1.35.10.2.1.3.".$ont_index.".".$eth_slot;
+                    $type[0] = "i";
+                    $value[0] = 4;
+
+                    // .1.3.6.1.4.1.637.61.1.35.10.2.1.4.${ONTID}.${ETHSLOT} i 24 # Card Type (24 - Ethernet)
+                    $oid[1] = ".1.3.6.1.4.1.637.61.1.35.10.2.1.4.".$ont_index.".".$eth_slot;
+                    $type[1] = "i";
+                    $value[1] = 24;
+
+                    if(!isset($portdetails['eth']['portscount'])) // ilość portwów ETH z konfiguracji modelu ont
+                    {
+                        $eth_port_count = 1;
+                    }
+                    else
+                    {
+                        $eth_port_count = $portdetails['eth']['portscount'];
+                    }
+
+                    // .1.3.6.1.4.1.637.61.1.35.10.2.1.10.${ONTID}.${ETHSLOT} i 1 #  (ile portów typu data)
+                    $oid[2] = ".1.3.6.1.4.1.637.61.1.35.10.2.1.10.".$ont_index.".".$eth_slot;
+                    $type[2] = "i";
+                    $value[2] = $eth_port_count;
+
+                    // .1.3.6.1.4.1.637.61.1.35.10.2.1.11.${ONTID}.${ETHSLOT} i 0 #  (ile portów typu pots)
+                    $oid[3] = ".1.3.6.1.4.1.637.61.1.35.10.2.1.11.".$ont_index.".".$eth_slot;
+                    $type[3] = "i";
+                    $value[3] = 0;
+
+                    // .1.3.6.1.4.1.637.61.1.35.10.2.1.6.${ONTID}.${ETHSLOT} i 0 # Admin State (0 - unlock, 1 - lock)
+                    $oid[4] = ".1.3.6.1.4.1.637.61.1.35.10.2.1.6.".$ont_index.".".$eth_slot;
+                    $type[4] = "i";
+                    $value[4] = 0;
+
+                    $result[] = $this->set_CLI($oid, $type, $value, 'x'); // ***********************
+
                 }
-                else
+
+                if(isset($portdetails['10-gig'])) // osobny if z 10g
                 {
-                    $eth_port_count = $portdetails['eth']['portscount'];
+
+                   if($portdetails['10-gig']['portslot'] > 0)
+                   {
+                       $eth_slot = self::calc_eth_slot($portdetails['10-gig']['portslot'], false);
+                   }
+                   else
+                   {
+                       $eth_slot = self::calc_eth_slot(1, false);
+                   }
+
+                    $oid = array();
+                    $type = array();
+                    $value = array();
+                    # Dodawanie slotu (jako jeden set)
+                    // .1.3.6.1.4.1.637.61.1.35.10.2.1.3.${ONTID}.${ETHSLOT} i 4 # Card Status (4 - create, 6 - destroy)
+                    $oid[0] = ".1.3.6.1.4.1.637.61.1.35.10.2.1.3.".$ont_index.".".$eth_slot;
+                    $type[0] = "i";
+                    $value[0] = 4;
+
+                    // .1.3.6.1.4.1.637.61.1.35.10.2.1.4.${ONTID}.${ETHSLOT} i 24 # Card Type (24 - Ethernet)
+                    $oid[1] = ".1.3.6.1.4.1.637.61.1.35.10.2.1.4.".$ont_index.".".$eth_slot;
+                    $type[1] = "i";
+                    $value[1] = 24;
+
+                    if(!isset($portdetails['10-gig']['portscount'])) // ilość portwów ETH z konfiguracji modelu ont
+                    {
+                        $eth_port_count = 1;
+                    }
+                    else
+                    {
+                        $eth_port_count = $portdetails['10-gig']['portscount'];
+                    }
+
+                    // .1.3.6.1.4.1.637.61.1.35.10.2.1.10.${ONTID}.${ETHSLOT} i 1 #  (ile portów typu data)
+                    $oid[2] = ".1.3.6.1.4.1.637.61.1.35.10.2.1.10.".$ont_index.".".$eth_slot;
+                    $type[2] = "i";
+                    $value[2] = $eth_port_count;
+
+                    // .1.3.6.1.4.1.637.61.1.35.10.2.1.11.${ONTID}.${ETHSLOT} i 0 #  (ile portów typu pots)
+                    $oid[3] = ".1.3.6.1.4.1.637.61.1.35.10.2.1.11.".$ont_index.".".$eth_slot;
+                    $type[3] = "i";
+                    $value[3] = 0;
+
+                    // .1.3.6.1.4.1.637.61.1.35.10.2.1.6.${ONTID}.${ETHSLOT} i 0 # Admin State (0 - unlock, 1 - lock)
+                    $oid[4] = ".1.3.6.1.4.1.637.61.1.35.10.2.1.6.".$ont_index.".".$eth_slot;
+                    $type[4] = "i";
+                    $value[4] = 0;
+
+                    $result[] = $this->set_CLI($oid, $type, $value, 'x'); // ***********************
+
                 }
-
-                // .1.3.6.1.4.1.637.61.1.35.10.2.1.10.${ONTID}.${ETHSLOT} i 1 #  (ile portów typu data)
-                $oid[2] = ".1.3.6.1.4.1.637.61.1.35.10.2.1.10.".$ont_index.".".$eth_slot;
-                $type[2] = "i";
-                $value[2] = $eth_port_count;
-
-                // .1.3.6.1.4.1.637.61.1.35.10.2.1.11.${ONTID}.${ETHSLOT} i 0 #  (ile portów typu pots)
-                $oid[3] = ".1.3.6.1.4.1.637.61.1.35.10.2.1.11.".$ont_index.".".$eth_slot;
-                $type[3] = "i";
-                $value[3] = 0;
-
-                // .1.3.6.1.4.1.637.61.1.35.10.2.1.6.${ONTID}.${ETHSLOT} i 0 # Admin State (0 - unlock, 1 - lock)
-                $oid[4] = ".1.3.6.1.4.1.637.61.1.35.10.2.1.6.".$ont_index.".".$eth_slot;
-                $type[4] = "i";
-                $value[4] = 0;
-
-                $result[] = $this->set_CLI($oid, $type, $value, 'x'); // ***********************
-
                 # QoS
                 $walkqos = $this->walk('.1.3.6.1.4.1.637.61.1.47.3.24.1.2', 'x');
                 $qosid = 1; // default qos
@@ -649,7 +718,8 @@ class GPON_NOKIA_SNMP
                 if($config['veip'] == 'true')
                 {
                     echo 'VEIP: '.$OLT_numport.'/'.$ONU_id.'<br />';
-                    $eth_slot_veip = self::calc_eth_slot(10, $xgspon, 0);
+                    //$eth_slot_veip = self::calc_eth_slot(10, $xgspon, 0);
+                    $eth_slot_veip = self::calc_eth_slot(14, false, 0);
                     echo 'ont_index: '.$ont_index.' eth_slot_veip: '.$eth_slot_veip.'<br />';
                     $oid = array();
                     $type = array();
@@ -681,9 +751,10 @@ class GPON_NOKIA_SNMP
 
                     $result['veip'] = $this->set_CLI($oid, $type, $value, 'x'); // ***********************
 
-                    $eth_index = self::calc_eth_index($OLT_numport.'/'.$ONU_id, $xgspon, 10);
+                    //$eth_index = self::calc_eth_index($OLT_numport.'/'.$ONU_id, $xgspon, 10);
+                    $eth_index = self::calc_eth_index($OLT_numport.'/'.$ONU_id, $xgspon, 14); 
 
-                    echo 'port: 10 '.$eth_index.'<br />';
+                    echo 'port VEIP '.$eth_index.'<br />';
 
                     $oid = array();
                     $type = array();
@@ -717,7 +788,8 @@ class GPON_NOKIA_SNMP
 
                     $result[] = $this->set_CLI($oid, $type, $value, 'x'); // ***********************
 
-                    $bridgeport = self::calc_bridgeport($OLT_numport.'/'.$ONU_id, $xgspon, 10);
+                    //$bridgeport = self::calc_bridgeport($OLT_numport.'/'.$ONU_id, $xgspon, 10);
+                    $bridgeport = self::calc_bridgeport($OLT_numport.'/'.$ONU_id, $xgspon, 14);
 
                     $oid = array();
                     $type = array();
@@ -746,6 +818,37 @@ class GPON_NOKIA_SNMP
 
                             $result['bridgeportveip'.$vlan] = $this->set_CLI($oid, $type, $value, 'x');
                             
+                            if($vlanconfig['multicast'] == 1)
+                            {
+                                // .1.3.6.1.4.1.637.61.1.31.2.12.1.9.${BRIDGEINDEX}.vlan
+                                $vporteth = $this->get('.1.3.6.1.4.1.637.61.1.31.2.12.1.9.'.$bridgeport.'.'.$vlan , 'x');
+
+                                $oid = array();
+                                $type = array();
+                                $value = array();
+
+                                // pbit dla MC
+                                $oid[0] = '.1.3.6.1.4.1.637.61.1.29.59.1.31.'.$vporteth;
+                                $type[0] = 'i';
+                                $value[0] = 4;
+
+                                // IGMP max num group
+                                $oid[1] = '.1.3.6.1.4.1.637.61.1.29.59.1.9.'.$vporteth;
+                                $type[1] = 'i';
+                                $value[1] = 16;
+
+                                // IGMP version
+                                $oid[2] = '.1.3.6.1.4.1.637.61.1.29.59.1.18.'.$vporteth;
+                                $type[2] = 'i';
+                                $value[2] = 2;
+
+                                // IGMP max msg rate
+                                $oid[3] = '.1.3.6.1.4.1.637.61.1.29.59.1.3.'.$vporteth;
+                                $type[3] = 'i';
+                                $value[3] = 16;
+
+                                $result[] = $this->set_CLI($oid, $type, $value, 'x');
+                            }
                         }
                     }
                 }              
@@ -836,7 +939,8 @@ class GPON_NOKIA_SNMP
                     {
                         continue; // port jest już up
                     }
-                    $eth_index = self::calc_eth_index($OLT_numport.'/'.$ONU_id, $xgspon, $port);
+                    //$eth_index = self::calc_eth_index($OLT_numport.'/'.$ONU_id, $xgspon, $port);
+                    $eth_index = self::calc_eth_index($OLT_numport.'/'.$ONU_id, false, $port);
 
                     echo 'port enable: '.$port.' '.$eth_index.'<br />';
 
@@ -1257,7 +1361,7 @@ class GPON_NOKIA_SNMP
             }  
         }
 
-        $bridgeport = self::calc_bridgeport($OLT_id.'/'.$ONU_id, $xgspon, 10);
+        $bridgeport = self::calc_bridgeport($OLT_id.'/'.$ONU_id, $xgspon, 14); // tu też musi być id slotu po modelu ont wysyłany najlepiej jako osobny parametr?
         $vlanport =$this->walk('.1.3.6.1.4.1.637.61.1.31.2.12.1.9.'.$bridgeport , 'x');
         if (is_array($vlanport) && count($vlanport)>0) {
             foreach ($vlanport as $d => $v) {
@@ -1542,7 +1646,8 @@ class GPON_NOKIA_SNMP
 
 
                 $result.='</table>';
-                $ETH_index = $this->calc_eth_index($OLT_id.'/'.$ONU_id, $xgspon);
+               // $ETH_index = $this->calc_eth_index($OLT_id.'/'.$ONU_id, $xgspon);
+                $ETH_index = $this->calc_eth_index($OLT_id.'/'.$ONU_id, false);
                 
                 $OLT_index = $this->calc_ont_index($OLT_id.'/'.$ONU_id);
 
@@ -1585,7 +1690,8 @@ class GPON_NOKIA_SNMP
 
                     for ($k = 0; $k < count($snmp_ports); $k++) {
 
-                        $ETH_slot = $this->calc_eth_slot(1, $xgspon, ($k+1));
+                        //$ETH_slot = $this->calc_eth_slot(1, $xgspon, ($k+1));
+                        $ETH_slot = $this->calc_eth_slot(1, false, ($k+1));
 
                         $snmp_ports_id=$this->get('1.3.6.1.2.1.2.2.1.8.'.($ETH_index + $k) ,'x');
                         $snmp_ports_admin_status=$this->get('1.3.6.1.2.1.2.2.1.7.'.($ETH_index+$k) , 'x');
@@ -1603,7 +1709,7 @@ class GPON_NOKIA_SNMP
                             $macs ='';
                             
                         $result.='<tr class="text-center"><td> eth '.($k+1).'</td><td>'
-                            . (empty($portoperstatus) || $portoperstatus == 'up' ? 'up' : 'down').'</td><td>'
+                            . (empty($portoperstatus) || $portoperstatus == 'up' ? 'up' : 'down').' - '.$portoperstatus.'</td><td>'
                             . (empty($portadminstatus) || $portadminstatus == 'up' ? 'up' : 'down')
 
                             . '</td><td>' . $autonego . '</td><td>'
@@ -1975,6 +2081,12 @@ class GPON_NOKIA_SNMP
         {
             $port = 1;
             $var[1]= 10;
+        } 
+        if( $port == 14) // dla VEIP 
+        {
+            $port = 1;
+            $var[1]= 14;
+            $xgspon = false;
         }
 
         $index = "00";
@@ -2034,7 +2146,8 @@ class GPON_NOKIA_SNMP
         $index .= "0110"; // level
         $index .= sprintf( "%05d", decbin($var[3]-1)); //PON
         $index .= sprintf( "%07d", decbin($var[4]-1)); //ONT
-        $index .= sprintf( "%04d", decbin(10));   
+        //$index .= sprintf( "%04d", decbin(10));   
+        $index .= sprintf( "%04d", decbin(14));   
         $index .= sprintf( "%05d", decbin(0));   
     
         return bindec($index);
@@ -2061,6 +2174,12 @@ class GPON_NOKIA_SNMP
         {
             $port = 1;
             $var[1]= 10;
+        }
+        if( $port == 14)
+        {
+            $port = 1;
+            $var[1]= 14;
+            $xgspon = false;
         }
 
         $index = "00";

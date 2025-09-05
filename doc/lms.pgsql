@@ -172,7 +172,8 @@ CREATE TABLE gponnokiaonuporttype2models (
 		REFERENCES gponnokiaonuporttypes (id) ON DELETE SET NULL ON UPDATE CASCADE,
 	gpononumodelsid integer NOT NULL
 		REFERENCES gponnokiaonumodels (id) ON DELETE CASCADE ON UPDATE CASCADE,
-	portscount integer NOT NULL
+	portscount integer NOT NULL,
+	portslot integer DEFAULT NULL
 );
 CREATE INDEX gponnokiaonuporttype2models_gpononuportstypeid_idx ON gponnokiaonuporttype2models (gpononuportstypeid, gpononumodelsid);
 
@@ -209,6 +210,6 @@ INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('gpon-
 %fullname% - pełna nazwa klienta', 0);
 
 
-INSERT INTO gponnokiaonuporttypes (name) VALUES ('eth'), ('pots'), ('video'), ('virtual-eth'), ('wifi');
+INSERT INTO gponnokiaonuporttypes (name) VALUES ('eth'), ('10-gig'), ('pots'), ('video'), ('virtual-eth'), ('wifi');
 
 INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSGponNokiaPlugin', '2025052100');

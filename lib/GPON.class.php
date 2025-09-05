@@ -918,7 +918,7 @@ class GPON_NOKIA
 			JOIN " . self::SQL_TABLE_GPONONUMODELS . " gom ON gom.id = g.gpononumodelsid
 			LEFT JOIN netdevices d ON d.id = g.netdevid
 			WHERE g.id = ?", array($id));
-        $result['portdetails'] = $this->DB->GetAllByKey("SELECT pt.name, portscount FROM " . self::SQL_TABLE_GPONONU . " o
+        $result['portdetails'] = $this->DB->GetAllByKey("SELECT pt.name, portscount, portslot FROM " . self::SQL_TABLE_GPONONU . " o
 			JOIN " . self::SQL_TABLE_GPONONUPORTTYPE2MODELS . " t2m ON o.gpononumodelsid = t2m.gpononumodelsid
 			JOIN " . self::SQL_TABLE_GPONONUPORTTYPES . "  pt ON pt.id = gpononuportstypeid
 			WHERE o.id = ?", 'name', array($id));
@@ -1816,7 +1816,7 @@ class GPON_NOKIA
         );
     }
 
-    public function SetGponOnuPortsType2Models($gpononumodelid, $porttypes)
+    public function SetGponOnuPortsType2Models($gpononumodelid, $porttypes, $portslot)
     {
         if (intval($gpononumodelid)) {
             $this->DB->BeginTrans();
@@ -1825,9 +1825,10 @@ class GPON_NOKIA
             if (is_array($porttypes) && count($porttypes)) {
                 foreach ($porttypes as $k => $v) {
                     if (intval($v)) {
+                        $portslot[$k] = isset($portslot[$k]) ? intval($portslot[$k]) : 0;
                         $this->DB->Execute('INSERT INTO ' . self::SQL_TABLE_GPONONUPORTTYPE2MODELS
-                        . ' (gpononuportstypeid, gpononumodelsid, portscount)
-							VALUES (?, ?, ?)', array(intval($k), $gpononumodelid, $v));
+                        . ' (gpononuportstypeid, gpononumodelsid, portscount, portslot)
+							VALUES (?, ?, ?, ?)', array(intval($k), $gpononumodelid, $v, $portslot[$k]));
                     }
                 }
             }

@@ -120,6 +120,11 @@
 															form="gponnokiaonumodel"
 															onkeyup="ZamienNaLiczbe(this)" {tip text="Enter the number of ports"}>
 													</td>
+													<td>
+														<input type="text" name="portslot[{$type.id}]" value="{$portstype2models[$type.id].portslot}"
+															form="gponnokiaonumodel"
+															onkeyup="ZamienNaLiczbe(this)" {tip text="Enter the slot number"}>
+													</td>
 												</tr>
 											{/foreach}
 										</table>

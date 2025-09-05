@@ -38,7 +38,7 @@ if (isset($_POST['netdev'])) {
 
     if (!$error) {
         $netdevid = $GPON->GponOnuModelsAdd($netdevdata);
-        $GPON->SetGponOnuPortsType2Models($netdevid, $_POST['portstype']);
+        $GPON->SetGponOnuPortsType2Models($netdevid, $_POST['portstype'], $_POST['portslot']);
         $SESSION->redirect('?m=gponnokiaonumodelsinfo&id='.$netdevid);
     }
     
