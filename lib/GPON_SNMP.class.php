@@ -1243,7 +1243,7 @@ class GPON_NOKIA_SNMP
                     $this->ONU_set_description($OLT_numport, $ONU_id, $ONU_description);
                 }
                 print_r($result);
-               // die;
+                //die;
                 $result = array_unique($result);
                 if (!strlen($this->parse_result_error($result))) {
                     $result['ONU_id']=$ONU_id;
@@ -1871,12 +1871,30 @@ class GPON_NOKIA_SNMP
 
                     if (is_array($snmp_ports) && count($snmp_ports)>0) {
     
-                        for ($k = 0; $k < count($snmp_ports); $k++) {
-    
-                            $ETH_slot = $this->calc_eth_slot(1, $xgspon, ($k+1));
-    
+                        //for ($k = 0; $k < count($snmp_ports); $k++) {
+                        foreach ($snmp_ports as $k => $v) {
+                            $parts = explode('.', $k);
+                            $lastValue = $parts[count($parts) - 1];
+
+                            $eth_info = $this->calc_eth_slot_reverse($lastValue);
+                            
+                            if($eth_info['xgspon'] == false)
+                            {
+                                $ETH_index = $this->calc_eth_index($OLT_id.'/'.$ONU_id, false);
+                                $eth10g = '';
+                            }
+                            else
+                            {
+                                $ETH_index = $this->calc_eth_index($OLT_id.'/'.$ONU_id, true);
+                                $eth10g = '10G ';
+                            }
+                        
+                            $k = $eth_info['port'] - 1;
+                            //$ETH_slot = $this->calc_eth_slot(1, $xgspon, ($k+1));
+                            $ETH_slot = $lastValue;
+
                             $snmp_ports_id=$this->get('1.3.6.1.2.1.2.2.1.8.'.($ETH_index + $k) ,'x');
-                            $portstatus=$this->get('1.3.6.1.2.1.2.2.1.7.'.($ETH_index+$k) , 'x');
+                            $portstatus=$this->get('1.3.6.1.2.1.2.2.1.7.'.($ETH_index+$k) , 'x'); // admin satus
                             $snmp_ports_autonego=$this->get('1.3.6.1.4.1.637.61.1.35.13.2.1.5.'.$OLT_index.'.'.$ETH_slot, 'x');
                             $snmp_ports_speed=$this->get('1.3.6.1.4.1.637.61.1.35.13.6.1.3.'.$OLT_index.'.'.$ETH_slot, 'x');
     
@@ -1890,10 +1908,10 @@ class GPON_NOKIA_SNMP
                                 $speed=$this->match_speed($this->clean_snmp_value($snmp_ports_speed));
 
                                 $portid = $k+1;
-                        $result.='<tr class="text-center"><td>eth '.$portid.'</td>';
-                        $result.='<td>'. (empty($portoperstatus) || $portoperstatus == 'up' ? 'up' : 'down').'</td>';
-                        $result.='<td>
-						<select name="onuport_'.$portid.'"'.$onchange.'>
+                        $result.='<tr class="text-center"><td>'.$eth10g.'eth '.$portid.'</td>';
+                        $result.='<td>'.$portoperstatus.' - '. (empty($portoperstatus) || $portoperstatus == 'up' ? 'up' : 'down').'</td>';
+                        $result.='<td>'.$portstatus.'
+						<select name="onuport_'.($ETH_index+$k).'"'.$onchange.'>
 						<option';
                         if ($portstatus == '1' || $portstatus == 'up' || $portstatus == 'up(1)') {
                             $result .= ' selected';
@@ -2553,7 +2571,8 @@ class GPON_NOKIA_SNMP
         $xgspon = $this->GPON->GetOnuXgsponStatus($OLT_id, $ONU_id);
         $port=intval($port);
         $status=intval($status);
-        $eth_index = $this->calc_eth_index($OLT_id.'/'.$ONU_id , $xgspon, $port);
+        //$eth_index = $this->calc_eth_index($OLT_id.'/'.$ONU_id , $xgspon, $port);
+        $eth_index = $port;
         
         if ($OLT_id && $ONU_id && $port) {
             $result[] = $this->set('.1.3.6.1.2.1.2.2.1.7.'.$eth_index, 'i', $status, 'x');

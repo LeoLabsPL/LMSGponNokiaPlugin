@@ -1389,9 +1389,10 @@ class GPON_NOKIA
                             }
                             $xgspon = $this->GetOnuXgsponStatusByName($onu_serial);
                             $swverpland = $this->GetOnuSwverplandByName($onu_serial);
+                            $profil_olt = $this->GetGponOltProfile($onu_data['profil_olt'])['name'];
                             // dodajemy onu do olt
                             //print_r($onu_data);
-                            $onu_id = $this->snmp->ONU_add($olt_port, $onu_serial, '', $onu_data['onudescription'], $onu_data['serviceprofile'], $onu_data['profil_olt'], $xgspon, $onu_data['portdetails'], $swverpland);
+                            $onu_id = $this->snmp->ONU_add($olt_port, $onu_serial, '', $onu_data['onudescription'], $onu_data['serviceprofile'], $profil_olt, $xgspon, $onu_data['portdetails'], $swverpland);
               
                             $description=$this->snmp->ONU_set_description($olt_port, $onu_id, $onu_data['onudescription']);
                             if ($debug==1) {

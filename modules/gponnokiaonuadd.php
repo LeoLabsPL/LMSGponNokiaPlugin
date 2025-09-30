@@ -121,9 +121,10 @@ if (isset($_POST['netdev'])) {
 
             if ($_POST['onu_id'] == 0)
             {      
+                $profil_olt = $GPON->GetGponOltProfile($netdevdata['gponoltprofilesid'])['name'];
                 $options_snmp=$GPON->GetGponOlt($_POST['gponoltid']);
                 $GPON->snmp->set_options($options_snmp);
-                $onu_id=$GPON->snmp->ONU_add($_POST['olt_port'], $netdevdata['name'], $netdevdata['password'], $netdevdata['onu_description'], $netdevdata['serviceprofile'], $gpon_onu['profil_olt'], $onuDetails['xgspon'], $onuDetails['portdetails'],  $onuDetails['swverpland'] );
+                $onu_id=$GPON->snmp->ONU_add($_POST['olt_port'], $netdevdata['name'], $netdevdata['password'], $netdevdata['onu_description'], $netdevdata['serviceprofile'],$profil_olt, $onuDetails['xgspon'], $onuDetails['portdetails'],  $onuDetails['swverpland'] );
                 $GPON->GponOnuUpdateOnuId($netdevid, $onu_id['ONU_id']);
             }
             else
