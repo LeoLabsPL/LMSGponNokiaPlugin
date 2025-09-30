@@ -36,6 +36,24 @@ $edit = '';
 $subtitle = '';
 
 switch ($action) {
+     case 'update-profiles':
+        header('Content-Type: application/json');
+        if (!isset($_GET['oltid']) || !intval($_GET['oltid'])) {
+            die('[]');
+        }
+        $oltid = $GPON->GetGponOltIdByNetdeviceId(intval($_GET['oltid']));
+        $GPON->snmp->clear_options();
+        $options_snmp = $GPON->GetGponOlt($oltid);
+        $GPON->snmp->set_options($options_snmp);
+        $GPON->UpdateGponOltProfiles($oltid);
+        $oltprofiles = $GPON->GetGponOltProfiles($oltid);
+        if (empty($oltprofiles)) {
+            $oltprofiles = array();
+        }
+        die(json_encode(array(
+            'profiles' => $oltprofiles,
+        )));
+        break;
     case 'disconnectnode':
         $LMS->NetDevLinkNode($_GET['nodeid'], 0);
         $SESSION->redirect('m=gponnokiaonuinfo&id='.$_GET['id']);
@@ -263,8 +281,10 @@ if (isset($_POST['netdev']) && (!isset($_POST['snmpsend']) || empty($_POST['snmp
             {
                 sleep(2); 
             }
+            print_r($netdevdata);
             $GPON->set_bussy($netdevdata['gponoltid'], 1);
             $GPON->snmp->ONU_delete($olt_port, $onu_id);
+            $profil_olt = $GPON->GetGponOltProfile($new_gponoltprofilesid)['name'];
             sleep(1);
             $snmp_result = $GPON->snmp->ONU_add(
                 $olt_port,
@@ -272,7 +292,7 @@ if (isset($_POST['netdev']) && (!isset($_POST['snmpsend']) || empty($_POST['snmp
                 $old_onu_data['password'],
                 $old_onu_data['onudescription'],
                 $new_serviceprofile,
-                $new_gponoltprofilesid,
+                $profil_olt,
                 $old_onu_data['xgspon'],
                 $old_onu_data['portdetails'],
                 $old_onu_data['swverpland']

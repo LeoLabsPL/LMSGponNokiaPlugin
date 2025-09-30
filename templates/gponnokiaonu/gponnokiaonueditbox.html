@@ -361,5 +361,36 @@
 </table>
 
 </form>
+{if !empty($netdevlist)}
+ <script>
+	$(function() {
+			console.log('Document ready - GPON Nokia ONU Edit Box');
+			$('#update-profiles').click(function() {
+				
+				var that = $(this);
+				{$olt = reset($netdevlist)}
+				var oltId = parseInt('{$olt.id}');
+				that.prop('disabled', true).attr('disabled', 'disabled');
+				$.ajax({
+					url: '?m={$layout.module}&action=update-profiles&oltid=' + oltId,
+					dataType: "json",
+					success: function(data) {
+						var selectedProfile = $('#profile-selection').val();
+						var html = '<option value="">{trans("— select —")}</option>';
+						$.each(data.profiles, function(index, profile) {
+							html += '<option value="' + profile.id + '"' +
+								(data.profile.length && profile.name == data.profile ||
+									!data.profile.length && profile.id == selectedProfile ? ' selected' : '') + '>' + profile.name + '</option>';
+						});
+						$('#profile-selection').html(html);
+					}
+				}).always(function() {
+					that.prop('disabled', false).removeAttr('disabled');
+				});
+			});
+	
+		
+	});
 
-
+</script>
+{/if}

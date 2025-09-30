@@ -3,7 +3,7 @@ type=bridge
 vlanid=100
 tagged=1
 untagged=
-multicast=no
+multicast=0
 priority=0
 
 [tv]
@@ -11,6 +11,6 @@ type=bridge
 vlanid=101
 tagged=1
 untagged=
-multicast=yes
+multicast=1
 priority=0
 

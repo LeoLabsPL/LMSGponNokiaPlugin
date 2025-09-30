@@ -210,6 +210,6 @@ INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('gpon-
 %fullname% - pełna nazwa klienta', 0);
 
 
-INSERT INTO gponnokiaonuporttypes (name) VALUES ('eth'), ('10-gig'), ('pots'), ('video'), ('virtual-eth'), ('wifi');
+INSERT INTO gponnokiaonuporttypes (name) VALUES ('eth'), ('10G-eth'), ('pots'), ('video'), ('virtual-eth'), ('wifi');
 
-INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSGponNokiaPlugin', '2025052100');
+INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSGponNokiaPlugin', '2025082800');

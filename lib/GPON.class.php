@@ -451,6 +451,12 @@ class GPON_NOKIA
         return $result;
     }
 
+    public function GetGponOltProfile($id)
+    {
+        return $this->DB->GetRow('SELECT p.name FROM ' . self::SQL_TABLE_GPONOLTPROFILES . ' p
+			WHERE p.id = ?', array($id));
+    }
+
     public function AddGponOltProfile($name, $gponoltid)
     {
         $name = trim($name);
@@ -1384,6 +1390,7 @@ class GPON_NOKIA
                             $xgspon = $this->GetOnuXgsponStatusByName($onu_serial);
                             $swverpland = $this->GetOnuSwverplandByName($onu_serial);
                             // dodajemy onu do olt
+                            //print_r($onu_data);
                             $onu_id = $this->snmp->ONU_add($olt_port, $onu_serial, '', $onu_data['onudescription'], $onu_data['serviceprofile'], $onu_data['profil_olt'], $xgspon, $onu_data['portdetails'], $swverpland);
               
                             $description=$this->snmp->ONU_set_description($olt_port, $onu_id, $onu_data['onudescription']);
@@ -1994,7 +2001,13 @@ class GPON_NOKIA
                         $config['ports']['enable'][$port] = 1;
                     }
                 }
-
+                 if(isset($values['ports10G_enable']))
+                {
+                    foreach (explode(',', $values['ports10G_enable']) as $port)
+                    {
+                        $config['ports10G']['enable'][$port] = 1;
+                    }
+                }
                 continue;
             }
             if (isset($values['vlanid'])) {

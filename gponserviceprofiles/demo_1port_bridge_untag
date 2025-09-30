@@ -3,6 +3,6 @@ type=bridge
 vlanid=100
 tagged=
 untagged=1
-multicast=no
+multicast=0
 priority=0
 
