@@ -72,6 +72,13 @@ Autoprovisioning (skrypt bin/gponautoscript.php)
 
 CHANGELOG
 
+## [1.0.7] - 2025-10-01
+### Dodano
+- w konfiguracji modeli ONT oprócz ilości portów, podajemy także slot
+### Naprawiono
+- nie zawsze przypisywało profil QOS do ONT
+- wyświetlanie statusu portów ETH na ONT
+
 ## [1.0.6] - 2025-06-05
 ### Dodano
 - po zmianie profilu usług (serviceprofile) ponowna konfiguracja ONT
@@ -110,6 +117,6 @@ CHANGELOG
 
 TODO
 
-ID slotu - VEIP w konfiguracji modelu ONT
+
 
 

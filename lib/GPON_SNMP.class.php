@@ -1760,7 +1760,8 @@ class GPON_NOKIA_SNMP
                             $macs ='';
                             
                         $result.='<tr class="text-center"><td>'.$eth10g.'eth '.($k+1).'</td><td>'
-                            . (empty($portoperstatus) || $portoperstatus == 'up' ? 'up' : 'down').' - '.$portoperstatus.'</td><td>'
+                            //. (empty($portoperstatus) || $portoperstatus == 'up' ? 'up' : 'down').' - '.$portoperstatus.'</td><td>'
+                            . (empty($portoperstatus) || $portoperstatus == 'up' ? 'up' : 'down').'</td><td>'
                             . (empty($portadminstatus) || $portadminstatus == 'up' ? 'up' : 'down')
 
                             . '</td><td>' . $autonego . '</td><td>'
@@ -1909,7 +1910,8 @@ class GPON_NOKIA_SNMP
 
                                 $portid = $k+1;
                         $result.='<tr class="text-center"><td>'.$eth10g.'eth '.$portid.'</td>';
-                        $result.='<td>'.$portoperstatus.' - '. (empty($portoperstatus) || $portoperstatus == 'up' ? 'up' : 'down').'</td>';
+                        //$result.='<td>'. (empty($portoperstatus) || $portoperstatus == 'up' ? 'up' : 'down').' - '.$portoperstatus.'</td>';
+                        $result.='<td>'. (empty($portoperstatus) || $portoperstatus == 'up' ? 'up' : 'down').'</td>';
                         $result.='<td>'.$portstatus.'
 						<select name="onuport_'.($ETH_index+$k).'"'.$onchange.'>
 						<option';
