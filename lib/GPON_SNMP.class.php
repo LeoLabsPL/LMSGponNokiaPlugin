@@ -1372,21 +1372,24 @@ class GPON_NOKIA_SNMP
                     $vlanid = explode($bridgeport.'.', $d);
                     $vlanid = $vlanid[1];       
 
-                    foreach ($macwalk as $vm) {
-                        $mac = $this->clean_snmp_value($vm);
-                        $mac_replace = str_replace('"', '', $mac);
-                        $mac_replace = trim(str_replace('&nbsp;', ' ', $mac));
-                        $mac_replace = str_replace(' ', ':', $mac_replace);
-                         $resultm.='<tr>
-                        <td>'.$num.'</td>
-                        <td>eth '.($k+1).'</td>
-                        <td class="text-right"><i class="lms-ui-icon-configuration" style="cursor: pointer;" onclick="javascript:changeMacFormat(\'mac-list-' . $num . '\')"
-                            title="' . trans('Change the format of presentation of the MAC address.') . '"></i></td>
-                        <td width="150px"><span id="mac-list-' . $num . '">' . $mac_replace . '</span></td>
-                        <td>'.get_producer($mac_replace).'</td>
-                        <td>'.$vlanid.'</td>
-                        </tr>';
-                        $num++;
+                    if(is_array($macwalk))
+                    {
+                        foreach ($macwalk as $vm) {
+                            $mac = $this->clean_snmp_value($vm);
+                            $mac_replace = str_replace('"', '', $mac);
+                            $mac_replace = trim(str_replace('&nbsp;', ' ', $mac));
+                            $mac_replace = str_replace(' ', ':', $mac_replace);
+                            $resultm.='<tr>
+                            <td>'.$num.'</td>
+                            <td>eth '.($k+1).'</td>
+                            <td class="text-right"><i class="lms-ui-icon-configuration" style="cursor: pointer;" onclick="javascript:changeMacFormat(\'mac-list-' . $num . '\')"
+                                title="' . trans('Change the format of presentation of the MAC address.') . '"></i></td>
+                            <td width="150px"><span id="mac-list-' . $num . '">' . $mac_replace . '</span></td>
+                            <td>'.get_producer($mac_replace).'</td>
+                            <td>'.$vlanid.'</td>
+                            </tr>';
+                            $num++;
+                        }
                     }
                 }
             }  
@@ -1716,7 +1719,7 @@ class GPON_NOKIA_SNMP
 					<thead><tr class="text-center"><th>Port:</th><th>'.trans('Oper Status:').'</th><th>Admin Status:</th><th>AutoNego:</th><th>Speed:</th></tr></thead>';
                     
                 $snmp_ports=$this->walk('1.3.6.1.4.1.637.61.1.35.13.6.1.3.'.$OLT_index, 'x'); // sprawdzamy ile portów ethernet
-                 $result .= '<pre>'.$OLT_index.'</pre>';
+                // $result .= '<pre>'.$OLT_index.'</pre>';
                 if (is_array($snmp_ports) && count($snmp_ports)>0) {
 
                     foreach ($snmp_ports as $k => $v) {

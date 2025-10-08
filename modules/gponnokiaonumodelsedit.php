@@ -50,7 +50,6 @@ if (isset($_POST['netdev'])) {
         $error['name'] =  trans('Specified name is too long (max.$a characters)!', '32');
     }
 
-    
 
     if (!$error) {
         $GPON->GponOnuModelsUpdate($netdevdata);
@@ -65,7 +64,7 @@ if (isset($_POST['netdev'])) {
 
 $portstype = $GPON->GetGponOnuPortsType();
 $portstype2models = $GPON->GetGponOnuPortsType2Models($_GET['id']);
-
+$qosprofiles = $GPON->GetGponOltProfilesGroupByName();
 
 unset($netdevlist['total']);
 unset($netdevlist['order']);
@@ -83,6 +82,7 @@ $SMARTY->assign('error', $error);
 $SMARTY->assign('netdevinfo', $netdevdata);
 $SMARTY->assign('portstype', $portstype);
 $SMARTY->assign('portstype2models', $portstype2models);
+$SMARTY->assign('qosprofiles', $qosprofiles);
 
 switch ($edit) {
     case 'data':

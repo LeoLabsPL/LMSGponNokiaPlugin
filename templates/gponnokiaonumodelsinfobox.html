@@ -156,6 +156,19 @@
 								</td>
 							</tr>
 							{/if}
+							{if $netdevinfo.defqosprofile}
+							<tr>
+								<td>
+									<img src="img/producer.gif">
+								</td>
+								<td>
+									<strong>{trans("Default QOS Profile:")}</strong>
+								</td>
+								<td>
+									{$netdevinfo.defqosprofile|escape}
+								</td>
+							</tr>
+							{/if}
 						</table>
 					</td>
 				</tr>

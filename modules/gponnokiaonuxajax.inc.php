@@ -66,7 +66,34 @@ function ONU_UpdateProperties($xmlprovisioning, $modelid)
         $portsettings = 'none';
     }
     $objResponse->assign("portsettings", "style.display", $portsettings);
-
+    
+    // Ustawienie wybranego profilu na podstawie nazwy wyświetlanej
+    $profileName = $GPON->GetGponOnuModels($modelid)['defqosprofile']; // profil który zaznaczyć
+    
+    // JavaScript do zaznaczenia opcji na podstawie tekstu
+    $objResponse->script("
+        var select = document.getElementById('profile-selection');
+        var options = select.options;
+        for (var i = 0; i < options.length; i++) {
+            if (options[i].text.indexOf('" . $profileName . "') !== -1) {
+                select.selectedIndex = i;
+                break;
+            }
+        }
+    ");
+    
+    // Alternatywnie - dokładne dopasowanie nazwy:
+    // $objResponse->script("
+    //     var select = document.getElementById('profile-selection');
+    //     var options = select.options;
+    //     for (var i = 0; i < options.length; i++) {
+    //         if (options[i].text === '" . $profileName . "') {
+    //             select.selectedIndex = i;
+    //             break;
+    //         }
+    //     }
+    // ");
+    
     return $objResponse;
 }
 

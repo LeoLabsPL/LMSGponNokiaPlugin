@@ -156,7 +156,24 @@
 											value="{$netdevinfo.swverpland|escape}">
 									</td>
 								</tr>
-								
+								<tr>
+									<td>
+										<i class="lms-ui-icon-radius"></i>
+									</td>
+									<td class="nobr">
+										<strong>{trans("Default QOS Profile")}</strong>
+									</td>
+									<td>
+										<select name="netdev[defqosprofile]" form="gponnokiaonumodel"
+											{tip text="Select default QOS profile (optional)"}>
+											<option value="">--</option>
+											{foreach $qosprofiles as $profile}
+												<option value="{$profile.name}" {if $netdevinfo.defqosprofile == $profile.name}selected{/if}>
+													{$profile.name|escape}
+												</option>
+											{/foreach}
+									</td>
+								</tr>
 							</table>
 						</td>
 					</tr>

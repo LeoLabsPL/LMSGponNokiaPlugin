@@ -439,6 +439,17 @@ class GPON_NOKIA
         return $list;
     }
 
+    public function GetGponOltProfilesGroupByName()
+    {
+        $result = $this->DB->GetAll('SELECT p.name
+            FROM ' . self::SQL_TABLE_GPONOLTPROFILES . ' p
+            GROUP BY p.name
+            ORDER BY p.name ASC');
+            //print_r($result);
+            //die;
+        return $result;
+    }
+
     public function GetGponOltProfiles($gponoltid = null)
     {
         $result = $this->DB->GetAllByKey('SELECT p.id, p.name' . (empty($gponoltid) ? ', nd.name AS oltname' : '') . '
@@ -1619,7 +1630,7 @@ class GPON_NOKIA
     public function GponOnuModelsUpdate($gpononumodelsdata)
     {
         $this->DB->Execute(
-            'UPDATE ' . self::SQL_TABLE_GPONONUMODELS . ' SET name=?, description=?, producer=?, urltemplate = ?, xmlfilename = ?, xmltemplate=?, xgspon=?, swverpland=?
+            'UPDATE ' . self::SQL_TABLE_GPONONUMODELS . ' SET name=?, description=?, producer=?, urltemplate = ?, xmlfilename = ?, xmltemplate=?, xgspon=?, swverpland=?, defqosprofile=?
 			WHERE id=?',
             array(
                 $gpononumodelsdata['name'],
@@ -1630,6 +1641,7 @@ class GPON_NOKIA
                 $gpononumodelsdata['xmltemplate'],
                 isset($gpononumodelsdata['xgspon']) ? $gpononumodelsdata['xgspon'] : 0,
                 isset($gpononumodelsdata['swverpland']) ? $gpononumodelsdata['swverpland'] : '',
+                isset($gpononumodelsdata['defqosprofile']) ? $gpononumodelsdata['defqosprofile'] : '',
                 $gpononumodelsdata['id']
             )
         );
@@ -1834,6 +1846,9 @@ class GPON_NOKIA
                 foreach ($porttypes as $k => $v) {
                     if (intval($v)) {
                         $portslot[$k] = isset($portslot[$k]) ? intval($portslot[$k]) : 0;
+                        if ($portslot[$k] == 0) {
+                            $portslot[$k] = null;
+                        }
                         $this->DB->Execute('INSERT INTO ' . self::SQL_TABLE_GPONONUPORTTYPE2MODELS
                         . ' (gpononuportstypeid, gpononumodelsid, portscount, portslot)
 							VALUES (?, ?, ?, ?)', array(intval($k), $gpononumodelid, $v, $portslot[$k]));

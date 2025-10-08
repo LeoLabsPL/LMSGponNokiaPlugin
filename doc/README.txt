@@ -2,7 +2,7 @@ Dodatek GPON / XGSPON NOKIA do LMS (ver 1.0.6)
 
 ==========================================================
 Wymagania:
-1. Wersja LMS z git (testowane w dniu 15 Maja 2025 z wersją lMS 27.78)
+1. Wersja LMS z git (testowane w dniu 15 Maja 2025 z wersją LMS 27.78)
 2. LMS z bazą PostgreSQL 
 3. PHP w wersji 5.3 lub nowszej.
 4. Moduł snmp dla PHP
@@ -71,6 +71,11 @@ Autoprovisioning (skrypt bin/gponautoscript.php)
 ===========================================================
 
 CHANGELOG
+## [1.0.8] - 2025-10-06
+### Dodano
+- dodano możliwość wyboru w modelu ONT defaultowego profilu QOS
+### Naprawiono
+- ustawianie 0 gdy nie podano slotu przy konfiguracji modelu
 
 ## [1.0.7] - 2025-10-01
 ### Dodano
