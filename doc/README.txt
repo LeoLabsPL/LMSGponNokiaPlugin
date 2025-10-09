@@ -1,4 +1,4 @@
-Dodatek GPON / XGSPON NOKIA do LMS (ver 1.0.6) 
+Dodatek GPON / XGSPON NOKIA do LMS (ver 1.0.8) 
 
 ==========================================================
 Wymagania:
@@ -121,6 +121,8 @@ CHANGELOG
 ===========================================================
 
 TODO
+
+- konfigurowanie VoIP 
 
 
 

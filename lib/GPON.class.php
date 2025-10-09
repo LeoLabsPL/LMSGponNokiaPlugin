@@ -2017,7 +2017,7 @@ class GPON_NOKIA
                         $config['ports']['enable'][$port] = 1;
                     }
                 }
-                 if(isset($values['ports10G_enable']))
+                if(isset($values['ports10G_enable']))
                 {
                     foreach (explode(',', $values['ports10G_enable']) as $port)
                     {

@@ -7,3 +7,5 @@
    W katalogu img wykonać polecenie: ln -s ../plugins/LMSGponNokiaPlugin/img LMSGponNokiaPlugin
 - Włączyć wtyczkę w zakładce Konfiguracja -> Lista wtyczek
 - Jeśli wtyczka nie jest widoczna wykonać polecenie w katalogu lms: composer update
+
+[Changelog](/doc/README.txt) 
