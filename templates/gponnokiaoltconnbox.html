@@ -160,6 +160,13 @@
 							</TD>
 						</TR>
 						<TR class="lms-ui-header-panel snmp-properties">
+							<td class="bold nobr onu-header" data-target="uptime">
+								<input type="hidden" class="sort-order" value="-1">
+								<a href="#" class="sort-order-toggle disabled">
+									{trans("Uptime:")}
+									<img class="sort-order-icon">
+								</a>
+							</td>
 							<td class="bold nobr onu-header" data-target="distance">
 								<input type="hidden" class="sort-order" value="-1">
 								<a href="#" class="sort-order-toggle disabled">
@@ -213,6 +220,7 @@
 									{/foreach}
 									</ol>
 							</TD>
+							<td class="nobr Uptime"></td>
 							<td class="nobr Distance"></td>
 							<td class="nobr RxPower"></td>
 							<td class="nobr OLTrxPower"></td>
@@ -284,6 +292,7 @@
 				var aValue = aAttr;
 				var bValue = bAttr;
 				switch (sortKey) {
+					case 'uptime':
 					case 'distance':
 					case 'status':
 					case 'deactive-reason':

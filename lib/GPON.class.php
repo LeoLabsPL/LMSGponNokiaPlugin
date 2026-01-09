@@ -1714,6 +1714,25 @@ class GPON_NOKIA
         $this->DB->CommitTrans();
     }
 
+    public function getOnuPortSlot($olt_id, $onu_id, $port_type) {
+        $query = "
+            SELECT gpm.portslot
+            FROM gponnokiaonuporttype2models gpm
+            JOIN gponnokiaonuporttypes gpt ON gpm.gpononuportstypeid = gpt.id
+            JOIN gponnokiaonumodels gom ON gpm.gpononumodelsid = gom.id
+            JOIN gponnokiaonus gon ON gon.gpononumodelsid = gom.id
+            JOIN gponnokiaonu2olts go2o ON go2o.gpononuid = gon.id
+            WHERE go2o.netdevicesid = ? 
+            AND gon.id = ?
+            AND gpt.name = ?
+            LIMIT 1
+        ";
+        
+        $result = $this->DB->GetOne($query, array($olt_id, $onu_id, $port_type));
+        
+        return $result !== false ? (int)$result : null;
+}
+
     public function GetGponOnuModelPorts($model)
     {
         return $this->DB->GetAllByKey("SELECT p.id, p.name, portscount
@@ -2051,9 +2070,9 @@ class GPON_NOKIA
             $multicast = isset($values['multicast']) && ConfigHelper::checkValue($values['multicast']);
             $iphost = isset($values['iphost']) && ConfigHelper::checkValue($values['iphost']);
             $veip = isset($values['veip']) && ConfigHelper::checkValue($values['veip']);
-            $tr69 = isset($values['tr069_profile']) && ConfigHelper::checkValue($values['tr069_profile']);
+            $tr69 = $values['tr069_profile'];
             $config['vlans'][$vlanid] = array(
-                'multicast' => $multicast,  'iphost' => $iphost, 'veip' => $veip, 'tr069_profile' => $values['tr069_profile']);           
+                'multicast' => $multicast,  'iphost' => $iphost, 'veip' => $veip, 'tr069_profile' => $tr69);           
             
             if($iphost == 1)
             {

@@ -722,9 +722,17 @@ class GPON_NOKIA_SNMP
                 // VEIP
                 if($config['veip'] == 'true')
                 {
+                    if(isset($portdetails['virtual-eth']['portslot']))
+                    {
+                        $eth_slot_veip = self::calc_eth_slot($portdetails['virtual-eth']['portslot'], false, 0);
+                    }
+                    else
+                    {
+                        $eth_slot_veip = self::calc_eth_slot(14, false, 0);
+                    }
                     echo 'VEIP: '.$OLT_numport.'/'.$ONU_id.'<br />';
                     //$eth_slot_veip = self::calc_eth_slot(10, $xgspon, 0);
-                    $eth_slot_veip = self::calc_eth_slot(14, false, 0);
+                    //$eth_slot_veip = self::calc_eth_slot(, false, 0);
                     echo 'ont_index: '.$ont_index.' eth_slot_veip: '.$eth_slot_veip.'<br />';
                     $oid = array();
                     $type = array();
@@ -757,7 +765,14 @@ class GPON_NOKIA_SNMP
                     $result['veip'] = $this->set_CLI($oid, $type, $value, 'x'); // ***********************
 
                     //$eth_index = self::calc_eth_index($OLT_numport.'/'.$ONU_id, $xgspon, 10);
-                    $eth_index = self::calc_eth_index($OLT_numport.'/'.$ONU_id, false, 14); 
+                    if(isset($portdetails['virtual-eth']['portslot']))
+                    {
+                        $eth_index = self::calc_eth_index($OLT_numport.'/'.$ONU_id, false, 1, $portdetails['virtual-eth']['portslot']) ;
+                    }
+                    else
+                    {
+                        $eth_index = self::calc_eth_index($OLT_numport.'/'.$ONU_id, false, 1, 14) ;
+                    }
 
                     echo 'port VEIP '.$eth_index.'<br />';
 
@@ -794,7 +809,14 @@ class GPON_NOKIA_SNMP
                     $result[] = $this->set_CLI($oid, $type, $value, 'x'); // ***********************
 
                     //$bridgeport = self::calc_bridgeport($OLT_numport.'/'.$ONU_id, $xgspon, 10);
-                    $bridgeport = self::calc_bridgeport($OLT_numport.'/'.$ONU_id, $xgspon, 14);
+                    if(isset($portdetails['virtual-eth']['portslot']))
+                    {
+                        $bridgeport = self::calc_bridgeport($OLT_numport.'/'.$ONU_id, false, $portdetails['virtual-eth']['portslot']);
+                    }
+                    else
+                    {   
+                        $bridgeport = self::calc_bridgeport($OLT_numport.'/'.$ONU_id, $xgspon, 14);
+                    }
 
                     echo 'bridge port VEIP: '.$bridgeport.'<br />';
                     $oid = array();
@@ -1125,7 +1147,7 @@ class GPON_NOKIA_SNMP
                     $iphost_index = $this->calc_iphost_index($OLT_numport.'/'.$ONU_id);
                     $bridgeport = self::calc_bridgeport_iphost($OLT_numport.'/'.$ONU_id);
 
-                    echo 'iphost_vlan: '.$config['iphost_vlan'].' iphost_index: '.$iphost_index.' bridgeport: '.$bridgeport.'<br />';
+                    //echo 'iphost_vlan: '.$config['iphost_vlan'].' iphost_index: '.$iphost_index.' bridgeport: '.$bridgeport.'<br />';
                     $oid = array();
                     $type = array();
                     $value = array();
@@ -1197,9 +1219,17 @@ class GPON_NOKIA_SNMP
 
                     if($config['vlans'][$config['iphost_vlan']]['tr069_profile'] > 0)
                     {
-                        $profil = intval($config['vlans'][$config['iphost_vlan']]['tr069_profile']);
-                        $tr069_index = $this->calc_tr069_index($OLT_numport.'/'.$ONU_id);
+                        if(isset($portdetails['virtual-eth']['portslot']))
+                        {
+                            $tr069_index = self::calc_tr069_index($OLT_numport.'/'.$ONU_id, false , $portdetails['virtual-eth']['portslot']);
+                        }
+                        else
+                        {
+                            $tr069_index = self::calc_tr069_index($OLT_numport.'/'.$ONU_id, false , 14);
+                        }
 
+                        $profil = intval($config['vlans'][$config['iphost_vlan']]['tr069_profile']);
+                    
                         $oid = array();
                         $type = array();
                         $value = array();
@@ -1242,6 +1272,15 @@ class GPON_NOKIA_SNMP
                 if (strlen($ONU_description)) {
                     $this->ONU_set_description($OLT_numport, $ONU_id, $ONU_description);
                 }
+                // konfiguracja VoIP
+                if($config['voipaccountsid1'] > 0) {
+                    $phone_data=$this->GPON->GetPhoneVoip($config['voipaccountsid1']);
+                    //$VoIP1=$this->ONU_SetPhoneVoip($olt_port, $onu_id, $phone_data['sip_server'], 1, $phone_data);
+                    
+                    //$result[] ='<br />VoIP1: '.$this->GetSNMPresultMsg($VoIP1);
+                    
+                }
+
                 print_r($result);
                 //die;
                 $result = array_unique($result);
@@ -2235,7 +2274,7 @@ class GPON_NOKIA_SNMP
         return bindec($index);
     }
 
-    private static function calc_tr069_index($ont, $xgspon = false)
+    private static function calc_tr069_index($ont, $xgspon = false, $port = 14)
     {
         $var = explode("/", $ont);
         
@@ -2245,7 +2284,7 @@ class GPON_NOKIA_SNMP
         $index .= sprintf( "%05d", decbin($var[3]-1)); //PON
         $index .= sprintf( "%07d", decbin($var[4]-1)); //ONT
         //$index .= sprintf( "%04d", decbin(10));   
-        $index .= sprintf( "%04d", decbin(14));   
+        $index .= sprintf( "%04d", decbin($port));   
         $index .= sprintf( "%05d", decbin(0));   
     
         return bindec($index);
@@ -2264,7 +2303,7 @@ class GPON_NOKIA_SNMP
         return bindec($index);
     }
 
-    private function calc_eth_index($ont, $xgspon = false, $port = 1)
+    private function calc_eth_index($ont, $xgspon = false, $port = 1, $slot = null)
     {
         $var = explode("/", $ont);
                
@@ -2277,6 +2316,11 @@ class GPON_NOKIA_SNMP
         {
             $port = 1;
             $var[1]= 14;
+            $xgspon = false;
+        }
+        if($slot !== null)
+        {
+            $var[1] = $slot;
             $xgspon = false;
         }
 
@@ -2340,7 +2384,12 @@ class GPON_NOKIA_SNMP
                             $OLTrxPower = $this->get('1.3.6.1.4.1.637.61.1.35.10.18.1.2.' . $port_snmp, 'x'); // OLT RX Power
                             $distance = $this->get('1.3.6.1.4.1.637.61.1.35.10.4.1.3.' . $port_snmp, 'x');
                             $activeos = $this->get('1.3.6.1.4.1.637.61.1.35.10.1.1.9.' . $port_snmp, 'x');
-                            
+                            $uptime = $this->get('1.3.6.1.4.1.637.61.1.35.10.4.1.11.' . $port_snmp, 'x'); // Device Uptime
+
+                            if( $uptime > 0)
+                            {
+                                $result['Uptime'][$port_snmp] = $this->secondsToTime(round($uptime/100, 0));
+                            }
                             $result['RxPower'][$port_snmp] = $rxPower;
                             $result['OLTrxPower'][$port_snmp] = $OLTrxPower;
                             $result['Distance'][$port_snmp] = $distance*0.1;
@@ -2607,36 +2656,126 @@ class GPON_NOKIA_SNMP
         return array_unique($result);
     }
 
-    public function ONU_SetPhoneVoip($OLT_id, $ONU_id, $typ, $port, $phone_data = array())
+    public function ONU_SetPhoneVoip($OLT_numport, $ONU_id, $sip_server, $port, $phone_data = array())
     {
+/*
+# VoIP
+${SNMPSET} 
+.1.3.6.1.4.1.637.61.1.35.27.2.1.2.${IPHOST} i 4 
+.1.3.6.1.4.1.637.61.1.35.27.2.1.3.${IPHOST} i 1 
+.1.3.6.1.4.1.637.61.1.35.27.2.1.14.${IPHOST} i 24 
+.1.3.6.1.4.1.637.61.1.35.27.2.1.13.${IPHOST} u 3100
+
+${SNMPSET} 
+.1.3.6.1.4.1.637.61.1.35.31.1.1.1.${IPHOST} i 4 
+.1.3.6.1.4.1.637.61.1.35.31.1.1.2.${IPHOST} i 1 
+.1.3.6.1.4.1.637.61.1.35.31.1.1.3.${IPHOST} i 1
+
+${SNMPSET} 
+.1.3.6.1.4.1.637.61.1.35.31.4.1.2.${IPHOST} i 4 
+.1.3.6.1.4.1.637.61.1.35.31.4.1.14.${IPHOST} i 1
+
+POTS1=545325056
+POTS2=545390592
+
+${SNMPSET} 
+.1.3.6.1.4.1.637.61.1.35.12.1.1.35.${ONTID}.${POTS1} s "0324402980" 
+.1.3.6.1.4.1.637.61.1.35.12.1.1.36.${ONTID}.${POTS1} s "0324402980" 
+.1.3.6.1.4.1.637.61.1.35.12.1.1.49.${ONTID}.${POTS1} i 1 
+.1.3.6.1.4.1.637.61.1.35.12.1.1.50.${ONTID}.${POTS1} s "0324402980" 
+.1.3.6.1.4.1.637.61.1.35.12.1.1.51.${ONTID}.${POTS1} s "PASSWD1" 
+.1.3.6.1.4.1.637.61.1.35.12.1.1.52.${ONTID}.${POTS1} s "sip.leon.pl"
+
+${SNMPSET} 
+.1.3.6.1.4.1.637.61.1.35.12.1.1.35.${ONTID}.${POTS2} s "0324402981" 
+.1.3.6.1.4.1.637.61.1.35.12.1.1.36.${ONTID}.${POTS2} s "0324402981" 
+.1.3.6.1.4.1.637.61.1.35.12.1.1.49.${ONTID}.${POTS2} i 1 
+.1.3.6.1.4.1.637.61.1.35.12.1.1.50.${ONTID}.${POTS2} s "0324402981" 
+.1.3.6.1.4.1.637.61.1.35.12.1.1.51.${ONTID}.${POTS2} s "PASSWD2" 
+.1.3.6.1.4.1.637.61.1.35.12.1.1.52.${ONTID}.${POTS2} s "sip.leon.pl"
+
+
+${SNMPSET} 
+.1.3.6.1.4.1.637.61.1.35.12.1.1.33.${ONTID}.${POTS1} i ${IPHOST} 
+.1.3.6.1.4.1.637.61.1.35.12.1.1.34.${ONTID}.${POTS1} i 2 
+.1.3.6.1.4.1.637.61.1.35.12.1.1.4.${ONTID}.${POTS1} i 0
+
+${SNMPSET} 
+.1.3.6.1.4.1.637.61.1.35.12.1.1.33.${ONTID}.${POTS2} i ${IPHOST} 
+.1.3.6.1.4.1.637.61.1.35.12.1.1.34.${ONTID}.${POTS2} i 2 
+.1.3.6.1.4.1.637.61.1.35.12.1.1.4.${ONTID}.${POTS2} i 0
+
+*/
         $result=array();
         $OLT_id=intval($OLT_id);
         $ONU_id=intval($ONU_id);
-        $typ=intval($typ);
         $port=intval($port);
+
+      
+       
         if ($OLT_id && $ONU_id && $port && is_array($phone_data)) {
             if (!count($phone_data)) {
                 $phone_data['login']='';
                 $phone_data['passwd']='';
                 $phone_data['phone']='';
             }
-            $onu=$this->walk('sleGponOnuSerial');
-            if ($this->search_array_key($onu, 'sleGponOnuSerial.'.$OLT_id.'.'.$ONU_id)) {
-                $result[] = $this->set_CLI(
-                    array('sleGponProfileVoIPOmciControlRequest', 'sleGponProfileVoIPOmciControlOltIndex', 'sleGponProfileVoIPOmciControlOnuIndex',
-                        'sleGponProfileVoIPOmciControlUniId', 'sleGponProfileVoIPOmciControlAuthName', 'sleGponProfileVoIPOmciControlAuthPasswd',
-                        'sleGponProfileVoIPOmciControlTimer'),
-                    array('i', 'i', 'i', 'i', 's', 's', 'u'),
-                    array(1, $OLT_id, $ONU_id, $port, $phone_data['login'], $phone_data['passwd'], 0)
-                );
 
-                $result[] = $this->set_CLI(
-                    array('sleGponProfileVoIPOmciControlRequest', 'sleGponProfileVoIPOmciControlOltIndex', 'sleGponProfileVoIPOmciControlOnuIndex',
-                        'sleGponProfileVoIPOmciControlUniId', 'sleGponProfileVoIPOmciControlPhoneNumber', 'sleGponProfileVoIPOmciControlTimer'),
-                    array('i', 'i', 'i', 'i', 's', 'u'),
-                    array(2, $OLT_id, $ONU_id, $port, $phone_data['phone'], 0)
-                );
-            }
+            $slot = $this->GPON->getOnuPortSlot($OLT_numport, $ONU_id, 'pots');
+            $pots = $this->calc_eth_slot($slot, false, $port);
+            $ont_index = $this->calc_ont_index($OLT_numport.'/'.$ONU_id);
+            $iphost_index = $this->calc_iphost_index($OLT_numport.'/'.$ONU_id);
+    
+
+            $oid = array();
+            $type = array();
+            $value = array();
+            $oid[0] = '.1.3.6.1.4.1.637.61.1.35.31.1.1.1.'.$iphost_index;
+            $type[0] = 'i';
+            $value[0] = 4; // VoIP
+            $oid[1] = '.1.3.6.1.4.1.637.61.1.35.31.1.1.2.'.$iphost_index;
+            $type[1] = 'i';
+            $value[1] = 1; // SIP
+            $oid[2] = '.1.3.6.1.4.1.637.61.1.35.31.1.1.3.'.$iphost_index;
+            $type[2] = 'i';
+            $value[2] = 1; // OMCI (default)
+            $result['settings'] = $this->set_CLI($oid, $type, $value, 'x');
+
+            $oid = array();
+            $type = array();
+            $value = array();
+            $oid[0] = '.1.3.6.1.4.1.637.61.1.35.31.4.1.2.'.$iphost_index;
+            $type[0] = 'i';
+            $value[0] = 4; // id profilu z OLT
+            $oid[1] = '.1.3.6.1.4.1.637.61.1.35.31.4.1.14.'.$iphost_index;
+            $type[1] = 'i';
+            $value[1] = 1; 
+            $result['profil'] = $this->set_CLI($oid, $type, $value, 'x');
+
+            $oid = array();
+            $type = array();
+            $value = array();
+
+            $oid[0] = '.1.3.6.1.4.1.637.61.1.35.12.1.1.35.'.$ont_index.'.'.$pots;
+            $type[0] = 's';
+            $value[0] = $phone_data['phone']; // numer
+            $oid[1] = '.1.3.6.1.4.1.637.61.1.35.12.1.1.36.'.$ont_index.'.'.$pots;
+            $type[1] = 's';
+            $value[1] = $phone_data['phone']; // numer
+            $oid[2] = '.1.3.6.1.4.1.637.61.1.35.12.1.1.49.'.$ont_index.'.'.$pots;
+            $type[2] = 'i';
+            $value[2] = 1; // aktywacja
+            $oid[3] = '.1.3.6.1.4.1.637.61.1.35.12.1.1.50.'.$ont_index.'.'.$pots;
+            $type[3] = 's';
+            $value[3] = $phone_data['phone']; // numer
+            $oid[4] = '.1.3.6.1.4.1.637.61.1.35.12.1.1.51.'.$ont_index.'.'.$pots;
+            $type[4] = 's';
+            $value[4] = $phone_data['passwd']; // haslo
+            $oid[5] = '.1.3.6.1.4.1.637.61.1.35.12.1.1.52.'.$ont_index.'.'.$pots;
+            $type[5] = 's';
+            $value[5] = $sip_server; // serwer sip
+           
+
+
         }
         return array_unique($result);
     }

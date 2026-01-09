@@ -281,7 +281,7 @@ if (isset($_POST['netdev']) && (!isset($_POST['snmpsend']) || empty($_POST['snmp
             {
                 sleep(2); 
             }
-            print_r($netdevdata);
+            //print_r($netdevdata);
             $GPON->set_bussy($netdevdata['gponoltid'], 1);
             $GPON->snmp->ONU_delete($olt_port, $onu_id);
             $profil_olt = $GPON->GetGponOltProfile($new_gponoltprofilesid)['name'];
