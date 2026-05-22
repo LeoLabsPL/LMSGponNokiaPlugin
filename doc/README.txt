@@ -1,4 +1,4 @@
-Dodatek GPON / XGSPON NOKIA do LMS (ver 1.0.8) 
+Dodatek GPON / XGSPON NOKIA do LMS (ver 1.0.9) 
 
 ==========================================================
 Wymagania:
@@ -71,6 +71,12 @@ Autoprovisioning (skrypt bin/gponautoscript.php)
 ===========================================================
 
 CHANGELOG
+## [1.0.9] - 2026-05-22
+### Poprawki
+- poprawki w skrypcie konfiguracji ONT
+### Dodano
+- Dodatkowy skrypt do oczytu sygnałów
+
 ## [1.0.8] - 2025-10-06
 ### Dodano
 - dodano możliwość wyboru w modelu ONT defaultowego profilu QOS
