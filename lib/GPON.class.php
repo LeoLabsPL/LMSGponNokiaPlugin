@@ -821,6 +821,19 @@ class GPON_NOKIA
 			WHERE go2o.netdevicesid = ? AND go2o.numport = ?', array($netdeviceid, $numport));
     }
 
+    public function GetGponOnuByNumPort($netdeviceid, $OLT_numport, $onu_index)
+    {
+        $netdeviceid = intval($netdeviceid);
+        $numport = $OLT_numport . '/' . $onu_index;
+        return $this->DB->GetRow(
+            'SELECT go2o.*, g.* 
+            FROM ' . self::SQL_TABLE_GPONONU2OLT . ' go2o
+            JOIN ' . self::SQL_TABLE_GPONONU . ' g ON g.id = go2o.gpononuid
+            WHERE go2o.netdevicesid = ? AND go2o.numport = ?',
+            array($netdeviceid, $numport)
+        );
+    }
+
     public function GetGponOnuList($order = 'name,asc')
     {
         list ($order, $direction) = sscanf($order, '%[^,],%s');
@@ -2097,6 +2110,7 @@ class GPON_NOKIA
                 }
             }
         }
+    
         return $config;
     }
 }

@@ -66,9 +66,9 @@ $portstype = $GPON->GetGponOnuPortsType();
 $portstype2models = $GPON->GetGponOnuPortsType2Models($_GET['id']);
 $qosprofiles = $GPON->GetGponOltProfilesGroupByName();
 
-unset($netdevlist['total']);
-unset($netdevlist['order']);
-unset($netdevlist['direction']);
+//unset($netdevlist['total']);
+//unset($netdevlist['order']);
+//unset($netdevlist['direction']);
 
 
 

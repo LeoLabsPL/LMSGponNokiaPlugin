@@ -309,7 +309,11 @@ class GPON_NOKIA_SNMP
                 $result = $this->get('1.3.6.1.4.1.637.61.1.35.10.1.1.5.'.$ONU_index);
                 if($result == '')
                 {
-                   return $i;
+                    // check in database if onu with this numport exists, because sometimes snmp get can return empty value for existing onu
+                    if(!$this->GPON->GetGponOnuByNumPort($this->get_options('netdeviceid'), $OLT_numport, $i))
+                    {
+                        return $i;
+                    }
                 }
         }
         return 0;
@@ -885,7 +889,8 @@ class GPON_NOKIA_SNMP
             
                 foreach($config['ports']['untagged'] as $port => $vlanindex)
                 {
-                    $eth_index = self::calc_eth_index($OLT_numport.'/'.$ONU_id, $xgspon, $port);
+                    $eth_index = self::calc_eth_index($OLT_numport.'/'.$ONU_id, false, $port);
+                    ##$eth_index = self::calc_eth_index($OLT_numport.'/'.$ONU_id, $xgspon, $port);
 
                     echo 'port: '.$port.' '.$eth_index.'<br />';
 
@@ -927,7 +932,15 @@ class GPON_NOKIA_SNMP
                     {
                         continue; // port jest już w untagged
                     }
-                    $eth_index = self::calc_eth_index($OLT_numport.'/'.$ONU_id, $xgspon, $port);
+                    if ($xgspon == true and $portdetails['10G-eth']['portslot'] > 0)
+                    {
+                         $eth_index = self::calc_eth_index($OLT_numport.'/'.$ONU_id, $xgspon, $port, $portdetails['10G-eth']['portslot']);
+                    }
+                    else
+                    {
+                         $eth_index = self::calc_eth_index($OLT_numport.'/'.$ONU_id, $xgspon, $port);
+                    }
+                   // $eth_index = self::calc_eth_index($OLT_numport.'/'.$ONU_id, $xgspon, $port); // do poprawy 
 
                     echo 'port: '.$port.' '.$eth_index.'<br />';
 
@@ -993,7 +1006,14 @@ class GPON_NOKIA_SNMP
                     {
                         continue; // port jest już up
                     }
-                    $eth_index = self::calc_eth_index($OLT_numport.'/'.$ONU_id, $xgspon, $port);
+                    if($xgspon == true and $portdetails['10G-eth']['portslot'] > 0)
+                    {
+                        $eth_index = self::calc_eth_index($OLT_numport.'/'.$ONU_id, $xgspon, $port, $portdetails['10G-eth']['portslot']);
+                    }
+                    else
+                    {
+                        $eth_index = self::calc_eth_index($OLT_numport.'/'.$ONU_id, $xgspon, $port);
+                    }
             
                     echo 'port enable: '.$port.' '.$eth_index.'<br />';
 
@@ -1013,7 +1033,7 @@ class GPON_NOKIA_SNMP
                 # VLANy (można jako jeden set albo później osobnym setem zmienić typ)
                 foreach($config['ports']['untagged'] as $port => $vlanindex)
                 {
-                    $bridgeport = self::calc_bridgeport($OLT_numport.'/'.$ONU_id, $xgspon, $port);
+                    $bridgeport = self::calc_bridgeport($OLT_numport.'/'.$ONU_id, false, $port);
                     $oid = array();
                     $type = array();
                     $value = array();
@@ -1083,7 +1103,14 @@ class GPON_NOKIA_SNMP
                 {      
                     foreach($vlanindexs as $vlanindex)
                     {                 
-                        $bridgeport = self::calc_bridgeport($OLT_numport.'/'.$ONU_id, $xgspon, $port);
+                        if($xgspon == true and $portdetails['10G-eth']['portslot'] > 0)
+                        {
+                               $bridgeport = self::calc_bridgeport($OLT_numport.'/'.$ONU_id, $xgspon, $port, $portdetails['10G-eth']['portslot']);
+                        }
+                        else
+                        {
+                            $bridgeport = self::calc_bridgeport($OLT_numport.'/'.$ONU_id, $xgspon, $port);
+                        }
                         $oid = array();
                         $type = array();
                         $value = array();
@@ -1602,7 +1629,7 @@ class GPON_NOKIA_SNMP
                 if ($style == 1) {
                     $result=' style="background-color:#FF0000;color:#FFFFFF;" ';
                 } else {
-                    $result='#FF0000';
+                    $result='#ff0000';
                 }
             } else {
                 $gpon_rx_power_overload = ConfigHelper::getConfig('gpon-nokia.tx_power_overload');
@@ -2186,7 +2213,7 @@ class GPON_NOKIA_SNMP
         return $result;
     }
 
-    private static function calc_bridgeport($ont, $xgspon = false, $port = 1)
+    private static function calc_bridgeport($ont, $xgspon = false, $port = 1, $slot = null)
     {
         $var = explode("/", $ont);
         
@@ -2201,6 +2228,12 @@ class GPON_NOKIA_SNMP
             $var[1]= 14;
             $xgspon = false;
         }
+        if($slot !== null)
+        {
+            $var[1] = $slot;
+            $xgspon = false;
+        }
+
 
         $index = "00";
         $index .= sprintf( "%05d", decbin($var[2]+1)); //SLOT
