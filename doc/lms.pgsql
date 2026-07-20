@@ -214,3 +214,103 @@ INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('gpon-
 INSERT INTO gponnokiaonuporttypes (name) VALUES ('eth'), ('10G-eth'), ('pots'), ('video'), ('virtual-eth'), ('wifi');
 
 INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSGponNokiaPlugin', '2025100600');
+
+/* ONT LeoLabs */
+INSERT INTO gponnokiaonumodels (name, producer, xgspon) VALUES ('LXT-010G-D', 'LeoLabs', 0);
+INSERT INTO gponnokiaonumodels (name, producer, xgspon) VALUES ('LXT-010H-D', 'LeoLabs', 0);
+INSERT INTO gponnokiaonumodels (name, description, producer, xgspon) VALUES ('LXT-010S-H', 'GSPON SFP', 'LeoLabs', 0);
+INSERT INTO gponnokiaonumodels (name, producer, xgspon) VALUES ('LXT-240G-C1', 'LeoLabs', 0);
+INSERT INTO gponnokiaonumodels (name, producer, xgspon) VALUES ('LXE-050X-C', 'LeoLabs', 1);
+INSERT INTO gponnokiaonumodels (name, description, producer, xgspon) VALUES ('LXE-010S-H', 'XGSPON SFP', 'LeoLabs', 1);
+
+
+/*  mapowanie portów LEOX */
+INSERT INTO gponnokiaonuporttype2models (gpononuportstypeid, gpononumodelsid, portscount, portslot)
+SELECT 1, id, 1, NULL FROM gponnokiaonumodels WHERE name = 'LXT-010G-D';
+
+INSERT INTO gponnokiaonuporttype2models (gpononuportstypeid, gpononumodelsid, portscount, portslot)
+SELECT 1, id, 1, NULL FROM gponnokiaonumodels WHERE name = 'LXT-010H-D';
+
+INSERT INTO gponnokiaonuporttype2models (gpononuportstypeid, gpononumodelsid, portscount, portslot)
+SELECT 5, id, 1, 14 FROM gponnokiaonumodels WHERE name = 'LXT-010S-H';
+
+INSERT INTO gponnokiaonuporttype2models (gpononuportstypeid, gpononumodelsid, portscount, portslot)
+SELECT 1, id, 4, 1 FROM gponnokiaonumodels WHERE name = 'LXT-240G-C1';
+
+INSERT INTO gponnokiaonuporttype2models (gpononuportstypeid, gpononumodelsid, portscount, portslot)
+SELECT 1, id, 4, 1 FROM gponnokiaonumodels WHERE name = 'LXE-050X-C';
+INSERT INTO gponnokiaonuporttype2models (gpononuportstypeid, gpononumodelsid, portscount, portslot)
+SELECT 5, id, 1, 14 FROM gponnokiaonumodels WHERE name = 'LXE-050X-C';
+INSERT INTO gponnokiaonuporttype2models (gpononuportstypeid, gpononumodelsid, portscount, portslot)
+SELECT 2, id, 1, 10 FROM gponnokiaonumodels WHERE name = 'LXE-050X-C';
+
+INSERT INTO gponnokiaonuporttype2models (gpononuportstypeid, gpononumodelsid, portscount, portslot)
+SELECT 2, id, 1, 1 FROM gponnokiaonumodels WHERE name = 'LXE-010S-H';
+
+
+/*  ONT HALNE */
+INSERT INTO gponnokiaonumodels (name, producer, xgspon) VALUES ('HL-1GE', 'Halny', 0);
+INSERT INTO gponnokiaonumodels (name, producer, xgspon) VALUES ('HL-2GRV', 'Halny', 0);
+INSERT INTO gponnokiaonumodels (name, producer, xgspon) VALUES ('HL-4BX3V-F', 'Halny', 0);
+INSERT INTO gponnokiaonumodels (name, producer, xgspon) VALUES ('HL-4G', 'Halny', 0);
+INSERT INTO gponnokiaonumodels (name, producer, xgspon) VALUES ('HL-4G2', 'Halny', 0);
+INSERT INTO gponnokiaonumodels (name, producer, xgspon) VALUES ('HL-4GMV', 'Halny', 0);
+INSERT INTO gponnokiaonumodels (name, producer, xgspon) VALUES ('HL-4GMV2', 'Halny', 0);
+INSERT INTO gponnokiaonumodels (name, producer, xgspon) VALUES ('HL-4GMV3', 'Halny', 0);
+INSERT INTO gponnokiaonumodels (name, producer, xgspon) VALUES ('HL-4GQV', 'Halny', 0);
+INSERT INTO gponnokiaonumodels (name, producer, xgspon) VALUES ('HL-4GQVS', 'Halny', 0);
+INSERT INTO gponnokiaonumodels (name, producer, xgspon) VALUES ('HL-4GXV', 'Halny', 0);
+INSERT INTO gponnokiaonumodels (name, producer, xgspon) VALUES ('HL-4GXV-F', 'Halny', 0);
+INSERT INTO gponnokiaonumodels (name, producer, xgspon) VALUES ('HLX-1TLV', 'Halny', 1);
+INSERT INTO gponnokiaonumodels (name, producer, xgspon) VALUES ('HLX-TGV', 'Halny', 1);
+
+/* mapowanie portów Halny */
+
+INSERT INTO gponnokiaonuporttype2models (gpononuportstypeid, gpononumodelsid, portscount, portslot)
+SELECT 1, id, 1, 1 FROM gponnokiaonumodels WHERE name = 'HL-1GE';
+INSERT INTO gponnokiaonuporttype2models (gpononuportstypeid, gpononumodelsid, portscount, portslot)
+SELECT 1, id, 2, 1 FROM gponnokiaonumodels WHERE name = 'HL-2GRV';
+INSERT INTO gponnokiaonuporttype2models (gpononuportstypeid, gpononumodelsid, portscount, portslot)
+SELECT 1, id, 4, 1 FROM gponnokiaonumodels WHERE name = 'HL-4BX3V-F';
+INSERT INTO gponnokiaonuporttype2models (gpononuportstypeid, gpononumodelsid, portscount, portslot)
+SELECT 5, id, 1, 10 FROM gponnokiaonumodels WHERE name = 'HL-4BX3V-F';
+INSERT INTO gponnokiaonuporttype2models (gpononuportstypeid, gpononumodelsid, portscount, portslot)
+SELECT 1, id, 4, 1 FROM gponnokiaonumodels WHERE name = 'HL-4G';
+INSERT INTO gponnokiaonuporttype2models (gpononuportstypeid, gpononumodelsid, portscount, portslot)
+SELECT 1, id, 4, 1 FROM gponnokiaonumodels WHERE name = 'HL-4G2';
+INSERT INTO gponnokiaonuporttype2models (gpononuportstypeid, gpononumodelsid, portscount, portslot)
+SELECT 1, id, 4, 1 FROM gponnokiaonumodels WHERE name = 'HL-4GMV';
+INSERT INTO gponnokiaonuporttype2models (gpononuportstypeid, gpononumodelsid, portscount, portslot)
+SELECT 5, id, 1, 10 FROM gponnokiaonumodels WHERE name = 'HL-4GMV';
+INSERT INTO gponnokiaonuporttype2models (gpononuportstypeid, gpononumodelsid, portscount, portslot)
+SELECT 1, id, 4, 1 FROM gponnokiaonumodels WHERE name = 'HL-4GMV2';
+INSERT INTO gponnokiaonuporttype2models (gpononuportstypeid, gpononumodelsid, portscount, portslot)
+SELECT 5, id, 1, 10 FROM gponnokiaonumodels WHERE name = 'HL-4GMV2';
+INSERT INTO gponnokiaonuporttype2models (gpononuportstypeid, gpononumodelsid, portscount, portslot)
+SELECT 1, id, 4, 1 FROM gponnokiaonumodels WHERE name = 'HL-4GMV3';
+INSERT INTO gponnokiaonuporttype2models (gpononuportstypeid, gpononumodelsid, portscount, portslot)
+SELECT 5, id, 1, 10 FROM gponnokiaonumodels WHERE name = 'HL-4GMV3';
+INSERT INTO gponnokiaonuporttype2models (gpononuportstypeid, gpononumodelsid, portscount, portslot)
+SELECT 1, id, 4, 1 FROM gponnokiaonumodels WHERE name = 'HL-4GQV';
+INSERT INTO gponnokiaonuporttype2models (gpononuportstypeid, gpononumodelsid, portscount, portslot)
+SELECT 5, id, 1, 10 FROM gponnokiaonumodels WHERE name = 'HL-4GQV';
+INSERT INTO gponnokiaonuporttype2models (gpononuportstypeid, gpononumodelsid, portscount, portslot)
+SELECT 1, id, 4, 1 FROM gponnokiaonumodels WHERE name = 'HL-4GQVS';
+INSERT INTO gponnokiaonuporttype2models (gpononuportstypeid, gpononumodelsid, portscount, portslot)
+SELECT 5, id, 1, 10 FROM gponnokiaonumodels WHERE name = 'HL-4GQVS';
+INSERT INTO gponnokiaonuporttype2models (gpononuportstypeid, gpononumodelsid, portscount, portslot)
+SELECT 1, id, 4, 1 FROM gponnokiaonumodels WHERE name = 'HL-4GXV';
+INSERT INTO gponnokiaonuporttype2models (gpononuportstypeid, gpononumodelsid, portscount, portslot)
+SELECT 5, id, 1, 10 FROM gponnokiaonumodels WHERE name = 'HL-4GXV';
+INSERT INTO gponnokiaonuporttype2models (gpononuportstypeid, gpononumodelsid, portscount, portslot)
+SELECT 1, id, 4, 1 FROM gponnokiaonumodels WHERE name = 'HL-4GXV-F';
+INSERT INTO gponnokiaonuporttype2models (gpononuportstypeid, gpononumodelsid, portscount, portslot)
+SELECT 5, id, 1, 10 FROM gponnokiaonumodels WHERE name = 'HL-4GXV-F';
+INSERT INTO gponnokiaonuporttype2models (gpononuportstypeid, gpononumodelsid, portscount, portslot)
+SELECT 2, id, 1, 8 FROM gponnokiaonumodels WHERE name = 'HLX-1TLV';
+INSERT INTO gponnokiaonuporttype2models (gpononuportstypeid, gpononumodelsid, portscount, portslot)
+SELECT 5, id, 1, 10 FROM gponnokiaonumodels WHERE name = 'HLX-1TLV';
+INSERT INTO gponnokiaonuporttype2models (gpononuportstypeid, gpononumodelsid, portscount, portslot)
+SELECT 2, id, 1, 8 FROM gponnokiaonumodels WHERE name = 'HLX-TGV';
+INSERT INTO gponnokiaonuporttype2models (gpononuportstypeid, gpononumodelsid, portscount, portslot)
+SELECT 5, id, 1, 10 FROM gponnokiaonumodels WHERE name = 'HLX-TGV';
