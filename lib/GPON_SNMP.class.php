@@ -309,6 +309,11 @@ class GPON_NOKIA_SNMP
                 $result = $this->get('1.3.6.1.4.1.637.61.1.35.10.1.1.5.'.$ONU_index);
                 if($result == '')
                 {
+                    usleep(500000); // sleep for 0.5 seconds
+                     $result = $this->get('1.3.6.1.4.1.637.61.1.35.10.1.1.5.'.$ONU_index);
+                }
+                if($result == '')
+                {
                     // check in database if onu with this numport exists, because sometimes snmp get can return empty value for existing onu
                     if(!$this->GPON->GetGponOnuByNumPort($this->get_options('netdeviceid'), $OLT_numport, $i))
                     {

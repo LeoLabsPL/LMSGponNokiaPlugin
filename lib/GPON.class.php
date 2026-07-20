@@ -824,13 +824,14 @@ class GPON_NOKIA
     public function GetGponOnuByNumPort($netdeviceid, $OLT_numport, $onu_index)
     {
         $netdeviceid = intval($netdeviceid);
-        $numport = $OLT_numport . '/' . $onu_index;
+        //$numport = $OLT_numport . '/' . $onu_index;
+        $numport = $OLT_numport;
         return $this->DB->GetRow(
             'SELECT go2o.*, g.* 
             FROM ' . self::SQL_TABLE_GPONONU2OLT . ' go2o
             JOIN ' . self::SQL_TABLE_GPONONU . ' g ON g.id = go2o.gpononuid
-            WHERE go2o.netdevicesid = ? AND go2o.numport = ?',
-            array($netdeviceid, $numport)
+            WHERE go2o.netdevicesid = ? AND go2o.numport = ? AND g.onuid = ?',
+            array($netdeviceid, $numport, $onu_index)
         );
     }
 
