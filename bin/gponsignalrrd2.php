@@ -182,19 +182,19 @@ if (!empty($olts)) {
             wait2olt($olt['id'], $GPON, 2);
 
             $signal=($GPON->snmp->get('1.3.6.1.4.1.637.61.1.35.10.14.1.2.'.$port, 'x'));
-            //echo "Signal: $signal" . PHP_EOL;
-
-            if($signal == 32768)
+            echo "ONURX: $signal" . PHP_EOL;
+            if($signal == 32768 or !is_numeric($signal))
             {
                 $signal = '';
             }
             else
             {
-                $signal = round($signal, 1)*0.002;
+                $signal = round($signal*0.002, 1);
             }
 
             $oltrx=($GPON->snmp->get('.1.3.6.1.4.1.637.61.1.35.10.18.1.2.'.$port, 'x'));
-            if($oltrx == 65534)
+            echo "OLTRX: $oltrx" . PHP_EOL;
+            if($oltrx == 65534 or !is_numeric($oltrx))
             {
                 $oltrx = '';
             }
