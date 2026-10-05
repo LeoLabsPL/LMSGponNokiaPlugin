@@ -1126,7 +1126,22 @@ class GPON_NOKIA_SNMP
                         $type[1] = "i";
                         $value[1] = 2;
 
-                        $result[] = $this->set_CLI($oid, $type, $value, 'x');
+                         // tutaj if jak jest svlan - TRANSLACJA
+                        if(isset($config['vlans'][$vlanindex]['svlan']) and $config['vlans'][$vlanindex]['svlan'] > 0)
+                        {
+                            $oid[2] = ".1.3.6.1.4.1.637.61.1.31.2.12.1.7.".$bridgeport.".".$vlanindex; 
+                            $type[2] = "i";
+                            $value[2] = 2;
+
+                            $svlan = $config['vlans'][$vlanindex]['svlan'];
+                            $oid[3] = ".1.3.6.1.4.1.637.61.1.31.2.12.1.8.".$bridgeport.".".$vlanindex; // translation
+                            $type[3] = "u";
+                            $value[3] = $svlan;
+                          
+
+                        }
+
+                        $result['vlan'.$vlanindex] = $this->set_CLI($oid, $type, $value, 'x');
 
                         if($config['vlans'][$vlanindex]['multicast'] == 1)
                         {
@@ -1315,6 +1330,9 @@ class GPON_NOKIA_SNMP
 
                 print_r($result);
                 //die;
+                // DEBUG: write log to file /var/log/gpon_snmp.log
+                //file_put_contents('/var/log/gpon_snmp.log', print_r($result, true), FILE_APPEND);
+
                 $result = array_unique($result);
                 if (!strlen($this->parse_result_error($result))) {
                     $result['ONU_id']=$ONU_id;
