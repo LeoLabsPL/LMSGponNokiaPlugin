@@ -432,7 +432,7 @@ class GPON_NOKIA_SNMP
             $cmd .= $path_OID . $OID . ' ' . $type . ' \'' . $value . '\'';
         }
         exec($cmd, $output, $ret);
-        //$result = $this->cli_result_to_snmp_result($ret.' '.$cmd); // debug
+        //file_put_contents('/var/log/gpon_snmp.log', print_r(array('cmd' => $cmd, 'output' => $output, 'ret' => $ret), true), FILE_APPEND);
         $result = $this->cli_result_to_snmp_result($ret);
         return $result;
     }
@@ -1137,17 +1137,38 @@ class GPON_NOKIA_SNMP
                             $oid[3] = ".1.3.6.1.4.1.637.61.1.31.2.12.1.8.".$bridgeport.".".$vlanindex; // translation
                             $type[3] = "u";
                             $value[3] = $svlan;
-                          
-
-                        }
+                            
+                        }                       
 
                         $result['vlan'.$vlanindex] = $this->set_CLI($oid, $type, $value, 'x');
 
-                        if($config['vlans'][$vlanindex]['multicast'] == 1)
+
+
+                        if($config['vlans'][$vlanindex]['multicast'] == 1 OR $config['vlans'][$vlanindex]['user-id-string'] != '')
                         {
                             // .1.3.6.1.4.1.637.61.1.31.2.12.1.9.${BRIDGEINDEX}.vlan
                             $vporteth = $this->get('.1.3.6.1.4.1.637.61.1.31.2.12.1.9.'.$bridgeport.'.'.$vlanindex , 'x');
+                        }
 
+                        if($config['vlans'][$vlanindex]['user-id-string'] == 'descr') // opis onu jako user-id-string
+                        {
+                            $ogonek = array(chr(177),chr(182),chr(191),chr(188),chr(230),chr(241),chr(179),chr(243),chr(234),chr(161),chr(166),chr(175),chr(172),chr(198),chr(209),chr(163),chr(211),chr(202));
+                            $bez_ogonek = array("a", "s", "z", "z", "c", "n", "l", "o", "e", "A", "S", "Z", "Z", "C", "N", "L", "O", "E");
+                            $userid = str_replace($ogonek, $bez_ogonek, $ONU_description);
+
+                            $oid = array();
+                            $type = array();
+                            $value = array();
+
+                            $oid[0] = '.1.3.6.1.4.1.637.61.1.6.5.1.1.'.$vporteth; // user-id-string
+                            $type[0] = 's';
+                            $value[0] = $userid;
+
+                            $result['user-id-string'] = $this->set_CLI($oid, $type, $value, 'x');
+                        }
+
+                        if($config['vlans'][$vlanindex]['multicast'] == 1)
+                        {
                             $oid = array();
                             $type = array();
                             $value = array();
@@ -1174,6 +1195,7 @@ class GPON_NOKIA_SNMP
 
                             $result[] = $this->set_CLI($oid, $type, $value, 'x');
                         }
+
                     }
 
                     $oid = array();
