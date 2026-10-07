@@ -9,7 +9,7 @@ priority=0
 
 [tv]
 type=bridge
-vlanid=35
+vlanid=36
 svlanid=101
 tagged=1
 untagged=
