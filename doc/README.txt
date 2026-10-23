@@ -71,6 +71,10 @@ Autoprovisioning (skrypt bin/gponautoscript.php)
 ===========================================================
 
 CHANGELOG
+## [1.0.13] - 2026-10-21
+### Dodano
+- profile konfiguracji przypisane do konkretnego OLT poprzez dopisanie w nazwie profilu OLT(OLT ID)_
+
 ## [1.0.12] - 2026-10-05
 ### Dodano
 - dodana mozliwość konfigurowania vlanów na ONT z translacja.

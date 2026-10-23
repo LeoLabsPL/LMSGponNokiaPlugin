@@ -341,7 +341,15 @@ if (isset($_POST['netdev'])) {
     $netdev_temp['autoprovisioning'] = ConfigHelper::checkConfig('gpon-nokia.auto_provisioning_default_enabled') ? 1 : 0;
 }
 
-$serviceprofiles = $GPON->ListServiceProfiles();
+if(isset($netdev['gponoltid']))
+{
+    $serviceprofiles = $GPON->ListServiceProfiles($netdev['gponoltid']);
+}
+else
+{
+    $serviceprofiles = $GPON->ListServiceProfiles();
+}
+
 $SMARTY->assign('serviceprofiles', $serviceprofiles);
 $SMARTY->assign('netdevinfo', $netdev_temp);
 $SMARTY->assign('netdevhosts', $GPON->GetHostForNetdevices());

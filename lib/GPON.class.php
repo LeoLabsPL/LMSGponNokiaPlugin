@@ -2000,29 +2000,37 @@ class GPON_NOKIA
 
     public function ListServiceProfiles($oltid = null)
     {
-        if (($dh = @opendir(PLUGINS_DIR . DIRECTORY_SEPARATOR . LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME
-            . DIRECTORY_SEPARATOR . 'gponserviceprofiles')) === false) {
+        $dirPath = PLUGINS_DIR . DIRECTORY_SEPARATOR . LMSGponNokiaPlugin::PLUGIN_DIRECTORY_NAME . DIRECTORY_SEPARATOR . 'gponserviceprofiles';
+        
+        if (($dh = @opendir($dirPath)) === false) {
             return null;
         }
-        $fnames = array();
+
+        $oltFiles = array();
+        $otherFiles = array();
+
         while (($fname = readdir($dh)) !== false) {
             if (!preg_match('/^\./', $fname)) {
-                if ($oltid) {
-                    if (preg_match('/^OLT(?<oltid>[0-9]+)_.+$/', $fname, $m)) {
+                
+                if (preg_match('/^OLT(?<oltid>[0-9]+)_.+$/', $fname, $m)) {
+                    if ($oltid) {
                         if (intval($m['oltid']) == $oltid) {
-                            $fnames[] = $fname;
+                            $oltFiles[] = $fname;
                         }
                     } else {
-                        $fnames[] = $fname;
+                        $oltFiles[] = $fname;
                     }
                 } else {
-                    $fnames[] = $fname;
+                    $otherFiles[] = $fname;
                 }
             }
         }
         closedir($dh);
-        sort($fnames, SORT_LOCALE_STRING);
-        return $fnames;
+
+        sort($oltFiles, SORT_LOCALE_STRING);
+        sort($otherFiles, SORT_LOCALE_STRING);
+
+        return array_merge($oltFiles, $otherFiles);
     }
 
     public function LoadServiceProfile($name, $model)

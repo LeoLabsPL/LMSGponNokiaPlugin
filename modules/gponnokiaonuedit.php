@@ -609,7 +609,14 @@ if (!isset($netdevdata['portsettings'])) {
     }
 }
 
-$serviceprofiles = $GPON->ListServiceProfiles();
+if(isset($netdevdata['gponoltid']))
+{
+    $serviceprofiles = $GPON->ListServiceProfiles($netdevdata['gponoltid']);
+}
+else
+{
+    $serviceprofiles = $GPON->ListServiceProfiles();  
+}
 $SMARTY->assign('serviceprofiles', $serviceprofiles);
 $SMARTY->assign('error', $error);
 $SMARTY->assign('onu_customerlimit', $onu_customerlimit);
